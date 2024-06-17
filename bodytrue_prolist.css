@@ -1,0 +1,38 @@
+/*programlist*/
+.sort_right{
+    width: 80%;
+    height: 80px;
+    margin: auto;
+    padding-top: 30px;
+    padding-right: 50px;
+}
+
+#sort1{
+    float: right;
+    font-size: 20px;
+    width: 120px;
+}
+
+.prolist_main{
+    width: 80%;
+    height: 80px;
+    margin: auto;
+}
+.prolist_list{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.program_item{
+    display: flex;
+    flex-wrap: wrap;
+    width: 256px;
+    margin: 25PX;
+}
+
+#proimage{
+    width: 256px;
+    height: 256px;
+    justify-content: space-between;
+}
