@@ -1,0 +1,299 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+ul{list-style: none;}
+a:link, a:visited{
+    text-decoration: none;
+    color: #333;
+}
+html, body{
+    width: 100%;
+    height: 100%;
+}
+body{
+    background-color: #fff;
+    min-width: 1280px;
+    line-height: 1.5;
+}   
+
+/* header */
+header{
+    width: 100%;
+    height: 80px;
+    /* background-color: gray; */
+    position: relative;
+    border-bottom: 1.5px solid black;
+}
+header .wrap{
+    width: 80%;
+    height: 80px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+header .nav_left{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 7;
+}
+header .nav_left h1{
+    width: 180px;
+    height: 55px;
+}
+header .logo img{
+    height: 60px;
+    line-height: 60px;
+}
+.nav_left .navbar{
+    display: block;
+    padding-left: 40px;
+}
+.nav_left .navbar .menu_list{
+    width: 500px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.menu_list .list{
+    height: 40px;
+    line-height: 40px;
+    font-size: 22px;
+    font-weight: bold;
+}
+.menu_list .list:hover{
+    font-size: 26px;
+    font-weight: bold;
+}
+header .nav_right{
+    display: flex;
+    align-items: end;
+    justify-content: flex-start;
+    z-index: 7;
+}
+.nav_right .icon_list{
+    width: 250px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.icon_list .item{
+    line-height: 35px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.icon_list .line{
+    line-height: 30px;
+}
+.item .icon img{
+    width: 18px;
+    height: 18px;
+    /* padding-top: 1px; */
+}
+
+/* main */
+main{
+    width: 100%;
+    height: 70%;
+    position: relative;
+    margin: auto;
+    display: grid;
+}
+main .slide{
+    width: 100%;
+    height: 100%;
+}
+main .wrap{
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+main .wrap .img_box{
+    width: 70%;
+    height: 550px;
+    /* border: 1px solid black; */
+    position: absolute;
+    top: 40px;
+    left: 250px;
+}
+main .img_box img{
+    width: 100%;
+    height: 100%;
+}
+/* footer */
+footer{
+    width: 100%;
+    height: 20%;
+}
+footer .wrap_tag{
+    width: 70%;
+    height: 90%;
+    position: relative;
+    left: 250px;
+    top: 20px;
+    display: flex;  
+    justify-content: center;
+    align-items: center;
+}
+footer .tag_list{
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+.tag_list .tag{
+    width: 20%;
+    height: 100%;
+}
+
+.tag_list .tag .pro_img{
+    width: 45%;
+    height: 70%;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto;
+}
+.tag_list .tag p{
+    text-align: center;
+}
+
+/* join */
+
+/* join_main */
+.join_main{
+    width: 100%;
+    height: 85%;
+    /* background-color: gray; */
+    position: relative;
+}
+.join_main .join_wrap{
+    width: 60%;
+    height: 100%;
+    margin: 0 auto;
+}
+.join_main .main_title{
+    width: 100%;
+    height: 15%;
+    padding-bottom: 10px;
+    /* background-color: aqua; */
+    display: flex;
+    align-items: end;
+    border-bottom: 1px solid black;
+}
+.join_main .join_list{
+    width: 100%;
+    padding-top: 10px;
+}
+.join_list .form_group{
+    display: flex;
+    flex-wrap: wrap;
+    /* border: 1px solid black; */
+    height: 40px;
+    line-height: 40px;
+}
+.form_group .form_left{
+    width: 15%;
+    border: 1px solid black;
+    font-size: 18px;
+    background-color: rgba(218, 218, 218, 0.5);
+    height: 40px;
+}
+.form_group .form_right{
+    border: 1px solid black;
+    width: 84.5%;
+    height: 40px;
+}
+#email1{
+    width: 130px;
+    line-height: 20px;
+    margin: 0 auto;
+    font-size: 16px;
+}
+#email2{
+    width: 150px;
+    height: 24px;
+    font-size: 16px;
+}
+.form_right .confirm{
+    font-size: 14px;
+    color: gray;
+}
+.form_right .btn_confirm{
+    width: 100px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 20px;
+}
+#password1{
+    width: 400px;
+    line-height: 20px;
+}
+#password2{
+    width: 400px;
+    line-height: 20px;
+}
+.form_right .btn_confirm1{
+    width: 150px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 20px;
+}
+#username{
+    height: 20px;
+    font-size: 16px;
+}
+.form_group:nth-child(7){
+    height: 120px;
+}
+.form_group:nth-child(7) .form_left{
+    height: 120px;
+    line-height: 120px;
+}
+.form_group:nth-child(7) .form_right{
+    border: 0;
+}
+.form_right .address_group{
+    display: flex;
+    flex-direction: column;
+    height: 120px;
+}
+.address_group .address_row{
+    border: 1px solid black;
+    height: 39px;
+}
+#postcode{
+    line-height: 20px;
+    font-size: 16px;
+}
+.address_row .address_search{
+    width: 100px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 20px;
+}
+#address, #address-detail{
+    width: 300px;
+    line-height: 20px;
+    font-size: 16px;
+}
+#number1{
+    height: 22px;
+    font-size: 16px;
+}
+#number2, #number3{
+    height: 20px;
+    width: 50px;
+    font-size: 16px;
+}
+.join_wrap .join_btn{
+    width: 100%;
+    height: 10%;
+    padding-top: 40px;
+    text-align: center;
+}
+#clear, #exit{
+    width: 100px;
+    font-size: 18px;
+    margin: 0 20px;
+}
