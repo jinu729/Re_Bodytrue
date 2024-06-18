@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="bodytrue_find.css">
+<title>비밀번호 찾기</title>
+</head>
+<body>
+    <div class="popup">
+        <div class="popup-content">
+                <form action="">
+                    <div class="form-group">
+                        <button type="button" class="right-button" ><a href="bodytrue_findPw.html"></a>비밀번호 찾기</button>
+                        <button type="button" class="left-button"href="bodytrue_findId.html">아이디 찾기</button>
+                    </div>
+                </form>
+            <h2>비밀번호 찾기</h2>
+            <form action="">
+                <div class="form-group">
+                    <label for="username">이름</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="birthdate">전화번호</label>
+                    <input type="number" id="number1" name="number1" required>
+                    <input type="number" id="number1" name="number1" required>
+                    <input type="number" id="number1" name="number1" required>
+                    
+                </div>
+                <div class="form-group">
+                    <label for="email">가입 이메일</label>
+                    <input type="email" id="email" name="email" required>
+                    <button type="submit">비밀번호 찾기</button>
+                </div>
+                <div class="form-group">
+                    <input type="passview" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <button type="click" onclick="location.href='/login'">로그인</button>
+                </div>
+                <div>
+                    <button class="close" onclick="closePopup()">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 팝업 닫기 기능 추가
+        function closePopup() {
+            const popup = document.querySelector('.popup');
+            popup.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
