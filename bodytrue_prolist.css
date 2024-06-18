@@ -36,3 +36,24 @@
     height: 256px;
     justify-content: space-between;
 }
+
+/*programdetail*/
+
+.left-panel, .right-panel {
+    padding: 20px;
+}
+.programdetailimg{
+    padding: 20px;
+    width: 600px;
+    height: 600px;
+}
+.left-panel {
+    flex: 3;
+}
+
+.right-panel {
+    flex: 1;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
