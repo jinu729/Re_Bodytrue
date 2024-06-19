@@ -1,5 +1,71 @@
-header{
+/*popup용 css*/
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.popup {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    max-width: 80%;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.popup-content {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.button-container {
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+#confirmButton {
+    background-color: #00C7AE;
     width: 40%;
+    margin-left: 15px;
+    color: #fff;
+}
+
+#cancelButton {
+    background-color: #ccc;
+    width: 22%;
+    color: #000;
+    margin-left: 10px;
+}
+
+#confirmButton:hover,
+#cancelButton:hover {
+    opacity: 0.8;
+}
+
+.popup h2 {
+    color: #000;
+}
+
+.popup p {
+    color: #333;
+}
+
+/*review용 css*/
+header{
+    width: 60%;
     margin: 0 auto;
     padding-top: 20px;
     padding-bottom: 20px;
@@ -7,7 +73,7 @@ header{
 }
 
 .review-main{
-    width:40%;
+    width:60%;
     padding-top:20px;
     margin: 0 auto;
     flex-direction: row;
@@ -52,14 +118,18 @@ header{
     height: 450px;
 }
 
-.submit-btn{
+.action-buttons{
+    padding-top:15px;
+}
+
+/* .submit-btn{
     background-color: #00C7AE; 
-    width: 70%;
+    width: 40%;
     height: 50px;
     border:none;
 }
 .cancel-btn{
-    width: 20%;
+    width: 21%;
     height: 50px;
     border:none;
-}
+} */
