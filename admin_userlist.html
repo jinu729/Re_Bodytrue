@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./admin_userlist.css">
+    <title>BodyTrue</title>
+</head>
+<body>
+    <header>
+        <div class="wrap">
+            <div class="nav_left">
+                <h1>
+                    <a class="logo" href="#"><img src="./image/BODYTRUE.png" alt="logo"></a>
+                </h1>
+            </div>
+            <div class="nav_right">
+                <ul class="icon_list">
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">회원 목록</a></li>
+                    <li class="line">|</li>
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">트레이너 관리</a></li>
+                    <li class="line">|</li>
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">FAQ 관리</a></li>
+                    <li class="line">|</li>
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">리뷰 관리</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <main class="admin_userlist-main"></main>
+        <div class="admin_userlist-bodyheader">
+            &nbsp;&nbsp;회원 목록
+        </div>
+        <div class="admin_userlist-bodysearch">
+            <input type="text" class="search-input" placeholder="이름 검색">
+            <button class="search-button">🔍</button>
+        </div>
+        <div class="admin_userlist-bodycontent">
+            <table>
+                <thead>
+                    <tr>
+                        <th>이메일</th>
+                        <th>비밀번호</th>
+                        <th>이름</th>
+                        <th>핸드폰번호</th>
+                        <th>성별</th>
+                        <th>주소1</th>
+                        <th>주소2</th>
+                        <th>정지</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>bodytrue@email.com</td>
+                        <td>1234</td>
+                        <td>바디트루</td>
+                        <td>010-1234-5678</td>
+                        <td>여</td>
+                        <td>서울시 종로구</td>
+                        <td>창신동</td>
+                        <td><button>❌</button></td>
+                    </tr>
+                    <tr>
+                        <td>bodytrue@email.com</td>
+                        <td>1234</td>
+                        <td>바디트루</td>
+                        <td>010-1234-5678</td>
+                        <td>여</td>
+                        <td>서울시 종로구</td>
+                        <td>창신동</td>
+                        <td><button>❌</button></td>
+                    </tr>
+                    <tr>
+                        <td>bodytrue@email.com</td>
+                        <td>1234</td>
+                        <td>바디트루</td>
+                        <td>010-1234-5678</td>
+                        <td>여</td>
+                        <td>서울시 종로구</td>
+                        <td>창신동</td>
+                        <td><button>❌</button></td>
+                    </tr>
+                    <tr>
+                        <td>bodytrue@email.com</td>
+                        <td>1234</td>
+                        <td>바디트루</td>
+                        <td>010-1234-5678</td>
+                        <td>여</td>
+                        <td>서울시 종로구</td>
+                        <td>창신동</td>
+                        <td><button>❌</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="admin_userlist-bodypaging">
+                <a href="#">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
+<script>
+    //검색어 자바스크립트 ㅇㅇ
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchButton = document.querySelector(".search-button");
+        const searchInput = document.querySelector(".search-input");
+
+        searchButton.addEventListener("click", function() {
+            const searchTerm = searchInput.value;
+            alert("검색어: " + searchTerm);
+            // 여기에 검색어를 기반으로 실제 검색 동작을 추가할 수 있습니다.
+        });
+    });
+document.addEventListener("DOMContentLoaded", function() {
+    const userTableBody = document.querySelector("tbody");
+    const pagingLinks = document.querySelectorAll(".admin_userlist-bodypaging a");
+
+    // 페이지당 보여줄 회원 수
+    const rowsPerPage = 2;
+
+    // 테스트용으로 사용하는 회원 데이터
+    const userData = [
+        { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" },
+        { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" },
+        { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" },
+        { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" },
+        { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" }
+    ];
+
+    function loadPage(page) {
+        // 테이블 내용을 비우기
+        userTableBody.innerHTML = "";
+
+        // 페이지에 해당하는 데이터 로드
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageData = userData.slice(start, end);
+
+        // 데이터 추가
+        pageData.forEach(user => {
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${user.email}</td>
+                <td>${user.password}</td>
+                <td>${user.name}</td>
+                <td>${user.phone}</td>
+                <td>${user.gender}</td>
+                <td>${user.address1}</td>
+                <td>${user.address2}</td>
+                <td><button>❌</button></td>
+            `;
+            userTableBody.appendChild(row);
+        });
+    }
+
+    // 페이지 링크 클릭 이벤트 추가
+    pagingLinks.forEach(link => {
+        link.addEventListener("click", function(event) {
+            event.preventDefault(); // 링크 기본 동작 방지
+            const page = parseInt(this.getAttribute("data-page"));
+            loadPage(page);
+
+            // 활성화된 페이지 링크 스타일 업데이트
+            pagingLinks.forEach(link => link.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+
+    // 초기 페이지 로드
+    loadPage(1);
+    pagingLinks[0].classList.add("active");
+});
+
+
+//gpt 선생님께서 제공한 페이징인데 수정해야댐
+
+// document.addEventListener("DOMContentLoaded", function() {
+//     const userTableBody = document.querySelector("tbody");
+//     const pagingLinks = document.querySelectorAll(".admin_userlist-bodypaging a");
+
+//     // 페이지당 보여줄 회원 수
+//     const rowsPerPage = 2;
+
+//     // 테스트용으로 사용하는 회원 데이터
+//     const userData = [
+//         { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" },
+//         { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" },
+//         { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" },
+//         { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" },
+//         { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" }
+//     ];
+
+//     function loadPage(page) {
+//         // 테이블 내용을 비우기
+//         userTableBody.innerHTML = "";
+
+//         // 페이지에 해당하는 데이터 로드
+//         const start = (page - 1) * rowsPerPage;
+//         const end = start + rowsPerPage;
+//         const pageData = userData.slice(start, end);
+
+//         // 데이터 추가
+//         pageData.forEach(user => {
+//             const row = document.createElement("tr");
+//             row.innerHTML = `
+//                 <td>${user.email}</td>
+//                 <td>${user.password}</td>
+//                 <td>${user.name}</td>
+//                 <td>${user.phone}</td>
+//                 <td>${user.gender}</td>
+//                 <td>${user.address1}</td>
+//                 <td>${user.address2}</td>
+//                 <td><button>❌</button></td>
+//             `;
+//             userTableBody.appendChild(row);
+//         });
+//     }
+
+//     // 페이지 링크 클릭 이벤트 추가
+//     pagingLinks.forEach(link => {
+//         link.addEventListener("click", function(event) {
+//             event.preventDefault(); // 링크 기본 동작 방지
+//             const page = parseInt(this.getAttribute("data-page"));
+//             loadPage(page);
+
+//             // 활성화된 페이지 링크 스타일 업데이트
+//             pagingLinks.forEach(link => link.classList.remove("active"));
+//             this.classList.add("active");
+//         });
+//     });
+
+//     // 초기 페이지 로드
+//     loadPage(1);
+//     pagingLinks[0].classList.add("active");
+// });
+
+</script>

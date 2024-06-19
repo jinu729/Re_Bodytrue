@@ -4,24 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="popup.css">
-<title>팝업 창</title>
+<title>트레이너</title>
 </head>
 <body>
-    <div class="popup">
+    <div class="popup" id="popup">
         <div class="popup-content">
-            <h2>로그인이 완료되었습니다.</h2>
+            <h2>트레이너가 등록 되었습니다.</h2>
             <div class="button-container">
-                <button id="confirmButton" onclick="closePopup()">확인</button>
+                <button id="confirmButton">확인</button>
             </div>
         </div>
     </div>
       <!-- JavaScript가 없어도 팝업 닫기를 위한 스타일링 적용 -->
       <script>
         // 팝업 닫기 기능 추가
-        function closePopup() {
-            const popup = document.querySelector('.popup');
-            popup.style.display = 'none';
-        }
+        document.getElementById('confirmButton').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+        });
     </script>
 </body>
 </html>
