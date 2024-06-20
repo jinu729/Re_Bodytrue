@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>회원 정보수정</title>
+        <title>BodyTrue</title>
         <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous"> -->
         <link rel="stylesheet" href="bodytrue.css">
     </head>
@@ -26,9 +26,9 @@
             </div>
             <div class="nav_right">
                 <ul class="icon_list">
-                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">로그아웃</a></li>
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">로그인</a></li>
                     <li class="line">|</li>
-                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">마이페이지</a></li>
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">회원가입</a></li>
                     <li class="line">|</li>
                     <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">FAQ</a></li>
                 </ul>
@@ -38,7 +38,7 @@
     <div class="join_main">
         <div class="join_wrap">
             <div class="main_title">
-                <h2>회원정보 수정</h2>
+                <h2>회원가입</h2>
             </div>
             <div class="join_list">
                 <form action="#" method="post">
@@ -47,7 +47,16 @@
                             <span>&nbsp;&nbsp;&nbsp;이메일</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="email" id="email1" name="email" disabled> 
+                            <input type="email" id="email1" name="email"> 
+                            <span>@</span>
+                            <select name="email" id="email2">
+                                <option value="naver.com">naver.com</option>
+                                <option value="gmail.com">gmail.com</option>
+                                <option value="nate.com">nate.com</option>
+                                <option value="hanmail.com">hanmail.com</option>
+                            </select>
+                            <span class="confirm">(영소문자/숫자,4~16자)</span>
+                            <button type="button" class="btn_confirm">중복확인</button>
                         </div>                        
                     </div>                    
                     <div class="form_group">
@@ -81,8 +90,8 @@
                             <span>&nbsp;&nbsp;&nbsp;이용자</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="radio" id="user" checked> 회원 &nbsp;&nbsp;
-                            <input type="radio" id="trainer" disabled> 트레이너
+                            <input type="radio" id="user" name="auth"> 회원 &nbsp;&nbsp;
+                            <input type="radio" id="trainer" name="auth"> 트레이너
                         </div>                        
                     </div>                    
                     <div class="form_group">
@@ -90,8 +99,8 @@
                             <span>&nbsp;&nbsp;&nbsp;성별</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="radio" id="men" name="men" checked> 남자 &nbsp;&nbsp;
-                            <input type="radio" id="women" name="women" disabled> 여자
+                            <input type="radio" id="men" name="gender"> 남자 &nbsp;&nbsp;
+                            <input type="radio" id="women" name="gender"> 여자
                         </div>                        
                     </div>                    
                     <div class="form_group">
@@ -132,15 +141,10 @@
                 </form>
             </div>
             <div class="join_btn">
-                <button type="button" name="clear" id="clear">수정완료</button>
+                <button type="button" name="clear" id="clear">회원가입</button>
                 <button type="button" name="exit" id="exit">수정취소</button>
             </div>
-            <div class="join_btn2">
-            <button type="button" name="del" id="del">회원탈퇴</button>
-        </div>
         </div>        
     </div>
-    <div class="join_wrap">
-            </div>
 </body>
 </html>
