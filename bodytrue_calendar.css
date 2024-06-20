@@ -1,0 +1,163 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+ul{list-style: none;}
+a:link, a:visited{
+    text-decoration: none;
+    color: #333;
+}
+html, body{
+    width: 100%;
+    height: 100%;
+}
+body{
+    background-color: #fff;
+    min-width: 1280px;
+    line-height: 1.5;
+}   
+
+/* header */
+header{
+    width: 100%;
+    height: 80px;
+    /* background-color: gray; */
+    position: relative;
+    border-bottom: 1.5px solid black;
+}
+header .wrap{
+    width: 80%;
+    height: 80px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+header .nav_left{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 7;
+}
+header .nav_left h1{
+    width: 180px;
+    height: 55px;
+}
+header .logo img{
+    height: 60px;
+    line-height: 60px;
+}
+.nav_left .navbar{
+    display: block;
+    padding-left: 40px;
+}
+.nav_left .navbar .menu_list{
+    width: 500px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.menu_list .list{
+    height: 40px;
+    line-height: 40px;
+    font-size: 22px;
+    font-weight: bold;
+}
+.menu_list .list:hover{
+    font-size: 26px;
+    font-weight: bold;
+}
+header .nav_right{
+    display: flex;
+    align-items: end;
+    justify-content: flex-start;
+    z-index: 7;
+}
+.nav_right .icon_list{
+    width: 250px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.icon_list .item{
+    line-height: 35px;
+    font-size: 18px;
+    font-weight: bold;
+}
+.icon_list .line{
+    line-height: 30px;
+}
+.item .icon img{
+    width: 18px;
+    height: 18px;
+    /* padding-top: 1px; */
+}
+
+/* main */
+
+.calender_main {
+    width: 80%;
+    padding-top: 20px;
+    text-align: left;
+    font-size: 35px;
+    margin: 0 auto;
+}
+.calender_sub {
+    padding-top: 50px;
+}
+.calender_img {
+    float: left;
+    display: inline-block;
+    width: 300px;
+    height: 300px;
+    border: 2px solid #000;
+}
+ .calender_img img {
+    width: 300px;
+    height: 300px;
+    display: inline-block;
+}
+.calender_sub {
+    padding-top: 50px;
+    display: flex;
+    width: 100%;
+}
+.calender_subtitle {
+    width: 35%;
+    padding-left: 2%;
+}
+.calender_rev {
+    background-color: #00C7AE;
+    color: black;
+    border: none;
+    font-size: 15px;
+    margin: auto;
+    width: 25%;
+    height: 15%;
+    border-radius: 4px;
+}
+.calender_cancle {
+    background-color: rgb(228, 227, 227);
+    color: black;
+    border: none;
+    font-size: 15px;
+    margin: auto;
+    width: 25%;
+    height: 15%;
+    border-radius: 4px;
+}
+.calender_api {
+    height: 300px;
+    width: 300px;
+    border: 1px solid black;
+}
+.calender_api img {
+    width: 300px;
+    height: 300px;
+    display: inline-block;
+}
+.calender_whole {
+    width: 100%;
+    padding-bottom: 50px;
+    border-bottom: 1px solid black;
+}
