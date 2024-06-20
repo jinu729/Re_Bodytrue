@@ -1,0 +1,31 @@
+.logo img{
+    width: 500px;
+    height: 200px;
+    text-align: center;
+    padding-top: 150px;
+}
+.admin_mainpage {
+    text-align: center;
+}
+.admin_buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 50%;
+    margin: 0 auto;
+}
+button {
+    border: none ;
+    color: white;
+    background-color: #00C7AE;
+    font-size: 30px;
+    padding: 15px 30px;
+    cursor: pointer;
+    border-radius: 8px;
+    width: 300px;
+    margin-top: 50px;
+    
+}
+button + button {
+    margin-left: 100px;
+}
