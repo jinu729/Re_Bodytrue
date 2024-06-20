@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BodyTrue</title>
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="bodytrue.css">
+    <!-- <link rel="stylesheet" href="bodytrue_mypage.css"> -->
+</head>
+<body>
+    <header>
+        <div class="wrap">
+            <div class="nav_left">
+                <h1>
+                    <a class="logo" href="#"><img src="./image/BODYTRUE.png" alt="logo"></a>
+                </h1>
+                <div class="navbar">
+                    <ul class="menu_list">
+                        <li class="list"><a class="tag" href="#">다이어트</a></li>
+                        <li class="list"><a class="tag" href="#">체형교정</a></li>
+                        <li class="list"><a class="tag" href="#">대회</a></li>
+                        <li class="list"><a class="tag" href="#">체력증진</a></li>
+                        <li class="list"><a class="tag" href="#">홈트</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="nav_right">
+                <ul class="icon_list">
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">로그인</a></li>
+                    <li class="line">|</li>
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">회원가입</a></li>
+                    <li class="line">|</li>
+                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">FAQ</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+    <div class="mypage_main">
+        <div class="section1">
+            <div class="profile">
+                <div class="pro_left">                   
+                    <div class="upload_img">
+                        <img id="profile-picture" class="profile-picture" src="./image/user2.png" alt="Profile Picture">
+                        <div class="file-input">
+                            <input type="file" id="image-upload" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+                <div class="pro_right">
+                    <span class="user_title">회원</span>
+                    <span class="user_name">홍길동</span>
+                    <span class="user_email">이메일 : bodytrue@bodytrue.com</span>
+                    <span class="user_phnumber">휴대전화번호 : 010-1111-1111</span>
+                    <div class="user_update">                        
+                        <button class="update" type="button">정보수정</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section2">
+            <div class="mp_list">
+                <ul class="mptag_list">
+                    <li class="mpitem"><a href="#">나의 예약</a></li>
+                    <li class="mpitem"><a href="#">/</a></li>
+                    <li class="mpitem"><a href="#">나의 리뷰</a></li>
+                    <li class="mpitem"><a href="#">/</a></li>
+                    <li class="mpitem"><a href="#">즐겨찾기</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="section3">
+            <div class="calendar_list">
+                <p class="cal_user">나의 예약 리스트</p>
+            </div>
+            <div class="calendar_table">
+                <table class="table_list">
+                    <thead>
+                        <tr>
+                            <th>프로그램</th>
+                            <th>트레이너</th>
+                            <th>예약시간</th>
+                            <th>예약시간 변경</th>
+                            <th>리뷰작성</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 1</td>
+                            <td>2024-06-18 09:00</td>
+                            <td></td>
+                            <td><button class="re_btn">리뷰작성하기</button></td>
+                        </tr>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 1</td>
+                            <td>2024-06-18 11:00</td>
+                            <td></td>
+                            <td><button class="re_btn">리뷰작성하기</button></td>
+                        </tr>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 2</td>
+                            <td>2024-06-20 09:00</td>
+                            <td><button class="cal_btn">변경</button></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 2</td>
+                            <td>2024-06-22 09:00</td>
+                            <td><button class="cal_btn">변경</button></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 2</td>
+                            <td>2024-06-25 09:00</td>
+                            <td><button class="cal_btn">변경</button></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="list_number">
+                <ul class="number_box">
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>5</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section4">
+            <div class="review_list">
+                <p class="review_user">나의 리뷰 리스트</p>
+            </div>
+            <div class="review_table">
+                <table class="table_list">
+                    <thead>
+                        <tr>
+                            <th>프로그램</th>
+                            <th>트레이너</th>
+                            <th>예약시간</th>
+                            <th>평점</th>
+                            <th>리뷰수정</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 1</td>
+                            <td>2024-06-18 09:00</td>
+                            <td>5.0</td>
+                            <td>
+                                <button class="reupdate_btn">수정</button>
+                                <button class="reupdate_btn">취소</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 1</td>
+                            <td>2024-06-18 11:00</td>
+                            <td>4.0</td>
+                            <td>
+                                <button class="reupdate_btn">수정</button>
+                                <button class="reupdate_btn">취소</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 2</td>
+                            <td>2024-06-20 09:00</td>
+                            <td>1.0</td>
+                            <td>
+                                <button class="reupdate_btn">수정</button>
+                                <button class="reupdate_btn">취소</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 2</td>
+                            <td>2024-06-22 09:00</td>
+                            <td>2.0</td>
+                            <td>
+                                <button class="reupdate_btn">수정</button>
+                                <button class="reupdate_btn">취소</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>프로그램 1</td>
+                            <td>트레이너 2</td>
+                            <td>2024-06-25 09:00</td>
+                            <td>3.0</td>
+                            <td>
+                                <button class="reupdate_btn">수정</button>
+                                <button class="reupdate_btn">취소</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="list_number">
+                <ul class="number_box">
+                    <li>1</li>
+                    <li>2</li>
+                    <li>3</li>
+                    <li>4</li>
+                    <li>5</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section5">
+            <div class="plike_list">
+                <p class="plike_user">즐겨찾기 리스트</p>
+            </div>
+            <div class="plike_table">
+                <div class="section5_list">
+                    <div class="plike_left">
+                        <img src="./image/running.png" alt="">
+                    </div>
+                    <div class="plike_right">
+                        <ul class="table_list">
+                            <li class="plike_proname">프로그램 1 <img src="./image/free-icon-star-8539511.png" alt="">&nbsp;<span>4.8</span></li>
+                            <li class="plike_trainer">트레이너1</li>
+                            <li class="pro_startdate">시작일 : 2024-05-01</li>
+                            <li class="pro_enddate">마감일 : 2024-06-30</li>
+                        </ul>
+                        <div class="del_btn">
+                            <button class="plike_delete">삭제</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="section5_list">
+                    <div class="plike_left">
+                        <img src="./image/running.png" alt="">
+                    </div>
+                    <div class="plike_right">
+                        <ul class="table_list">
+                            <li class="plike_proname">프로그램 1 <img src="./image/free-icon-star-8539511.png" alt="">&nbsp;<span>4.8</span></li>
+                            <li class="plike_trainer">트레이너1</li>
+                            <li class="pro_startdate">시작일 : 2024-05-01</li>
+                            <li class="pro_enddate">마감일 : 2024-06-30</li>
+                        </ul>
+                        <div class="del_btn">
+                            <button class="plike_delete">삭제</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="section5_list">
+                    <div class="plike_left">
+                        <img src="./image/running.png" alt="">
+                    </div>
+                    <div class="plike_right">
+                        <ul class="table_list">
+                            <li class="plike_proname">프로그램 1 <img src="./image/free-icon-star-8539511.png" alt="">&nbsp;<span>4.8</span></li>
+                            <li class="plike_trainer">트레이너1</li>
+                            <li class="pro_startdate">시작일 : 2024-05-01</li>
+                            <li class="pro_enddate">마감일 : 2024-06-30</li>
+                        </ul>
+                        <div class="del_btn">
+                            <button class="plike_delete">삭제</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    // 이미지 사이즈 규격 설정 해야함
+    const imageUpload = document.getElementById('image-upload');
+    const profilePicture = document.getElementById('profile-picture');
+
+    imageUpload.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                profilePicture.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });

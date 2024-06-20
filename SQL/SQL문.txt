@@ -1,0 +1,227 @@
+USE TEST;
+
+drop table USER;				
+create Table USER (				
+	USER_NO int not null primary key auto_increment,			
+	USER_EMAIL varchar(50),			
+	USER_PWD varchar(30),			
+	USER_NAME varchar(30) ,			
+	USER_SEX char(1),			
+	USER_ADDNO varchar(30),			
+	USER_ADD1 varchar(50),			
+	USER_ADD2 varchar(50),			
+	USER_TEL varchar(30),			
+	USER_AUTH int not null default 1,			
+	USER_BAN boolean not null default 0,			
+	USER_PROFILE varchar(100) ,			
+	USER_SOCIAL int not null default 0			
+);				
+
+DELETE FROM USER;
+
+INSERT INTO  USER VALUES (1,"MSH9870@GMAIL.COM","1234","민승호","M","000-000","강남구","도곡동","010-0000-0000",0,0,NULL,0);
+INSERT INTO  USER VALUES (2,"MSH9870@NAVER.COM","4321","숭메","F","111-111","서초구","양재동","010-1111-1111",1,0,NULL,0);
+INSERT INTO  USER VALUES (3,"AAA@GMAIL.COM","1111","김회원","F","222-222","강남구","삼성동","010-2222-2222",1,0,NULL,0);
+INSERT INTO  USER VALUES (4,"AAA@NAVER.COM","2222","남궁회원","M","333-333","서초구","개포동","010-3333-3333",1,0,NULL,1);
+
+SELECT * FROM USER;
+---------------------------------------------------------------------
+
+drop table TRAINER;				
+create table TRAINER(				
+	TR_NO int not null primary key auto_increment,			
+	TR_EMAIL varchar(50),			
+	TR_PWD varchar(30),			
+	TR_NAME varchar(30),			
+	TR_SEX char(1),			
+	TR_ADDNO varchar(30),			
+	TR_ADD1 varchar(50),			
+	TR_ADD2 varchar(50),			
+	TR_TEL varchar(30),			
+	TR_ADMIT int not null default 0,			
+	TR_BAN int not null default 0,			
+	TR_CNT int not null default 0			
+);				
+DELETE FROM TRAINER;
+
+INSERT INTO  TRAINER VALUES (1,"MSH9870@GMAIL.COM","1234","민승호","M","000-000","강남구","도곡동","010-0000-0000",0,0,0);
+INSERT INTO  TRAINER VALUES (2,"MSH9870@NAVER.COM","4321","메숭","F","111-111","서초구","양재동","010-1111-1111",0,0,0);
+INSERT INTO  TRAINER VALUES (3,"AAA@GMAIL.COM","1111","김트레이너","F","222-222","강남구","삼성동","010-2222-2222",0,0,0);
+INSERT INTO  TRAINER VALUES (4,"AAA@NAVER.COM","2222","남궁트레이너","M","333-333","서초구","개포동","010-3333-3333",0,1,0);
+
+select * FROM TRAINER;
+----------------------------------------------------------------------
+
+					
+drop table PLIKE;					
+create table PLIKE(					
+	PLIKE_DATE datetime default current_timestamp,				
+	PLIKE_USER_NO int,				
+	PLIKE_PRO_NO int,			
+	FOREIGN KEY(PLIKE_USER_NO) REFERENCES USER (USER_NO) ON DELETE SET NULL,				
+	FOREIGN KEY(PLIKE_PRO_NO) REFERENCES PROGRAM (PRO_NO) ON DELETE SET NULL				
+);					
+
+DELETE FROM PLIKE;
+
+
+INSERT INTO PLIKE (PLIKE_USER_NO,PLIKE_PRO_NO)values(1,1);
+INSERT INTO PLIKE (PLIKE_USER_NO,PLIKE_PRO_NO)values(1,2);
+INSERT INTO PLIKE (PLIKE_USER_NO,PLIKE_PRO_NO)values(2,1);
+INSERT INTO PLIKE (PLIKE_USER_NO,PLIKE_PRO_NO)values(3,2);
+INSERT INTO PLIKE (PLIKE_USER_NO,PLIKE_PRO_NO)values(4,3);
+
+
+SELECT * FROM PLIKE;
+					
+
+-----------------------------------------------------------------------
+
+drop table REVIEW;					
+create table REVIEW(					
+	RE_NO int primary key not null auto_increment,				
+	RE_COMMENT varchar(2000),			
+	RE_DATE datetime default current_timestamp,				
+	RE_USER_NO int,				
+	RE_PRO_NO int,				
+	RE_TR_NO int,				
+	RE_RATE int,				
+	DEL_YN boolean default 0 not null,				
+	FOREIGN KEY(RE_USER_NO) REFERENCES USER (USER_NO) ON DELETE SET NULL,				
+	FOREIGN KEY(RE_PRO_NO) REFERENCES PROGRAM (PRO_NO) ON DELETE SET NULL,				
+	FOREIGN KEY(RE_TR_NO) REFERENCES TRAINER (TR_NO) ON DELETE SET NULL				
+);			
+
+DELETE FROM REVIEW;
+
+INSERT INTO REVIEW (RE_COMMENT,RE_USER_NO,RE_PRO_NO,RE_TR_NO,RE_RATE)values("2번 회원의 1번프로그램의 리뷰입니다.",2,1,2,5);
+INSERT INTO REVIEW (RE_COMMENT,RE_USER_NO,RE_PRO_NO,RE_TR_NO,RE_RATE)values("3번 회원의 1번프로그램의 리뷰입니다.",3,1,2,2);
+INSERT INTO REVIEW (RE_COMMENT,RE_USER_NO,RE_PRO_NO,RE_TR_NO,RE_RATE)values("3번 회원의 2번프로그램의 리뷰입니다.",3,2,1,5);
+INSERT INTO REVIEW (RE_COMMENT,RE_USER_NO,RE_PRO_NO,RE_TR_NO,RE_RATE)values("4번 회원의 3번프로그램의 리뷰입니다.",4,3,4,5);
+
+
+SELECT * FROM REVIEW;
+
+------------------------------------------------------------------------
+
+drop table CALENDAR;					
+create table CALENDAR(					
+	CAL_DATE datetime DEFAULT CURRENT_TIMESTAMP,				
+	CAL_STARTDATE datetime,				
+	CAL_ENDDATE datetime,				
+	CAL_PRO_NO int,				
+	CAL_TR_NO int,				
+	CAL_USER_NO int,				
+	FOREIGN KEY(CAL_PRO_NO) REFERENCES PROGRAM (PRO_NO) ON DELETE SET NULL,				
+	FOREIGN KEY(CAL_TR_NO) REFERENCES TRAINER (TR_NO) ON DELETE SET NULL,				
+	FOREIGN KEY(CAL_USER_NO) REFERENCES USER (USER_NO) ON DELETE SET NULL			
+);	
+
+DELETE FROM CALENDAR;
+
+INSERT INTO CALENDAR (CAL_USER_NO,CAL_PRO_NO,CAL_TR_NO,CAL_STARTDATE,CAL_ENDDATE)values(2,1,2,"2019-04-26 09:00:00.007","2020-04-26 09:00:00.007");
+INSERT INTO CALENDAR (CAL_USER_NO,CAL_PRO_NO,CAL_TR_NO,CAL_STARTDATE,CAL_ENDDATE)values(3,1,2,"2019-04-26 09:00:00.007","2020-04-26 09:00:00.007");
+INSERT INTO CALENDAR (CAL_USER_NO,CAL_PRO_NO,CAL_TR_NO,CAL_STARTDATE,CAL_ENDDATE)values(3,2,1,"2019-04-26 09:00:00.007","2020-04-26 09:00:00.007");
+INSERT INTO CALENDAR (CAL_USER_NO,CAL_PRO_NO,CAL_TR_NO,CAL_STARTDATE,CAL_ENDDATE)values(4,3,4,"2019-04-26 09:00:00.007","2020-04-26 09:00:00.007");
+
+
+SELECT * FROM CALENDAR;
+
+-----------------------------------------------------------------------------
+
+drop table FAQ;		
+create table FAQ(		
+	FAQ_Q varchar(2000),	
+	FAQ_A varchar(2000)	
+);		
+
+DELETE FROM FAQ;
+
+INSERT INTO FAQ values("1번 주로하는 질문입니다.","1번의 대한 대답입니다.");
+INSERT INTO FAQ values("2번 주로하는 질문입니다.","2번의 대한 대답입니다.");
+
+SELECT * FROM FAQ;
+
+-------------------------------------------------------------------------------
+
+drop table PROGRAM;					
+create table PROGRAM(					
+	PRO_NO int not null primary key auto_increment,				
+	PRO_NAME varchar(50),				
+	PRO_ADD1 varchar(50),				
+	PRO_COMMENT1 varchar(2000),				
+	PRO_COMMENT2 varchar(2000),				
+	PRO_COMMENT3 varchar(2000),				
+	PRO_TAG int not null,
+	PRO_STARTDATE datetime,				
+	PRO_ENDDATE datetime,	
+	PRO_TR_NO int,				
+	PRO_CNT int,				
+	FOREIGN KEY(PRO_TR_NO) REFERENCES TRAINER (TR_NO) ON DELETE SET NULL				
+);					
+
+DELETE FROM PROGRAM;
+
+INSERT INTO PROGRAM values(1,"김메숭선생님과 함께하는 도키도키 요가클래스","주소1","코멘트1","코멘트2","코멘트3",2,"2019-04-26 09:00:00.007","2020-04-26 09:00:00.007",2,0);
+INSERT INTO PROGRAM values(2,"민승호선생님의 뼈와 살을 분리해주마 다이어트코스","주소2","코멘트1","코멘트2","코멘트3",0,"2019-04-26 09:00:00.007","2019-07-26 09:00:00.007",1,0);
+INSERT INTO PROGRAM values(3,"남궁선생님의 집이라고 쉴줄알았지?","주소2","코멘트1","코멘트2","코멘트3",4,"2019-06-26 09:00:00.007","2019-12-26 09:00:00.007",4,0);
+
+SELECT * FROM PROGRAM;
+
+--------------------------------------------------------------------------------
+
+
+DROP TABLE IMG;
+CREATE TABLE IMG (
+IMG_TYPE INT NOT NULL,
+IMG_NO INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+IMG_PATH VARCHAR(100),
+IMG_USER_NO INT,
+IMG_TR_NO INT,
+IMG_PRO_NO INT,
+IMG_RE_NO INT,
+FOREIGN KEY (IMG_USER_NO) REFERENCES USER (USER_NO) ON DELETE SET NULL,
+FOREIGN KEY (IMG_TR_NO) REFERENCES TRAINER (TR_NO) ON DELETE SET NULL,
+FOREIGN KEY (IMG_RE_NO) REFERENCES REVIEW (RE_NO) ON DELETE SET NULL,
+FOREIGN KEY (IMG_PRO_NO) REFERENCES PROGRAM (PRO_NO) ON DELETE SET NULL
+);
+
+DELETE FROM IMG;
+
+INSERT INTO IMG (IMG_USER_NO,IMG_TYPE,IMG_PATH) VALUES(1,0,"1번회원 프로필사진 PATH");
+INSERT INTO IMG (IMG_USER_NO,IMG_TYPE,IMG_PATH) VALUES(1,1,"1번회원 리뷰사진 PATH");
+INSERT INTO IMG (IMG_USER_NO,IMG_TYPE,IMG_PATH) VALUES(2,0,"2번회원 프로필사진 PATH");
+INSERT INTO IMG (IMG_USER_NO,IMG_TYPE,IMG_PATH) VALUES(2,1,"2번회원 리뷰사진 PATH");
+INSERT INTO IMG (IMG_USER_NO,IMG_TYPE,IMG_PATH) VALUES(3,0,"3번회원 프로필사진 PATH");
+INSERT INTO IMG (IMG_USER_NO,IMG_TYPE,IMG_PATH) VALUES(3,1,"3번회원 리뷰사진 PATH");
+INSERT INTO IMG (IMG_USER_NO,IMG_TYPE,IMG_PATH) VALUES(4,0,"4번회원 프로필사진 PATH");
+INSERT INTO IMG (IMG_USER_NO,IMG_TYPE,IMG_PATH) VALUES(4,1,"4번회원 리뷰사진 PATH");
+
+--
+
+INSERT INTO IMG (IMG_TR_NO,IMG_TYPE,IMG_PATH) VALUES(1,0,"1번 트레이너 프로필사진 PATH");
+INSERT INTO IMG (IMG_TR_NO,IMG_TYPE,IMG_PATH) VALUES(2,0,"2번 트레이너 프로필사진 PATH");
+INSERT INTO IMG (IMG_TR_NO,IMG_TYPE,IMG_PATH) VALUES(3,0,"3번 트레이너 프로필사진 PATH");
+INSERT INTO IMG (IMG_TR_NO,IMG_TYPE,IMG_PATH) VALUES(4,0,"4번 트레이너 프로필사진 PATH");
+
+--
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(1,0,"1번 프로그램 썸네일사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(1,1,"1번 프로그램 프로그램사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(1,2,"1번 프로그램 상세사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(1,3,"1번 프로그램 가격사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(2,0,"2번 프로그램 썸네일사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(2,1,"2번 프로그램 프로그램사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(2,2,"2번 프로그램 상세사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(2,3,"2번 프로그램 가격사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(3,0,"3번 프로그램 썸네일사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(3,1,"3번 프로그램 프로그램사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(3,2,"3번 프로그램 상세사진 PATH");
+INSERT INTO IMG (IMG_PRO_NO,IMG_TYPE,IMG_PATH) VALUES(3,3,"3번 프로그램 가격사진 PATH");
+
+--
+
+INSERT INTO IMG (IMG_RE_NO,IMG_TYPE,IMG_PATH) VALUES(1,0,"1번 리뷰의 사진");
+INSERT INTO IMG (IMG_RE_NO,IMG_TYPE,IMG_PATH) VALUES(1,0,"1번 리뷰의 사진두번째");
+INSERT INTO IMG (IMG_RE_NO,IMG_TYPE,IMG_PATH) VALUES(2,0,"2번 리뷰의 사진");
+INSERT INTO IMG (IMG_RE_NO,IMG_TYPE,IMG_PATH) VALUES(3,0,"3번 리뷰의 사진");
+INSERT INTO IMG (IMG_RE_NO,IMG_TYPE,IMG_PATH) VALUES(4,0,"4번 리뷰의 사진");

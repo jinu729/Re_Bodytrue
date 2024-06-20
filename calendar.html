@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일정 등록</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .calendar-container {
+            max-width: 900px;
+            margin: auto;
+        }
+        .daterange-picker {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <h1>일정 등록</h1>
+        <div class="daterange-picker">
+            <input type="text" id="daterange" />
+            <button onclick="addEvent()">일정 등록</button>
+            <button onclick="addHourlyEvents()">1시간 단위로 일정 등록</button>
+        </div>
+        <div id="calendar"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: [],
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                }
+            });
+            calendar.render();
+
+            window.addEvent = function() {
+                var dateRange = $('#daterange').val().split(' - ');
+                var startDate = moment(dateRange[0], 'YYYY-MM-DD HH:mm');
+                var endDate = moment(dateRange[1], 'YYYY-MM-DD HH:mm');
+                calendar.addEvent({
+                    title: '등록된 일정',
+                    start: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+                    end: endDate.format('YYYY-MM-DDTHH:mm:ss')
+                });
+            }
+
+            window.addHourlyEvents = function() {
+                var dateRange = $('#daterange').val().split(' - ');
+                var startDate = moment(dateRange[0], 'YYYY-MM-DD HH:mm');
+                var endDate = moment(dateRange[1], 'YYYY-MM-DD HH:mm');
+                
+                while (startDate.isBefore(endDate)) {
+                    calendar.addEvent({
+                        title: '1시간 단위 일정',
+                        start: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+                        end: startDate.add(1, 'hours').format('YYYY-MM-DDTHH:mm:ss')
+                    });
+                }
+            }
+
+            $('#daterange').daterangepicker({
+                timePicker: true,
+                timePicker24Hour: true,
+                locale: {
+                    format: 'YYYY-MM-DD HH:mm'
+                }
+            });
+        });
+    </script>
+</body>
+</html>

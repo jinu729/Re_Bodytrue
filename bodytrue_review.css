@@ -1,0 +1,135 @@
+/*popup용 css*/
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.popup {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 60%;
+    max-width: 80%;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.popup-content {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.button-container {
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+#confirmButton {
+    background-color: #00C7AE;
+    width: 40%;
+    margin-left: 15px;
+    color: #fff;
+}
+
+#cancelButton {
+    background-color: #ccc;
+    width: 22%;
+    color: #000;
+    margin-left: 10px;
+}
+
+#confirmButton:hover,
+#cancelButton:hover {
+    opacity: 0.8;
+}
+
+.popup h2 {
+    color: #000;
+}
+
+.popup p {
+    color: #333;
+}
+
+/*review용 css*/
+header{
+    width: 60%;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #525252;
+}
+
+.review-main{
+    width:60%;
+    padding-top:20px;
+    margin: 0 auto;
+    flex-direction: row;
+    align-items: center;
+}
+.review-img{
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #525252;
+}
+
+.review-img img{
+    width: 200px;
+    height: 200px;
+    margin: 0;
+    
+}
+
+.review-title{
+    padding-left:40px;
+    justify-content: center;
+}
+
+.review-title h1{
+    padding-bottom: 30px;
+    border-bottom: 1px solid #525252;
+}
+
+.star-img img{
+    width: 20px;
+    height: 20px;
+}
+
+.review-content{
+    border-top: 1px solid #525252;
+    padding-top: 50px;
+}
+
+#review-text{
+    width: 730px;
+    height: 450px;
+}
+
+.action-buttons{
+    padding-top:15px;
+}
+
+/* .submit-btn{
+    background-color: #00C7AE; 
+    width: 40%;
+    height: 50px;
+    border:none;
+}
+.cancel-btn{
+    width: 21%;
+    height: 50px;
+    border:none;
+} */
