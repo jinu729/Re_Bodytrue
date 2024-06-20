@@ -12,17 +12,16 @@ create Table USER (
 	USER_ADD2 varchar(50),			
 	USER_TEL varchar(30),			
 	USER_AUTH int not null default 1,			
-	USER_BAN boolean not null default 0,			
-	USER_PROFILE varchar(100) ,			
+	USER_BAN boolean not null default 0,					
 	USER_SOCIAL int not null default 0			
 );				
 
 DELETE FROM USER;
 
-INSERT INTO  USER VALUES (1,"MSH9870@GMAIL.COM","1234","민승호","M","000-000","강남구","도곡동","010-0000-0000",0,0,NULL,0);
-INSERT INTO  USER VALUES (2,"MSH9870@NAVER.COM","4321","숭메","F","111-111","서초구","양재동","010-1111-1111",1,0,NULL,0);
-INSERT INTO  USER VALUES (3,"AAA@GMAIL.COM","1111","김회원","F","222-222","강남구","삼성동","010-2222-2222",1,0,NULL,0);
-INSERT INTO  USER VALUES (4,"AAA@NAVER.COM","2222","남궁회원","M","333-333","서초구","개포동","010-3333-3333",1,0,NULL,1);
+INSERT INTO  USER VALUES (1,"MSH9870@GMAIL.COM","1234","민승호","M","000-000","강남구","도곡동","010-0000-0000",0,0,0);
+INSERT INTO  USER VALUES (2,"MSH9870@NAVER.COM","4321","숭메","F","111-111","서초구","양재동","010-1111-1111",1,0,0);
+INSERT INTO  USER VALUES (3,"AAA@GMAIL.COM","1111","김회원","F","222-222","강남구","삼성동","010-2222-2222",1,0,0);
+INSERT INTO  USER VALUES (4,"AAA@NAVER.COM","2222","남궁회원","M","333-333","서초구","개포동","010-3333-3333",1,0,1);
 
 SELECT * FROM USER;
 ---------------------------------------------------------------------
