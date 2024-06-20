@@ -3,60 +3,58 @@ body {
     font-family: Arial, sans-serif; /* 전체 페이지의 폰트 설정 */
     background-color: #f5f5f5; /* 배경색 설정 */
     display: flex;
-    justify-content: center; /* 가로 중앙 정렬 */
-    height: 100vh; /* 화면 전체 높이로 설정 */
-    margin: 0; /* 바디의 마진 제거 */
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
 }
 
-/* 팝업을 위한 오버레이 스타일 */
 .popup-overlay {
-    display: none; /* 초기에는 보이지 않음 */
-    position: fixed; /* 고정 위치 */
-    z-index: 999; /* 다른 요소들보다 위에 표시 */
+    display: none;
+    position: fixed;
+    z-index: 999;
     left: 0;
     top: 0;
-    width: 100%; /* 전체 너비 */
-    height: 100%; /* 전체 높이 */
-    background-color: rgba(0, 0, 0, 0.5); /* 반투명한 검은색 배경 */
-    overflow: auto; /* 스크롤이 생길 경우 스크롤 허용 */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
 }
 
-/* 팝업 창 스타일 */
 .popup {
-    background-color: #fefefe; /* 배경색 */
-    margin: 0 auto; /* 수평 가운데 정렬 */
-    padding: 20px; /* 안쪽 여백 */
-    border: 1px solid #888; /* 테두리 설정 */
-    width: 80%; /* 너비 설정 */
-    max-width: 600px; /* 최대 너비 */
-    border-radius: 8px; /* 테두리 둥글게 */
-    position: relative; /* 상대 위치 */
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 8px;
+    position: relative;
 }
 
-/* 팝업 닫기 버튼 스타일 */
 .close {
-    position: absolute; /* 절대 위치 */
-    left: 50%; /* 왼쪽으로부터 가운데 정렬 */
-    transform: translateX(-50%); /* 가운데 정렬 */
-    bottom: 10px; /* 하단 여백 */
-    font-size: 20px; /* 폰트 크기 */
-    cursor: pointer; /* 마우스 커서 포인터로 변경 */
-    color: #202627; /* 글자색 */
-    border: none; /* 테두리 없음 */
-    background: none; /* 배경 없음 */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 10px; /* 하단에 배치 */
+    font-size: 20px;
+    cursor: pointer;
+    color: #202627; /* 색상 변경 */
+    border: none;
+    background: none;
+
 }
 
 .close:hover,
 .close:focus {
-    color: #000; /* 호버 및 포커스 상태에서 글자색 변경 */
-    text-decoration: none; /* 밑줄 제거 */
-    cursor: pointer; /* 마우스 커서 포인터로 변경 */
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-/* 팝업 제목 스타일 */
 .popup h2 {
-    text-align: center; /* 가운데 정렬 */
-    margin-bottom: 20px; /* 하단 마진 */
+    text-align: center;
+    margin-bottom: 20px;
 }
 .popbox {
     width: 100%;
