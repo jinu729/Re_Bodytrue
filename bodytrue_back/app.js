@@ -3,7 +3,7 @@ const cors = require('cors');
 const app = express();
 
 app.use(cors({      // cors 설정을 해줘야 front 서버와 통신 가능
-    origin: 'http://localhost:8080',
+    origin: 'http://localhost:8081',
     credentials: true,
 }));
 
