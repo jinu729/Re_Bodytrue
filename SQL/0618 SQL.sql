@@ -1,4 +1,4 @@
-USE TEST;
+USE bodytrue;
 
 drop table USER;				
 create Table USER (				
@@ -23,6 +23,14 @@ INSERT INTO  USER VALUES (1,"MSH9870@GMAIL.COM","1234","민승호","M","000-000"
 INSERT INTO  USER VALUES (2,"MSH9870@NAVER.COM","4321","숭메","F","111-111","서초구","양재동","010-1111-1111",1,0,NULL,0);
 INSERT INTO  USER VALUES (3,"AAA@GMAIL.COM","1111","김회원","F","222-222","강남구","삼성동","010-2222-2222",1,0,NULL,0);
 INSERT INTO  USER VALUES (4,"AAA@NAVER.COM","2222","남궁회원","M","333-333","서초구","개포동","010-3333-3333",1,0,NULL,1);
+insert into user (user_email,user_pwd,user_name,user_sex,user_addno,user_add1,user_add2,user_tel) values ("bbb@bbb.com","1432","확인용",'M',"123-123","00구","00동","010-2342-2342");
+
+update user set user_pwd = '임시비밀번호' where user_no = 5;
+
+update user set user_pwd = '임시' where user_name = '확인용' and user_tel = '010-2342-2342';
+
+select user_email from user where user_name = '민승호' and user_tel = '010-0000-0000';
+
 
 SELECT * FROM USER;
 ---------------------------------------------------------------------
@@ -268,4 +276,8 @@ SELECT * FROM IMG;
 SELECT * FROM PROGRAM;
 SELECT * FROM REVIEW;
 SELECT * FROM CALENDAR;
+
+SELECT * FROM USER;
+
+USE BODYTRUE;
 COMMIT;
