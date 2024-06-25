@@ -1,4 +1,4 @@
-USE TEST;
+USE bodytrue;
 
 drop table USER;				
 create Table USER (				
@@ -23,6 +23,16 @@ INSERT INTO  USER VALUES (1,"MSH9870@GMAIL.COM","1234","민승호","M","000-000"
 INSERT INTO  USER VALUES (2,"MSH9870@NAVER.COM","4321","숭메","F","111-111","서초구","양재동","010-1111-1111",1,0,NULL,0);
 INSERT INTO  USER VALUES (3,"AAA@GMAIL.COM","1111","김회원","F","222-222","강남구","삼성동","010-2222-2222",1,0,NULL,0);
 INSERT INTO  USER VALUES (4,"AAA@NAVER.COM","2222","남궁회원","M","333-333","서초구","개포동","010-3333-3333",1,0,NULL,1);
+insert into user (user_email,user_pwd,user_name,user_sex,user_addno,user_add1,user_add2,user_tel) values ("bbb@bbb.com","1432","확인용",'M',"123-123","00구","00동","010-2342-2342");
+
+update user set user_pwd = '임시비밀번호' where user_no = 5;
+
+update user set user_pwd = '임시' where user_name = '확인용' and user_tel = '010-2342-2342';
+	
+select user_email from user where user_name = '민승호' and user_tel = '010-0000-0000';
+
+delete from user where user_no = 7;
+
 
 SELECT * FROM USER;
 ---------------------------------------------------------------------
@@ -131,14 +141,15 @@ SELECT * FROM CALENDAR;
 
 drop table FAQ;		
 create table FAQ(		
+	FAQ_NO int not null primary key auto_increment,
 	FAQ_Q varchar(2000),	
 	FAQ_A varchar(2000)	
 );		
 
 DELETE FROM FAQ;
 
-INSERT INTO FAQ values("1번 주로하는 질문입니다.","1번의 대한 대답입니다.");
-INSERT INTO FAQ values("2번 주로하는 질문입니다.","2번의 대한 대답입니다.");
+INSERT INTO FAQ (faq_q,faq_a) values("1번 주로하는 질문입니다.","1번의 대한 대답입니다.");
+INSERT INTO FAQ (faq_q,faq_a) values("2번 주로하는 질문입니다.","2번의 대한 대답입니다.");
 
 
 
@@ -268,4 +279,20 @@ SELECT * FROM IMG;
 SELECT * FROM PROGRAM;
 SELECT * FROM REVIEW;
 SELECT * FROM CALENDAR;
+
+SELECT * FROM USER;
+
+USE BODYTRUE;
+
+SELECT pro_tag,pro_name,tr_name, ROUND(AVG(RE_RATE),1) AS rate_avg
+FROM REVIEW R JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO join trainer t on p.pro_tr_no = t.tr_no
+GROUP BY re_pro_no;
+
+select * from faq;
+
+insert into faq (faq_q) values ("새로운질문");
+update faq set faq_a = "새로운질문에대한 답" where faq_no = 3;
+
+select * from calendar;
+
 COMMIT;

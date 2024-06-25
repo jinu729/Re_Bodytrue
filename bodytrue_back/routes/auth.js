@@ -7,7 +7,7 @@ const sql = require('../sql.js');
 
 //회원가입
 router.post("/join", async (req, res) => {
-
+  
     const email = req.body.email1 + '@' + req.body.email2;
     const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
     const user = {
@@ -17,8 +17,8 @@ router.post("/join", async (req, res) => {
       USER_NAME : req.body.username,
       USER_SEX: req.body.sex,
       USER_ADDNO: req.body.postcode,
-      USER_ADD1: req.body.address,
       USER_ADD2: req.body.address_detail,
+      USER_ADD2: req.body.address-detail,
       USER_TEL : tel
     };
   
@@ -44,6 +44,7 @@ router.post("/join", async (req, res) => {
 });
 
 //아이디 유효성 검사
+
 
 router.post("/email_check", async (req, res) => {
 
