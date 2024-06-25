@@ -16,7 +16,7 @@ import ProgramList from '../views/ProgramList.vue'
 
 
 //은미작성
-
+import ProgramDetail from '../views/ProgramDetail.vue'
 
 //은미작성완
 
@@ -76,7 +76,12 @@ const routes = [
 
 
 //은미작성
-
+,
+  {
+    path: '/user/prodetail/:pro_no', 
+    name: 'ProgramDetail',
+    component: ProgramDetail
+  }
 
 //은미작성완
 

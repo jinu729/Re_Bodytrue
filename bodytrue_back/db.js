@@ -1,6 +1,6 @@
 const db = {
     //디비연결
-    database: "BodyTrue",
+    database: "bodytrue",
     connectionLimit: 10,
     host: "127.0.0.1",
     user: "root",
@@ -9,6 +9,7 @@ const db = {
     charset: "utf8mb4",
   };
   const dbPool = require("mysql").createPool(db);
-  
+
   module.exports = dbPool;
-  
+
+
