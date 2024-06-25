@@ -1,42 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>회원가입</title>
-        <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous"> -->
-        <link rel="stylesheet" href="bodytrue.css">
-    </head>
-<body>
-    <header>
-        <div class="wrap">
-            <div class="nav_left">
-                <h1>
-                    <a class="logo" href="#"><img src="./image/BODYTRUE.png" alt="logo"></a>
-                </h1>
-                <!-- <div class="navbar">
-                    <ul class="menu_list">
-                        <li class="list"><a class="tag" href="#">다이어트</a></li>
-                        <li class="list"><a class="tag" href="#">체형교정</a></li>
-                        <li class="list"><a class="tag" href="#">대회</a></li>
-                        <li class="list"><a class="tag" href="#">체력증진</a></li>
-                        <li class="list"><a class="tag" href="#">홈트</a></li>
-                    </ul>
-                </div> -->
-            </div>
-            <div class="nav_right">
-                <ul class="icon_list">
-                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">로그인</a></li>
-                    <li class="line">|</li>
-                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">회원가입</a></li>
-                    <li class="line">|</li>
-                    <li class="item"><a class="icon" href="#"><img src="./image/icon.png" alt="login">FAQ</a></li>
-                </ul>
-            </div>
-        </div>
-    </header>
+<template>
     <div class="join_main">
-        <div class="join_wrap">
+        <div class="join_wrap" @submit.prevent="onSubmitForm">
             <div class="main_title">
                 <h2>회원가입</h2>
             </div>
@@ -47,16 +11,16 @@
                             <span>&nbsp;&nbsp;&nbsp;이메일</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="email" id="email1" name="email"> 
-                            <span>@</span>
-                            <select name="email" id="email2">
+                            <input type="email" v-model="user_email1" id="email1" name="email"> 
+                            <span>&nbsp;@&nbsp;</span>
+                            <select name="email" v-model="user_email2" id="email2">
                                 <option value="naver.com">naver.com</option>
                                 <option value="gmail.com">gmail.com</option>
                                 <option value="nate.com">nate.com</option>
                                 <option value="hanmail.com">hanmail.com</option>
                             </select>
-                            <span class="confirm">(영소문자/숫자,4~16자)</span>
-                            <button type="button" class="btn_confirm">중복확인</button>
+                            <span class="confirm">&nbsp;&nbsp;(영소문자/숫자,4~16자)</span>
+                            <button type="button" class="btn_confirm" @click="confirm_email">중복확인</button>
                         </div>                        
                     </div>                    
                     <div class="form_group">
@@ -64,8 +28,8 @@
                             <span>&nbsp;&nbsp;&nbsp;비밀번호</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="password" id="password1" name="password1">
-                            <span class="confirm">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합,8~20자)</span>
+                            <input type="password" id="password1" v-model="password1" name="password1">
+                            <span class="confirm">&nbsp;&nbsp;(영문 대소문자/숫자/특수문자 중 3가지 이상 조합,8~20자)</span>
                         </div>                        
                     </div>                    
                     <div class="form_group">
@@ -73,8 +37,8 @@
                             <span>&nbsp;&nbsp;&nbsp;비밀번호 확인</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="password" id="password2" name="password2">
-                            <button type="button" class="btn_confirm1">비밀번호확인</button>
+                            <input type="password" id="password2" v-model="password2" name="password2">
+                            <button type="button" class="btn_confirm1" @click="confirm_password">비밀번호확인</button>
                         </div>                        
                     </div>                    
                     <div class="form_group">
@@ -90,8 +54,12 @@
                             <span>&nbsp;&nbsp;&nbsp;이용자</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="radio" id="user" name="auth" value="user" > 회원 &nbsp;&nbsp;
-                            <input type="radio" id="trainer" name="auth" value="trainer"> 트레이너
+                            <label for="user">
+                                <input type="radio" id="user" name="auth" value="user"> 회원 &nbsp;&nbsp;
+                            </label>
+                            <label for="trainer">
+                                <input type="radio" id="trainer" name="auth" value="trainer"> 트레이너
+                            </label>
                         </div>                        
                     </div>                    
                     <div class="form_group">
@@ -99,8 +67,12 @@
                             <span>&nbsp;&nbsp;&nbsp;성별</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="radio" id="sex" name="man" value='M' > 남자 &nbsp;&nbsp;
-                            <input type="radio" id="sex" name="woman" value='F'> 여자
+                            <label for="men">
+                                <input type="radio" id="men" name="gender" value="M"> 남자 &nbsp;&nbsp;
+                            </label>
+                            <label for="women">
+                                <input type="radio" id="women" name="gender" value="F"> 여자
+                            </label>
                         </div>                        
                     </div>                    
                     <div class="form_group">
@@ -111,7 +83,7 @@
                             <div class="address_group">
                                 <div class="address_row">&nbsp;&nbsp;
                                     <input type="text" id="postcode" name="postcode" placeholder="우편번호" required>
-                                    <button type="button" class="address_search">주소 검색</button>
+                                    <button type="button" class="address_search" @click="zipload">주소 검색</button>
                                 </div>
                                 <div class="address_row">&nbsp;&nbsp;
                                     <input type="text" id="address" name="address" placeholder="기본 주소">
@@ -141,10 +113,158 @@
                 </form>
             </div>
             <div class="join_btn">
-                <button type="button" name="clear" id="clear">회원가입</button>
-                <button type="button" name="exit" id="exit">수정취소</button>
+                <button type="submit" name="clear" id="clear">회원가입</button>
+                <button type="button" name="exit" id="exit">취소</button>
             </div>
         </div>        
     </div>
-</body>
-</html>
+</template>
+<script>
+export default {
+    data() {
+        return {
+            sampleData: ''
+        };
+    }
+}
+</script>
+<style>
+.join_main{
+    width: 100%;
+    height: 85%;
+    position: relative;
+    padding-top: 50px;
+}
+.join_main .join_wrap{
+    width: 60%;
+    height: 100%;
+    margin: 0 auto;
+}
+.join_main .main_title{
+    width: 100%;
+    height: 15%;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: end;
+    border-bottom: 1px solid black;
+}
+.join_main .join_list{
+    width: 100%;
+    padding-top: 10px;
+}
+.join_list .form_group{
+    display: flex;
+    flex-wrap: wrap;
+    /* border: 1px solid black; */
+    height: 40px;
+    line-height: 40px;
+}
+.form_group .form_left{
+    width: 15%;
+    border: 1px solid black;
+    font-size: 18px;
+    background-color: rgba(218, 218, 218, 0.5);
+    height: 40px;
+}
+.form_group .form_right{
+    border: 1px solid black;
+    width: 84.5%;
+    height: 40px;
+}
+#email1{
+    width: 130px;
+    line-height: 20px;
+    margin: 0 auto;
+    font-size: 16px;
+}
+#email2{
+    width: 150px;
+    height: 24px;
+    font-size: 16px;
+}
+.form_right .confirm{
+    font-size: 14px;
+    color: gray;
+}
+.form_right .btn_confirm{
+    width: 100px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 20px;
+}
+#password1{
+    width: 400px;
+    line-height: 20px;
+}
+#password2{
+    width: 400px;
+    line-height: 20px;
+}
+.form_right .btn_confirm1{
+    width: 150px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 20px;
+}
+#username{
+    height: 20px;
+    font-size: 16px;
+}
+.form_group:nth-child(7){
+    height: 120px;
+}
+.form_group:nth-child(7) .form_left{
+    height: 120px;
+    line-height: 120px;
+}
+.form_group:nth-child(7) .form_right{
+    border: 0;
+}
+.form_right .address_group{
+    display: flex;
+    flex-direction: column;
+    height: 120px;
+}
+.address_group .address_row{
+    border: 1px solid black;
+    height: 39px;
+}
+#postcode{
+    line-height: 20px;
+    font-size: 16px;
+}
+.address_row .address_search{
+    width: 100px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 20px;
+}
+#address, #address-detail{
+    width: 300px;
+    line-height: 20px;
+    font-size: 16px;
+}
+#number1{
+    height: 22px;
+    font-size: 16px;
+}
+#number2, #number3{
+    height: 20px;
+    width: 50px;
+    font-size: 16px;
+}
+.join_wrap .join_btn{
+    width: 100%;
+    height: 10%;
+    padding-top: 40px;
+    text-align: center;
+}
+#clear, #exit{
+    width: 100px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+}
+</style>

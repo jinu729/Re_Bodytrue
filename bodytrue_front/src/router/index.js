@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+
 //승호작성
 
 
@@ -7,7 +8,9 @@ import HomeView from '../views/HomeView.vue'
 
 
 //진우작성
-
+import Join from '../views/Join.vue'
+import Login from '../views/Login.vue'
+import ProgramList from '../views/ProgramList.vue'
 
 //진우작성완
 
@@ -52,7 +55,22 @@ const routes = [
 
 
 //진우작성
-
+,
+  {
+    path: '/join',
+    name: 'Join',
+    component: Join
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/prolist',
+    name: 'ProgramList',
+    component: ProgramList
+  }
 
 //진우작성완
 
