@@ -19,7 +19,7 @@
                                 <option value="nate.com">nate.com</option>
                                 <option value="hanmail.com">hanmail.com</option>
                             </select>
-                            <span class="confirm">&nbsp;&nbsp;(영소문자/숫자,4~16자)</span>
+                            <span class="confirm">&nbsp;&nbsp;(영소문자/숫자,3~16자)</span>
                             <button type="button" class="btn_confirm" @click="confirm_email">중복확인</button>
                         </div>                        
                     </div>                    
@@ -46,19 +46,19 @@
                             <span>&nbsp;&nbsp;&nbsp;이름</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="text" id="username" name="username">
+                            <input type="text" id="username" v-model="user_name" name="username">
                         </div>                        
                     </div>                    
                     <div class="form_group">
                         <div class="form_left">
-                            <span>&nbsp;&nbsp;&nbsp;이용자</span>
+                            <span>&nbsp;&nbsp;&nbsp;가입자 유형</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
                             <label for="user">
-                                <input type="radio" id="user" name="auth" value="user"> 회원 &nbsp;&nbsp;
+                                <input type="radio" id="user" v-model="user_auth" name="auth" value="user"> 회원 &nbsp;&nbsp;
                             </label>
                             <label for="trainer">
-                                <input type="radio" id="trainer" name="auth" value="trainer"> 트레이너
+                                <input type="radio" id="trainer" v-model="user_auth" name="auth" value="trainer"> 트레이너
                             </label>
                         </div>                        
                     </div>                    
@@ -68,10 +68,10 @@
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
                             <label for="men">
-                                <input type="radio" id="men" name="gender" value="M"> 남자 &nbsp;&nbsp;
+                                <input type="radio" id="men" v-model="gender" name="gender" value="M"> 남자 &nbsp;&nbsp;
                             </label>
                             <label for="women">
-                                <input type="radio" id="women" name="gender" value="F"> 여자
+                                <input type="radio" id="women" v-model="gender" name="gender" value="F"> 여자
                             </label>
                         </div>                        
                     </div>                    
@@ -82,14 +82,14 @@
                         <div class="form_right">
                             <div class="address_group">
                                 <div class="address_row">&nbsp;&nbsp;
-                                    <input type="text" id="postcode" name="postcode" placeholder="우편번호" required>
+                                    <input type="text" id="postcode" name="postcode" v-model="zipcode" placeholder="우편번호" required>
                                     <button type="button" class="address_search" @click="zipload">주소 검색</button>
                                 </div>
                                 <div class="address_row">&nbsp;&nbsp;
-                                    <input type="text" id="address" name="address" placeholder="기본 주소">
+                                    <input type="text" id="address" name="address" v-model="address" placeholder="기본 주소">
                                 </div>
                                 <div class="address_row">&nbsp;&nbsp;
-                                    <input type="text" id="address-detail" name="address-detail" placeholder="상세 주소">
+                                    <input type="text" id="address_detail" name="address_detail" v-model="address_detail" placeholder="상세 주소">
                                 </div>
                             </div>
                         </div>
@@ -99,15 +99,15 @@
                             <span>&nbsp;&nbsp;&nbsp;휴대전화번호</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <select name="number1" id="number1">
+                            <select name="number1" v-model="number1" id="number1">
                                 <option value="010">010</option>
                                 <option value="011">011</option>
                                 <option value="012">012</option>
                             </select>
                             <span> - </span>
-                            <input type="text" name="number2" id="number2">
+                            <input type="text" name="number2" v-model="number2" id="number2">
                             <span> - </span>
-                            <input type="text" name="number3" id="number3">
+                            <input type="text" name="number3" v-model="number3" id="number3">
                         </div>                        
                     </div>                  
                 </form>
@@ -120,11 +120,120 @@
     </div>
 </template>
 <script>
-export default {
+import axios from 'axios';
+
+export default {    
     data() {
         return {
-            sampleData: ''
+            user_email1: '',
+            user_email2: 'naver.com',
+            password1: '',
+            password2: '',
+            user_name: '',
+            user_auth: '',
+            gender: '',
+            zipcode : '',
+            address: '',
+            address_detail: '',
+            number1: '010',
+            number2: '',
+            number3: '',
         };
+    },
+    methods: {
+        async confirm_email() {
+
+            if (this.user_email1.length < 3 || this.user_email1.length > 16) {
+                alert('이메일은 3~16자 사이여야 합니다.');
+                return;
+            }
+           
+                const email = `${this.user_email1}@${this.user_email2}`; 
+                try {
+                    const response = await axios.post('http://localhost:3000/auth/email_check',{email});
+                    console.log(`확인할 이메일: ${email}`);
+                    // console.log(response.data);
+                    if (response.data.exists) {
+                        alert('이미 존재하는 이메일입니다.');
+                        // console.log(response.data.exists)
+                    } else {
+                        alert('사용 가능한 이메일입니다.');
+                    }
+                } catch (error) {
+                    console.error('이메일 확인 중 오류가 발생했습니다:', error);
+                    alert('이메일 확인 중 오류가 발생했습니다. 다시 시도해주세요.');
+                }
+            
+        },
+        confirm_password() {
+            const password = this.password1;
+            const passwordConfirm = this.password2;
+
+            // Check if passwords match
+            if (password !== passwordConfirm) {
+                alert('비밀번호가 일치하지 않습니다.');
+                return;
+            }
+
+            // Check length of password
+            if (password.length < 8 || password.length > 20) {
+                alert('비밀번호는 8~20자 사이여야 합니다.');
+                return;
+            }
+
+            // Check if password contains at least three types of characters
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasLowerCase = /[a-z]/.test(password);
+            const hasNumbers = /\d/.test(password);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
+
+            if (typesCount < 3) {
+                alert('비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.');
+                return;
+            }
+
+            alert('비밀번호가 일치합니다.');
+        },
+        zipload() {
+            // 주소 검색 로직
+            new window.daum.Postcode({
+                oncomplete: (data) => {
+                    // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                    // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                    var addr = ''; // 주소 변수
+                    var extraAddr = '';
+                    //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                    if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                        addr = data.roadAddress;
+                    } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                        addr = data.jibunAddress;
+                    }
+                    // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                    if (data.userSelectedType === 'R') {
+                        // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                        // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                        if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+                            // addr += ' ';
+                            extraAddr += data.bname;
+                        }
+                        // 건물명이 있고, 공동주택일 경우 추가한다.
+                        if (data.buildingName !== '' && data.apartment === 'Y') {
+                            // addr += ' ';
+                            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                        }
+                    }
+                    this.zipcode = data.zonecode;
+                    this.address = addr;
+                    this.addressde = extraAddr;
+                }
+            }).open();
+        },
+
+        onSubmitForm() {
+            // 폼 제출 로직
+        }
     }
 }
 </script>

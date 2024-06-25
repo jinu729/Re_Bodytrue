@@ -3,7 +3,7 @@
         <div class="wrap">
             <div class="nav_left">
                 <h1>
-                    <router-link class="logo" to="/"><img src="../image/BODYTRUE.png" alt="logo"></router-link>
+                    <router-link class="logo" to="/"><img src="../image/banner.png" alt="logo"></router-link>
                 </h1>
                 <div class="navbar">
                     <ul class="menu_list">
@@ -91,8 +91,8 @@ header .nav_left h1{
     height: 55px;
 }
 header .logo img{
-    height: 60px;
-    line-height: 60px;
+    height: 50px;
+    /* line-height: 60px; */
 }
 .nav_left .navbar{
     display: block;
