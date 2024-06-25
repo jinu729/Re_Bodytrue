@@ -67,7 +67,7 @@ const routes = [
     component: Login
   },
   {
-    path: '/prolist',
+    path: '/prolist/:menu_list',
     name: 'ProgramList',
     component: ProgramList
   }

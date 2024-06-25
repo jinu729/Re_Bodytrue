@@ -4,7 +4,7 @@ const db = {
     connectionLimit: 10,
     host: "127.0.0.1",
     user: "root",
-    password: "12341",
+    password: "1234",
     timezone: "GMT",
     charset: "utf8mb4",
   };

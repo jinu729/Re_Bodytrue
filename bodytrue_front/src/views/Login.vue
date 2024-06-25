@@ -36,7 +36,7 @@
             </span>
         </div>
         <div class="form-group">
-            <a href="#" class="login-button" onclick="openPopup('/popup/login.html')">로그인</a>
+            <a href="#" class="login-button" onclick="openPopup('../popup/login.html')">로그인</a>
         </div>
         <div class="form-group">
             <button type="submit">회원가입</button>
@@ -71,7 +71,7 @@ export default {
     }
 }
 </script>
-<!-- <style>
+<style scoped>
 /* 전반적인 페이지 스타일 */
 body {
     font-family: Arial, sans-serif; /* 전체 페이지의 폰트 설정 */
@@ -286,4 +286,4 @@ body {
     font-size: 16px; /* 폰트 크기 설정 */
 }
 
-</style> -->
+</style>
