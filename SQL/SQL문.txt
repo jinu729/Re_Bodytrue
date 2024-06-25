@@ -130,14 +130,16 @@ SELECT * FROM CALENDAR;
 
 drop table FAQ;		
 create table FAQ(		
+	FAQ_NO int not null primary key auto_increment,
 	FAQ_Q varchar(2000),	
 	FAQ_A varchar(2000)	
 );		
 
 DELETE FROM FAQ;
 
-INSERT INTO FAQ values("1번 주로하는 질문입니다.","1번의 대한 대답입니다.");
-INSERT INTO FAQ values("2번 주로하는 질문입니다.","2번의 대한 대답입니다.");
+INSERT INTO FAQ (faq_q,faq_a) values("1번 주로하는 질문입니다.","1번의 대한 대답입니다.");
+INSERT INTO FAQ (faq_q,faq_a) values("2번 주로하는 질문입니다.","2번의 대한 대답입니다.");
+
 
 SELECT * FROM FAQ;
 

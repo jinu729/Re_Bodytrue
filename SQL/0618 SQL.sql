@@ -28,8 +28,10 @@ insert into user (user_email,user_pwd,user_name,user_sex,user_addno,user_add1,us
 update user set user_pwd = '임시비밀번호' where user_no = 5;
 
 update user set user_pwd = '임시' where user_name = '확인용' and user_tel = '010-2342-2342';
-
+	
 select user_email from user where user_name = '민승호' and user_tel = '010-0000-0000';
+
+delete from user where user_no = 7;
 
 
 SELECT * FROM USER;
@@ -139,14 +141,15 @@ SELECT * FROM CALENDAR;
 
 drop table FAQ;		
 create table FAQ(		
+	FAQ_NO int not null primary key auto_increment,
 	FAQ_Q varchar(2000),	
 	FAQ_A varchar(2000)	
 );		
 
 DELETE FROM FAQ;
 
-INSERT INTO FAQ values("1번 주로하는 질문입니다.","1번의 대한 대답입니다.");
-INSERT INTO FAQ values("2번 주로하는 질문입니다.","2번의 대한 대답입니다.");
+INSERT INTO FAQ (faq_q,faq_a) values("1번 주로하는 질문입니다.","1번의 대한 대답입니다.");
+INSERT INTO FAQ (faq_q,faq_a) values("2번 주로하는 질문입니다.","2번의 대한 대답입니다.");
 
 
 
@@ -280,4 +283,16 @@ SELECT * FROM CALENDAR;
 SELECT * FROM USER;
 
 USE BODYTRUE;
+
+SELECT pro_tag,pro_name,tr_name, ROUND(AVG(RE_RATE),1) AS rate_avg
+FROM REVIEW R JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO join trainer t on p.pro_tr_no = t.tr_no
+GROUP BY re_pro_no;
+
+select * from faq;
+
+insert into faq (faq_q) values ("새로운질문");
+update faq set faq_a = "새로운질문에대한 답" where faq_no = 3;
+
+select * from calendar;
+
 COMMIT;
