@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db.js');
 const sql = require('../sql.js');
+const fs = require('fs');
+const multer = require('multer');
+const path = require("path");
 
 //승호작성
 
@@ -24,9 +27,10 @@ router.post("/패스명",async(req,res)=>{
 
 //이름 검색하기
 
-router.post("/패스명",async(req,res)=>{
+router.get("/2",async(req,res)=>{
 
-    const name = req.body.name;
+    // const name = req.body.name;
+    const name = "민승호";
 
     db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user where user_name = ?",
         name,
@@ -40,6 +44,7 @@ router.post("/패스명",async(req,res)=>{
             });
           } else {
             res.send(results);
+            console.log(results);
           }
     });
 });

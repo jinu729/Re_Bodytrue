@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="nav_right">
-                <ul class="icon_list">
+                <ul :class="['icon_list', { 'logged-in': user.email, 'logged-out': !user.email }]">
                     <li v-if="user.email==undefined" class="item"  @click="gotoLogin">
                         <router-link class="icon" to="/login"><img src="../image/icon.png" alt="login">로그인</router-link>
                     </li>
@@ -44,7 +44,7 @@ export default {
     name : 'header',
     computed: {
     user() {
-      return this.$store.state.user;
+      return this.$store.state.user;    
         }
     },
     data() {
@@ -121,8 +121,15 @@ header .nav_right{
     justify-content: flex-start;
     z-index: 7;
 }
-.nav_right .icon_list{
+.nav_right .logged-in {
     width: 250px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.nav_right .logged-out {
+    width: 300px;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
