@@ -42,7 +42,7 @@
                 </div>
                 <br>
                 <br>
-
+                
                 <center><h1>SNS 로그인</h1></center>
                 <div class="line-center"></div>
                 <br>
@@ -60,6 +60,7 @@
             </div>
         </div>
     </body>
+
 </template>
 <script>
 export default {

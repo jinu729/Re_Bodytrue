@@ -293,6 +293,7 @@ select * from faq;
 insert into faq (faq_q) values ("새로운질문");
 update faq set faq_a = "새로운질문에대한 답" where faq_no = 3;
 
-select * from calendar;
+select * from trainer;
 
+select * from img;
 COMMIT;
