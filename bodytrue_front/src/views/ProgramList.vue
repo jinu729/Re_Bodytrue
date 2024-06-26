@@ -118,10 +118,8 @@ export default {
     }
 }
 </script>
+
 <style scoped>
-
-
-    
 
 /*programlist*/
 .sort_right{

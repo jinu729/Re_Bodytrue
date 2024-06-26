@@ -48,6 +48,7 @@
       <h4 v-if="tagname">#{{ tagname }}</h4>
       <h2><p v-if="program.pro_name">{{ program.pro_name }}</p></h2>
       <h3><p v-if="program.tr_name">{{ program.tr_name }}</p></h3>
+      <h3><p v-if="formattedEndDate">프로그램 종료 날짜:&nbsp;{{ formattedEndDate }}</p></h3>
       <p v-if="program.rate_avg"><img src="..\image\star.png" id="star">{{ program.rate_avg }}</p>
       <div class="calendar">
         <div class="controls">
@@ -108,6 +109,20 @@
             4: '홈트'
         };
         return tagmapping[this.program.pro_tag];
+      },
+
+      //프로그램 종료 날짜 format
+      formattedEndDate() {
+      // pro_enddate가 존재할 때만 포맷을 변경
+      if (this.program.pro_enddate) {
+        const date = new Date(this.program.pro_enddate);
+        return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+          }).replace('. ', '-').replace('. ', '-').replace('.', ''); // 'YYYY. MM. DD.' 형식을 'YYYY-MM-DD'로 변경
+       }
+        return '';
       }
     },
     created() {
@@ -140,9 +155,17 @@
       isSelected(fullDate) {
         return this.selectedDate && this.selectedDate.fullDate === fullDate;
       },
-      // 선택된 날짜를 저장 (예: 서버로 전송)
+      // 선택된 날짜를 프로그램 종료날짜와 비교 ㅣ
       saveDate() {
-        console.log('선택된 날짜:', this.selectedDate);
+        if(this.selectedDate && this.formattedEndDate){
+          const selectedDateObj = new Date(this.selectedDate.year, this.selectedDate.month, this.selectedDate.date);
+          const endDateObj = new Date(this.formattedEndDate)
+          if(selectedDateObj > endDateObj){
+            alert('선택된 날짜는 프로그램 종료 날짜를 넘어섰습니다. 다시 선택해주세요.')
+          } else{
+              console.log('선택된 날짜:', this.selectedDate);
+          }
+        }
       },
       // 이전 주로 이동
       previousWeek() {

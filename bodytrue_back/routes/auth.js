@@ -45,6 +45,44 @@ router.post("/join", async (req, res) => {
   });
 });
 
+//트레이너 회원가입
+router.post("/패스명(bodytrue_join.html)", async (req, res) => {
+
+  const email = req.body.email1 + '@' + req.body.email2;
+  const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
+  const tr = {
+    //프론트에서 전달해주는 데이터
+    tr_email: email,
+    tr_pwd: req.body.password1,
+    tr_name : req.body.username,
+    tr_sex: req.body.sex,
+    tr_addno: req.body.postcode,
+    tr_add1: req.body.address,
+    tr_add2: req.body.address_detail,
+    tr_tel : tel
+  };
+
+  db.query("insert into trainer (tr_email,tr_pwd,tr_name,tr_sex,tr_addno,tr_add1,tr_add2,tr_tel) values (?,?,?,?,?,?,?,?)",
+      [tr.tr_email, user.tr_pwd, user.tr_name, user.tr_sex, user.tr_addno, user.tr_add1, user.tr_add2, user.tr_tel], 
+      (err, results, fields) => {
+          //쿼리 실행
+          if (err) {
+              res.send({
+              // 에러 발생 시
+              code: 400,
+              failed: "error occurred",
+              error: err,
+              });
+          } else {
+              res.send({
+              //쿼리 실행 성공시
+              code: 200,
+              message: "회원가입 성공",
+              });
+          }
+  });
+});
+
 
 //아이디 유효성 검사
 
