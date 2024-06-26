@@ -41,6 +41,7 @@ pro_detail:`SELECT
     p.pro_name,
     p.pro_startdate,
     p.pro_enddate,
+    p.pro_tr_no,
     t.tr_name,
     ROUND(AVG(r.re_rate), 1) AS rate_avg
 FROM 

@@ -7,40 +7,42 @@ const sql = require('../sql.js');
 
 //회원가입
 router.post("/join", async (req, res) => {
-  
-    const email = req.body.email1 + '@' + req.body.email2;
-    const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
-    const user = {
-      //프론트에서 전달해주는 데이터
-      USER_EMAIL: email,
-      USER_PWD: req.body.password1,
-      USER_NAME : req.body.username,
-      USER_SEX: req.body.sex,
-      USER_ADDNO: req.body.postcode,
-      USER_ADD1: req.body.address,
-      USER_ADD2: req.body.address_detail,
-      USER_TEL : tel
-    };
-  
-    db.query("insert into user (user_email,user_pwd,user_name,user_sex,user_addno,user_add1,user_add2,user_tel) values (?,?,?,?,?,?,?,?)",
-        [user.USER_EMAIL, user.USER_PWD, user.USER_NAME, user.USER_SEX, user.USER_ADDNO, user.USER_ADD1, user.USER_ADD2, user.USER_TEL], 
-        (err, results, fields) => {
-            //쿼리 실행
-            if (err) {
-                res.send({
-                // 에러 발생 시
-                code: 400,
-                failed: "error occurred",
-                error: err,
-                });
-            } else {
-                res.send({
-                //쿼리 실행 성공시
-                code: 200,
-                message: "회원가입 성공",
-                });
-            }
-    });
+  console.log(req.body)
+
+  const email = req.body.email1 + '@' + req.body.email2;
+  const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
+  const user = {
+    //프론트에서 전달해주는 데이터
+    USER_EMAIL: req.body.email,
+    USER_PWD: req.body.user_password,
+    USER_NAME : req.body.username,
+    USER_SEX: req.body.gender,
+    USER_ADDNO: req.body.postcode,
+    USER_ADD1: req.body.address,
+    USER_ADD2: req.body.address_detail,
+    USER_TEL : req.body.user_tel,
+  };
+  console.log(user)
+
+  db.query("insert into user (user_email,user_pwd,user_name,user_sex,user_addno,user_add1,user_add2,user_tel) values (?,?,?,?,?,?,?,?)",
+      [user.USER_EMAIL, user.USER_PWD, user.USER_NAME, user.USER_SEX, user.USER_ADDNO, user.USER_ADD1, user.USER_ADD2, user.USER_TEL], 
+      (err, results, fields) => {
+          //쿼리 실행
+          if (err) {
+              res.send({
+              // 에러 발생 시
+              code: 400,
+              failed: "error occurred",
+              error: err,
+              });
+          } else {
+              res.send({
+              //쿼리 실행 성공시
+              code: 200,
+              message: "회원가입 성공",
+              });
+          }
+  });
 });
 
 //트레이너 회원가입
@@ -80,6 +82,7 @@ router.post("/패스명(bodytrue_join.html)", async (req, res) => {
           }
   });
 });
+
 
 //아이디 유효성 검사
 
@@ -302,6 +305,143 @@ router.post("/패스명", async (req, res) => {
 
 
 //진우작성
+// router.post("/join", async (req, res) => {
+//   console.log('Header:', req.headers)
+//   console.log('Receieved data',req.body)
+
+//   if (!req.body) {
+//     return res.status(400).send({ message: 'No data received' });
+//   }
+
+//   const {
+//     user_email,
+//     user_password,
+//     user_name,
+//     gender,
+//     user_addno,
+//     user_add1,
+//     user_add2,
+//     user_tel
+//   } = req.body;
+
+//   const email = req.body.email1 + '@' + req.body.email2;
+//   const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
+//   const user = {
+//     //프론트에서 전달해주는 데이터
+//     USER_EMAIL: req.body.user_email,
+//     USER_PWD: req.body.user_password,
+//     USER_NAME: req.body.user_name,
+//     USER_SEX: req.body.gender,
+//     USER_ADDNO: req.body.user_addno,
+//     USER_ADD1: req.body.user_add1,
+//     USER_ADD2: req.body.user_add2,
+//     USER_TEL: req.body.user_tel
+//   };
+//   console.log(user);
+
+//   db.query("insert into user (user_email,user_pwd,user_name,user_sex,user_addno,user_add1,user_add2,user_tel) values (?,?,?,?,?,?,?,?)",
+//       [user.USER_EMAIL, user.USER_PWD, user.USER_NAME, user.USER_SEX, user.USER_ADDNO, user.USER_ADD1, user.USER_ADD2, user.USER_TEL], 
+//       (err, results, fields) => {
+//           //쿼리 실행
+//           if (err) {
+//               res.send({
+//               // 에러 발생 시
+//               code: 400,
+//               failed: "error occurred",
+//               error: err,
+//               });
+//           } else {
+//               res.send({
+//               //쿼리 실행 성공시
+//               code: 200,
+//               message: "회원가입 성공",
+//               });
+//           }
+//   });
+// });
+
+router.post("/user_join", async (req, res) => {
+  console.log(req.body)
+
+  const email = req.body.email1 + '@' + req.body.email2;
+  const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
+  const user = {
+    //프론트에서 전달해주는 데이터
+    USER_EMAIL: req.body.email,
+    USER_PWD: req.body.user_password,
+    USER_NAME : req.body.user_name,
+    USER_SEX: req.body.gender,
+    USER_ADDNO: req.body.postcode,
+    USER_ADD1: req.body.user_add1,
+    USER_ADD2: req.body.user_add2,
+    USER_TEL : req.body.user_tel,
+  };
+  console.log(user)
+
+  db.query("insert into user (user_email,user_pwd,user_name,user_sex,user_addno,user_add1,user_add2,user_tel) values (?,?,?,?,?,?,?,?)",
+      [user.USER_EMAIL, user.USER_PWD, user.USER_NAME, user.USER_SEX, user.USER_ADDNO, user.USER_ADD1, user.USER_ADD2, user.USER_TEL], 
+      (err, results, fields) => {
+          //쿼리 실행
+          if (err) {
+              res.send({
+              // 에러 발생 시
+              code: 400,
+              failed: "error occurred",
+              error: err,
+              });
+          } else {
+              res.send({
+              //쿼리 실행 성공시
+              code: 200,
+              message: "회원가입 성공",
+              });
+          }
+  });
+});
+
+
+
+router.post("/trainer_join", async (req, res) => {
+  console.log(req.body)
+
+  const email = req.body.email1 + '@' + req.body.email2;
+  const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
+  const user = {
+    //프론트에서 전달해주는 데이터
+    USER_EMAIL: req.body.email,
+    USER_PWD: req.body.user_password,
+    USER_NAME : req.body.user_name,
+    USER_SEX: req.body.gender,
+    USER_ADDNO: req.body.postcode,
+    USER_ADD1: req.body.user_add1,
+    USER_ADD2: req.body.user_add2,
+    USER_TEL : req.body.user_tel,
+  };
+  console.log(user)
+
+  db.query("insert into trainer (tr_email,tr_pwd,tr_name,tr_sex,tr_addno,tr_add1,tr_add2,tr_tel) values (?,?,?,?,?,?,?,?)",
+      [user.USER_EMAIL, user.USER_PWD, user.USER_NAME, user.USER_SEX, user.USER_ADDNO, user.USER_ADD1, user.USER_ADD2, user.USER_TEL], 
+      (err, results, fields) => {
+          //쿼리 실행
+          if (err) {
+              res.send({
+              // 에러 발생 시
+              code: 400,
+              failed: "error occurred",
+              error: err,
+              });
+          } else {
+              res.send({
+              //쿼리 실행 성공시
+              code: 200,
+              message: "회원가입 성공",
+              });
+          }
+  });
+});
+
+
+
 
 
 //진우작성완
