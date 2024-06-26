@@ -13,10 +13,10 @@
     </div>
     <div class="page-buttons">
       <router-link to="/page1" class="page-button">
-        <img src="../image/buttonImage/다이어트.png" alt="Page 1"><span>&nbsp;&nbsp;&nbsp;다이어트</span>
+        <img src="../image/buttonImage/다이어트.png" alt="Page 1"><span>&nbsp;&nbsp;&nbsp;다이어트</span>
       </router-link>
       <router-link to="/page2" class="page-button">
-        <img src="../image/buttonImage/체형교정.png" alt="Page 2"><span>&nbsp;&nbsp;체형교정</span>
+        <img src="../image/buttonImage/체형교정.png" alt="Page 2"><span>&nbsp;&nbsp;체형교정</span>
       </router-link>
       <router-link to="/page3" class="page-button">
         <img src="../image/buttonImage/대회.png" alt="Page 3"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대회</span>
