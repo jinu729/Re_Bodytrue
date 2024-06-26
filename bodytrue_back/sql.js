@@ -22,7 +22,39 @@ module.exports = {
 
 
 //은미작성
+// pro_detail:`SELECT p.pro_comment1, p.pro_comment2, p.pro_comment3,p.pro_tag,p.pro_name,t.tr_name, ROUND(AVG(r.re_rate), 1) AS rate_avg
+//             FROM program p
+// LEFT JOIN 
+//     review r ON p.pro_no = r.re_pro_no
+// JOIN 
+//     trainer t ON p.pro_tr_no = t.tr_no
+// WHERE 
+//     p.pro_no = ?
+// GROUP BY 
+//     p.pro_no;`,
 
+pro_detail:`SELECT 
+    p.pro_comment1, 
+    p.pro_comment2, 
+    p.pro_comment3,
+    p.pro_tag,
+    p.pro_name,
+    p.pro_startdate,
+    p.pro_enddate,
+    t.tr_name,
+    ROUND(AVG(r.re_rate), 1) AS rate_avg
+FROM 
+    program p
+LEFT JOIN 
+    review r ON p.pro_no = r.re_pro_no
+JOIN 
+    trainer t ON p.pro_tr_no = t.tr_no
+WHERE 
+    p.pro_no = ?
+GROUP BY 
+    p.pro_no;
+    
+    `
 
 //은미작성완
 

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+
 
 //승호작성
 
@@ -16,13 +16,13 @@ import ProgramList from '../views/ProgramList.vue'
 
 
 //은미작성
-
+import ProgramDetail from '../views/ProgramDetail.vue'
 
 //은미작성완
 
 
 //재영작성
-
+import MainPage from '../views/MainPage.vue'
 
 //재영작성완
 
@@ -36,8 +36,8 @@ import ProgramList from '../views/ProgramList.vue'
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: HomeView
+    name: 'MainPage',
+    component: MainPage
   },
   {
     path: '/about',
@@ -67,7 +67,7 @@ const routes = [
     component: Login
   },
   {
-    path: '/prolist',
+    path: '/prolist/:menu_list',
     name: 'ProgramList',
     component: ProgramList
   }
@@ -76,13 +76,17 @@ const routes = [
 
 
 //은미작성
-
+,
+  {
+    path: '/user/prodetail/:pro_no', 
+    name: 'ProgramDetail',
+    component: ProgramDetail
+  }
 
 //은미작성완
 
 
 //재영작성
-
 
 //재영작성완
 
