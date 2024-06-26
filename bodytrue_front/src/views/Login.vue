@@ -16,13 +16,13 @@
         <div class="form-group">
             <label for="username">아이디</label>
             <div class="input-with-icon">
-                <input type="text" id="username" name="username" placeholder="Username">
+                <input type="text" id="email" name="email" placeholder="Username">
             </div>
         </div>
         <div class="form-group">
             <label for="username">비밀번호</label>
             <div class="input-with-icon">
-                <input type="text" id="username" name="username" placeholder="Password">
+                <input type="text" id="pwd" name="pwd" placeholder="Password">
             </div>
         </div>
         <div class="form-group forgot-password">

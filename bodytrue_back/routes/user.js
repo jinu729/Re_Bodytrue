@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db.js');
 const sql = require('../sql.js');
+const fs = require('fs');
+const multer = require('multer');
+const path = require("path");
+
 
 //승호작성
 
