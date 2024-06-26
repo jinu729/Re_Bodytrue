@@ -8,8 +8,6 @@ const sql = require('../sql.js');
 //회원리스트 불러오기
 
 router.post("/패스명",async(req,res)=>{
-
-
     db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user",(err,results)=>{
         if (err) {
             res.send({

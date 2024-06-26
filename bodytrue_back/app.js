@@ -20,6 +20,12 @@ app.use('/user', userRouter);
 app.use('/trainer', trainerRouter);
 app.use('/admin', adminRouter);
 
+// // 테스트 라우트 추가
+// app.get('/test', (req, res) => {
+//     res.status(200).send('Server is connected and running!');
+// });
+
+
 app.listen(3000, function() {
     console.log('Server Running at http://localhost:3000');
 });

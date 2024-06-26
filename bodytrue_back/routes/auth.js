@@ -5,9 +5,9 @@ const sql = require('../sql.js');
 
 //승호작성
 
-//유저 회원가입
-router.post("/패스명(bodytrue_join.html)", async (req, res) => {
-
+//회원가입
+router.post("/join", async (req, res) => {
+  
     const email = req.body.email1 + '@' + req.body.email2;
     const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
     const user = {
@@ -83,13 +83,19 @@ router.post("/패스명(bodytrue_join.html)", async (req, res) => {
 
 //아이디 유효성 검사
 
-router.post("/패스명(bodytrue_join.html)", async (req, res) => {
+
+router.post("/email_check", async (req, res) => {
 
     const email = req.body.email; //확인하려는 이메일
+
+    // console.log(`확인하려는 이메일: ${email}`);
   
-    db.query("select * from user where USER_EMAIL= ? ",email,(err, results) => {
+    db.query("select * from user where USER_EMAIL= ? ",[email],(err, results) => {
+
+      // console.log(`Querying user email: ${email}`);
         //user테이블에 보내준 이메일을 select했을때 데이터가 있다면
         if (err) {
+          // console.error(`Error occurred during email check: ${err}`);
           res.send({
             // 에러 발생 시
             code: 400,
@@ -99,15 +105,19 @@ router.post("/패스명(bodytrue_join.html)", async (req, res) => {
         } else {
           if (results.length > 0) {
             //결과값이 있으면 //쿼리 실행결과는 배열로 나와서 length를 이용하여 데이터를 파악함
+            // console.log(`Email exists: ${email}`);
             res.send({
               code: 200,
               message: "존재하는 이메일입니다.",
+              exists: true,
             });
           } else {
             //결과값이 없으면
+            // console.log(`Email available: ${email}`);
             res.send({
               code: 200,
               message: "사용가능한 이메일입니다.",
+              exists: false,
             });
           }
         }
