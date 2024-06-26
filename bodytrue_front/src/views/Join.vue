@@ -1,6 +1,7 @@
 <template>
     <div class="join_main">
-        <div class="join_wrap" @submit.prevent="onSubmitForm">
+        <div class="join_wrap">
+            <form @submit.prevent="onSubmitForm">
             <div class="main_title">
                 <h2>회원가입</h2>
             </div>
@@ -55,10 +56,10 @@
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
                             <label for="user">
-                                <input type="radio" id="user" v-model="user_auth" name="auth" value="user"> 회원 &nbsp;&nbsp;
+                                <input type="radio" id="user" v-model="user_auth" name="auth" value="1"> 회원 &nbsp;&nbsp;
                             </label>
                             <label for="trainer">
-                                <input type="radio" id="trainer" v-model="user_auth" name="auth" value="trainer"> 트레이너
+                                <input type="radio" id="trainer" v-model="user_auth" name="auth" value="2"> 트레이너
                             </label>
                         </div>                        
                     </div>                    
@@ -68,10 +69,10 @@
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
                             <label for="men">
-                                <input type="radio" id="men" v-model="gender" name="gender" value="M"> 남자 &nbsp;&nbsp;
+                                <input type="radio" id="sex" v-model="gender" name="men" value="M"> 남자 &nbsp;&nbsp;
                             </label>
                             <label for="women">
-                                <input type="radio" id="women" v-model="gender" name="gender" value="F"> 여자
+                                <input type="radio" id="sex" v-model="gender" name="women" value="F"> 여자
                             </label>
                         </div>                        
                     </div>                    
@@ -116,6 +117,7 @@
                 <button type="submit" name="clear" id="clear">회원가입</button>
                 <button type="button" name="exit" id="exit">취소</button>
             </div>
+        </form>
         </div>        
     </div>
 </template>
@@ -231,8 +233,53 @@ export default {
             }).open();
         },
 
-        onSubmitForm() {
-            // 폼 제출 로직
+        // async onSubmitForm() {
+        //     // 폼 제출 로직
+        //     try{
+        //         const response = await axios.post("http://localhost:3000/auth/join", {
+        //             user_email: `${this.user_email1}@${this.user_email2}`,
+        //             user_password: this.password1,
+        //             user_name: this.user_name,
+        //             gender: this.gender,
+        //             user_addno: this.zipcode,
+        //             user_add1: this.address,
+        //             user_add2: this.address_detail,
+        //             user_tel: `${this.number1}-${this.number2}-${this.number3}`,
+        //         }, {
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         });
+        //         console.log('폼 제출 성공', response.data);
+        //     } catch(error){
+        //         console.error('폼 제출 중 오류 발생', error);
+        //     }
+        // },
+        async onSubmitForm() {
+            const endpoint = this.user_auth === '1' ? 'user_join' : 'trainer_join';
+            const data = {
+                email: `${this.user_email1}@${this.user_email2}`,
+                user_password: this.password1,
+                user_name: this.user_name,
+                gender: this.gender,
+                postcode: this.zipcode,
+                user_add1: this.address,
+                user_add2: this.address_detail,
+                user_tel: `${this.number1}-${this.number2}-${this.number3}`,
+                user_auth: this.user_auth,
+            };
+            console.log('Sending data:', data);
+
+            try {
+                const response = await axios.post(`http://localhost:3000/auth/${endpoint}`, data, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                });
+                console.log('폼 제출 성공', response.data);
+            } catch (error) {
+                console.error('폼 제출 중 오류 발생', error);
+            }
         }
     }
 }
