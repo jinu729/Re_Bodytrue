@@ -1,74 +1,80 @@
 <template>
     <body>
-    <!-- <div class="popup"></div>
-    <div class="popup-content"></div> -->
-
-    <center><h1>로그인</h1></center>
-<div class="line-center"></div>
-<div class="login-container">
-        <div class="form_left">
-        </div>
-        <div class="form_right">
-            <input type="radio" id="men" name="user_jender">개인 &nbsp;&nbsp;
-            <input type="radio" id="women" name="user_jender"> 트레이너
-        </div>                        
-    <form action="">
-        <div class="form-group">
-            <label for="username">아이디</label>
-            <div class="input-with-icon">
-                <input type="text" id="username" name="username" placeholder="Username">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="username">비밀번호</label>
-            <div class="input-with-icon">
-                <input type="text" id="username" name="username" placeholder="Password">
-            </div>
-        </div>
-        <div class="form-group forgot-password">
-            <a onclick="openPopup('/bodytrue_findId.html')">아이디 찾기</a>
-            <span>|</span>
-            <a onclick="openPopup('/bodytrue_findPw.html')">비밀번호 찾기</a>
-        </div>
-        <div class="form-group save-id-checkbox">
-            <span>
-                <input type="checkbox" name="save_id" > 아이디 저장
-            </span>
-        </div>
-        <div class="form-group">
-            <a href="#" class="login-button" onclick="openPopup('../popup/login.html')">로그인</a>
-        </div>
-        <div class="form-group">
-            <button type="submit">회원가입</button>
-        </div>
-        <br>
-        <br>
-
-        <center><h1>SNS 로그인</h1></center>
+        <center><h1>로그인</h1></center>
         <div class="line-center"></div>
-        <br>
-        <form action="">
-            <div class="form-group">
-                <button id="special2-button" class="button" type="submit" href="#" >카카오 로그인</button>
+        <div class="login-container">
+                <div class="form_right">
+                    <label for="user">
+                        <input type="radio" id="user" name="auth" v-model="user_auth" value="1">회원 &nbsp;&nbsp;
+                    </label>
+                    <label for="trainer">
+                        <input type="radio" id="trainer" name="auth" v-model="user_auth" value="2"> 트레이너
+                    </label>
+                </div>                        
+            <form action="">
+                <div class="form-group">
+                    <label for="username">아이디</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="email" name="email" v-model="emial" placeholder="Username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="username">비밀번호</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="pwd" name="pwd" v-model="pwd" placeholder="Password">
+                    </div>
+                </div>
+                <div class="form-group forgot-password">
+                    <a @click="goEmailFind()">아이디 찾기</a>
+                    <span>|</span>
+                    <a @click="goPwdFind()">비밀번호 찾기</a>
+                </div>
+                <div class="form-group save-id-checkbox">
+                    <span>
+                        <input type="checkbox" name="save_id" > 아이디 저장
+                    </span>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="login-button">로그인</button>
+                </div>
+                <div class="form-group">
+                    <button type="submit">회원가입</button>
+                </div>
+                <br>
+                <br>
+
+                <center><h1>SNS 로그인</h1></center>
+                <div class="line-center"></div>
+                <br>
+                <form action="">
+                    <div class="form-group">
+                        <button id="special2-button" class="button" type="submit" href="#" >카카오 로그인</button>
+                    </div>
+                    <div class="form-group">
+                        <button id="special-button" class="button" type="submit" href="#" >네이버 로그인</button>
+                    </div>
+                </form>
+            </form>
+            <div>
+                <button class="close">취소</button>
             </div>
-            <div class="form-group">
-                <button id="special-button" class="button" type="submit" href="#" >네이버 로그인</button>
-            </div>
-        </form>
-    </form>
-    <div>
-        <button class="close" onclick="closePopup()">취소</button>
-    </div>
-</div>
-</body>
+        </div>
+    </body>
 </template>
 <script>
 export default {
     data() {
         return {
-            sampleData: ''
+            user_auth: '',
+            email: '',
+            pwd: '',
         };
-    }
+    },
+    computed: {
+        user() {
+            return this.$store.state.user; // user 정보가 바뀔 때마다 자동으로 user() 갱신
+        },
+    },
 }
 </script>
 <style scoped>
@@ -78,29 +84,6 @@ body {
     background-color: #f5f5f5; /* 배경색 설정 */
     
 }
-.popup-overlay {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: auto;
-}
-
-.popup {
-    background-color: #fefefe;
-    margin: 0% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-    position: relative;
-}
-
 .close {
     position: absolute;
     left: 50%;

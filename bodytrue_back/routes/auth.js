@@ -440,7 +440,64 @@ router.post("/trainer_join", async (req, res) => {
   });
 });
 
+//회원 로그인
 
+router.post("패스명",async(req,res)=>{
+
+  const data={
+    user_email : req.body.email,
+    user_pwd : req.body.pwd
+  }
+
+  db.query('select user_no, user_email, user_name from user where user_email = ? and user_pwd = ?',
+    [data.user_email,data.user_pwd],
+    function(err,results,fields){
+    if (err) {
+        res.send({
+        // 에러 발생 시
+        code: 400,
+        failed: "error occurred",
+        error: err,
+        });
+    } else {
+        res.send({
+        //쿼리 실행 성공시
+        code: 200,
+        message: "로그인성공",
+        });
+    }
+  });
+});
+
+//트레이너 로그인
+
+router.post("패스명",async(req,res)=>{
+
+  const data={
+    tr_email : req.body.email,
+    tr_pwd : req.body.pwd
+  }
+
+  db.query('select tr_no, tr_email, tr_name from trainer where tr_email = ? and tr_pwd = ?',
+    [data.tr_email,data.tr_pwd],
+    function(err,results,fields){
+    if (err) {
+        res.send({
+        // 에러 발생 시
+        code: 400,
+        failed: "error occurred",
+        error: err,
+        });
+    } else {
+        res.send({
+        //쿼리 실행 성공시
+        code: 200,
+        message: "로그인성공",
+        });
+    }
+  });
+
+});
 
 
 
