@@ -139,7 +139,7 @@
       this.initWeek(); // 컴포넌트가 생성될 때 주를 초기화
       this.pro_comment();
       //id값 임의로 넣어주기 위함
-      // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1});
+      // this.$store.commit('user', { user_email: 'aaa@naver.com' , user_no: 1});
       console.log("store",this.$store.state.user);
       console.log("user_no",this.$store.state.user.user_no);
     },

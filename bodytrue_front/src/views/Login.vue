@@ -1,33 +1,33 @@
 <template>
     <body>
-        <center><h1>로그인</h1></center>
+        <h1 style="text-align: center;">로그인</h1>
         <div class="line-center"></div>
         <div class="login-container">
                 <div class="form_right">
                     <label for="user">
-                        <input type="radio" id="user" name="auth" v-model="user_auth" value="1">회원 &nbsp;&nbsp;
+                        <input type="radio" id="user" name="auth" v-model="user_auth" value="1" checked>회원 &nbsp;&nbsp;
                     </label>
                     <label for="trainer">
                         <input type="radio" id="trainer" name="auth" v-model="user_auth" value="2"> 트레이너
                     </label>
                 </div>                        
-            <form action="">
+            <form @submit.prevent="login">
                 <div class="form-group">
-                    <label for="username">아이디</label>
+                    <label for="email">아이디</label>
                     <div class="input-with-icon">
-                        <input type="text" id="email" name="email" v-model="emial" placeholder="Username">
+                        <input type="text" id="email" name="email" v-model="email" placeholder="Username">
                     </div>
-                </div>
+                </div>  
                 <div class="form-group">
-                    <label for="username">비밀번호</label>
+                    <label for="password">비밀번호</label>
                     <div class="input-with-icon">
-                        <input type="text" id="pwd" name="pwd" v-model="pwd" placeholder="Password">
+                        <input type="password" id="pwd" name="pwd" v-model="pwd" placeholder="Password">
                     </div>
                 </div>
                 <div class="form-group forgot-password">
-                    <a @click="goEmailFind()">아이디 찾기</a>
+                    <a @click.prevent="goEmailFind">아이디 찾기</a>
                     <span>|</span>
-                    <a @click="goPwdFind()">비밀번호 찾기</a>
+                    <a @click.prevent="goPwdFind">비밀번호 찾기</a>
                 </div>
                 <div class="form-group save-id-checkbox">
                     <span>
@@ -35,38 +35,39 @@
                     </span>
                 </div>
                 <div class="form-group">
-                    <button type="button" class="login-button">로그인</button>
+                    <button type="submit" class="login-button">로그인</button>
                 </div>
                 <div class="form-group">
-                    <button type="submit">회원가입</button>
+                    <button type="button" @click="goToJoin">회원가입</button>
                 </div>
                 <br>
                 <br>
                 
-                <center><h1>SNS 로그인</h1></center>
+                <h1 style="text-align: center;">SNS 로그인</h1>
                 <div class="line-center"></div>
                 <br>
-                <form action="">
-                    <div class="form-group">
-                        <button id="special2-button" class="button" type="submit" href="#" >카카오 로그인</button>
-                    </div>
-                    <div class="form-group">
-                        <button id="special-button" class="button" type="submit" href="#" >네이버 로그인</button>
-                    </div>
-                </form>
+                <div class="form-group">
+                    <button id="special2-button" class="button" type="button" @click="loginKakao" >카카오 로그인</button>
+                </div>
+                <div class="form-group">
+                    <button id="special-button" class="button" type="button" @click="loginNaver" >네이버 로그인</button>
+                </div>
             </form>
             <div>
-                <button class="close">취소</button>
+                <button class="close" @click="cancel">취소</button>
             </div>
         </div>
     </body>
 
 </template>
 <script>
+import axios from 'axios';
+import { mapMutations } from 'vuex';
+
 export default {
     data() {
         return {
-            user_auth: '',
+            user_auth: '1',
             email: '',
             pwd: '',
         };
@@ -75,7 +76,107 @@ export default {
         user() {
             return this.$store.state.user; // user 정보가 바뀔 때마다 자동으로 user() 갱신
         },
+        isLoggedIn() {
+            return !!this.$store.state.user.user_email || !!this.$store.state.trainer.tr_email;
+        }
+    }, 
+    created() {
+        if (!this.isLoggedIn) {
+            this.$router.push('/login'); // 로그인 상태가 아니면 로그인 페이지로 리다이렉트
+        }
     },
+        methods: {
+            ...mapMutations({
+            setUser: 'user', // user 뮤테이션을 setUser 메서드로 매핑
+            setTrainer: 'trainer' // trainer 뮤테이션을 setTrainer 메서드로 매핑
+        }),
+        async login() {
+            const endpoint = (this.user_auth === '1') ? 'login_user' : 'login_tr';
+
+            try {
+                console.log(endpoint);
+                const res = await axios({
+                    url: `http://localhost:3000/auth/${endpoint}`,
+                    method: "POST",
+                    data: {
+                        email: this.email,
+                        pwd: this.pwd,
+                        user_auth: this.user_auth,
+                    },
+                });
+                console.log(res.data);
+                console.log("res.data.email", res.data.email);
+
+                if (res.data.code === 200) {
+                    // 로그인 성공 시
+                    if (this.user_auth === '1') {
+                        const userPayload = {
+                            user_email: res.data.email,
+                            user_no: res.data.user_no,
+                        };
+                        this.setUser(userPayload);
+                        console.log(res.data.email);
+                    } else {
+                        const trainerPayload = {
+                            tr_email: res.data.email,
+                            tr_no: res.data.tr_no,
+                        };
+                        this.setTrainer(trainerPayload);
+                    }
+
+                    this.$swal({
+                        position: 'top',
+                        icon: 'success',
+                        title: '로그인 성공!',
+                        showConfirmButton: false,
+                        timer: 1000
+                    });
+
+                    window.location.href = "/";
+                } else if (res.data.code === 401) {
+                    // 비밀번호 오류 시
+                    alert(res.data.error + "\n" + res.data.message);
+                    window.location.href = "/login";
+                } else if (res.data.code === 404) {
+                    // 존재하지 않는 이메일일 때
+                    alert(res.data.error + "\n" + res.data.message);
+                    window.location.href = "/login";
+                }
+            } catch (err) {
+                alert(err);
+            }
+        },
+
+        // login() {
+        //     // 로그인 로직
+
+        //     console.log('로그인 시도', this.email, this.pwd, this.user_auth);
+        // },
+        goEmailFind() {
+            // 아이디 찾기 로직
+            console.log('아이디 찾기');
+        },
+        goPwdFind() {
+            // 비밀번호 찾기 로직
+            console.log('비밀번호 찾기');
+        },
+        goToJoin() {
+            // 회원가입 페이지로 이동
+            console.log('회원가입 페이지로 이동');
+        },
+        loginKakao() {
+            // 카카오 로그인 로직
+            console.log('카카오 로그인 시도');
+        },
+        loginNaver() {
+            // 네이버 로그인 로직
+            console.log('네이버 로그인 시도');
+        },
+        cancel() {
+            // 취소 로직
+            console.log('취소');
+        }
+    }
 }
 </script>
 <style scoped>
