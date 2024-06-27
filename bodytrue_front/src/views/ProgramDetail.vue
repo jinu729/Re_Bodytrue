@@ -19,9 +19,9 @@
       </div>
       <div class="description" id="detail1">
         <h2>상세 설명</h2>
-        <p v-if="program.pro_comment1">{{ program.pro_comment1 }}</p>
-        <p v-if="program.pro_comment2">{{ program.pro_comment2 }}</p>
-        <p v-if="program.pro_comment3">{{ program.pro_comment3 }}</p>
+        <p>{{ programdetail.pro_comment1 }}</p>
+        <p>{{ programdetail.pro_comment2 }}</p>
+        <p>{{ programdetail.pro_comment3 }}</p>
       </div>
       <div class="price-info" id="price1">
         <h2>가격 안내</h2>
@@ -34,22 +34,26 @@
       </div>
       <div class="price-info" id="review1">
         <h2>리뷰</h2>
-        <p>1회 비용: 100,000 원</p>
+        <div v-for="reviewItem in review" :key="reviewItem.re_data">
+          <p>{{ reviewItem.user_name }} : {{ reviewItem.re_comment }} <img src="..\image\star.png" id="star"> {{ reviewItem.re_rate }} 작성 날짜: {{ reviewItem.re_date }}</p>
+        </div>
+        
+        <!-- <p>1회 비용: 100,000 원</p>
         <p>3회 비용: 300,000 원</p>
         <p>주의 사항</p>
         <p>수업은 1회당 1시간 동안 진행되며, 수업료는 1회당 10만원입니다.</p>
         <p>미리 예약하셔야 하며, 수용 가능한 인원이 한정되어 있으므로 선착순으로 등록됩니다.</p>
-        <p>수업료에는 요가 매트 및 필요한 장비 사용료가 포함되어 있습니다.</p>
+        <p>수업료에는 요가 매트 및 필요한 장비 사용료가 포함되어 있습니다.</p> -->
       </div>
       
     </div>
 
     <div class="right-panel">
       <h4 v-if="tagname">#{{ tagname }}</h4>
-      <h2><p v-if="program.pro_name">{{ program.pro_name }}</p></h2>
-      <h3><p v-if="program.tr_name">{{ program.tr_name }}</p></h3>
-      <h3><p v-if="formattedEndDate">프로그램 종료 날짜:&nbsp;{{ formattedEndDate }}</p></h3>
-      <p v-if="program.rate_avg"><img src="..\image\star.png" id="star">{{ program.rate_avg }}</p>
+      <h2><p>{{ programdetail.pro_name }}</p></h2>
+      <h3><p>{{ programdetail.tr_name }}</p></h3>
+      <h3><p v-if="formattedEndDate">프로그램 종료 날짜&nbsp;:&nbsp;{{ formattedEndDate }}</p></h3>
+      <p><img src="..\image\star.png" id="star">{{ programdetail.rate_avg }}</p>
       <div class="calendar">
         <div class="controls">
           <button @click="previousWeek" class="prev2">이전</button>
@@ -63,16 +67,15 @@
           </div>
         </div>
         <div class="times">
-          <button>오전 8:00</button>
-          <button>오전 9:00</button>
-          <button>오전 10:00</button>
+          <button v-for="(time, index) in times" :key="index" :class="['time-btn', { 'selected' : time === selectedTime }]" @click="selectTime(time)">{{ time }}</button>
         </div>
         <div>
-          <p v-if="selectedDate">선택된 날짜: {{ selectedDate.year }}년 {{ selectedDate.month + 1 }}월 {{ selectedDate.date }}일</p>
-          <button @click="saveDate" class="reserve-btn">예약</button>
+          <h4><p v-if="selectedDate">선택된 날짜: {{ selectedDate.year }}년 {{ selectedDate.month + 1 }}월 {{ selectedDate.date }}일</p></h4>
+          <h4><p v-if="selectedTime">선택된 시간: {{ selectedTime }}</p></h4>
+          <button @click="checklogin('saveDate')" class="reserve-btn">예약</button>
         </div>
       </div>
-      <button class="favorite-btn">♥</button>
+      <button class="favorite-btn" @click="checklogin('favorite-btn')">♥</button>
     </div>
   </div>
 </template>
@@ -89,10 +92,17 @@
         weekDays: [], // 현재 주의 날짜 목록
         selectedDate: null, // 선택된 날짜 정보
         dayNames: ['일', '월', '화', '수', '목', '금', '토'], // 요일 이름
-        program: {} //프로그램 데이터를 객체로 저장
+        program: {}, //프로그램 데이터를 객체로 저장
+        times: ['오전 8:00', '오전 9:00', '오전 10:00', '오전 11:00', '오후 12:00', '오후 13:00', '오후 14:00', '오후 15:00', '오후 16:00', '오후 17:00', '오후 18:00', '오후 19:00'], //시간들 배열 나열해줌 
+        selectedTime: null, //선택된 시간 정보
+        programdetail:[], //프로그램 디테일 배열로 저장
+        review:[] //프로그램 리뷰 배열로 저장 
       };
     },
     computed: {
+      user(){
+        return this.$store.state.user;
+      },
       // 현재 주의 시작과 끝 날짜를 문자열로 반환
       weekRange() {
         const startOfWeek = this.weekDays[0]; // 주의 첫 날
@@ -108,14 +118,14 @@
             3: '체력증진',
             4: '홈트'
         };
-        return tagmapping[this.program.pro_tag];
+        return tagmapping[this.programdetail.pro_tag];
       },
 
       //프로그램 종료 날짜 format
       formattedEndDate() {
       // pro_enddate가 존재할 때만 포맷을 변경
-      if (this.program.pro_enddate) {
-        const date = new Date(this.program.pro_enddate);
+      if (this.programdetail.pro_enddate) {
+        const date = new Date(this.programdetail.pro_enddate);
         return date.toLocaleDateString('ko-KR', {
         year: 'numeric',
         month: '2-digit',
@@ -128,8 +138,22 @@
     created() {
       this.initWeek(); // 컴포넌트가 생성될 때 주를 초기화
       this.pro_comment();
+      //id값 임의로 넣어주기 위함
+      // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1});
+      console.log("store",this.$store.state.user);
+      console.log("user_no",this.$store.state.user.user_no);
     },
     methods: {
+      //로그인확인
+      checklogin(){
+        if(this.user.user_no==''){
+          alert('로그인 해주세요.');
+          this.$router.push({ path: '/login'});
+          return;
+        }
+        //로그인 되어있으면 saveDate() 메서드 호출
+        this.saveDate();
+      },  
       // 현재 주의 날짜를 계산하여 weekDays에 저장
       initWeek() {
         const currentDateObj = new Date(this.currentYear, this.currentMonth, this.currentDate); // 현재 날짜 객체 생성
@@ -155,7 +179,7 @@
       isSelected(fullDate) {
         return this.selectedDate && this.selectedDate.fullDate === fullDate;
       },
-      // 선택된 날짜를 프로그램 종료날짜와 비교 ㅣ
+      // 선택된 날짜를 프로그램 종료날짜와 비교 해서 값 저장중임 
       saveDate() {
         if(this.selectedDate && this.formattedEndDate){
           const selectedDateObj = new Date(this.selectedDate.year, this.selectedDate.month, this.selectedDate.date);
@@ -186,22 +210,32 @@
         this.initWeek(); // 주를 다시 초기화
       },
 
-      //pro_comment메소드 시작
+      //pro_comment메소드 시작, 메소드를 통해서 서버단의 데이터베이스값 가져옴 
       pro_comment(){
         const pro_no = this.$route.params.pro_no;
         console.log(pro_no);
         axios.get(`http://localhost:3000/user/prodetail/${pro_no}`)
             .then(response =>{
-                this.program = response.data[0];
+                this.program = response.data; //데이터를 받아서 저장
+                this.programdetail = this.program.productDetails[0];
+                console.log(this.programdetail);
+                this.review = this.program.reviews;
+                console.log(this.review);
             })
             .catch(error => {
                 console.error('프로그램 정보를 불러오는 중 오류 발생', error);
             });
+      },
+
+      //times 메소드
+      selectTime(time){
+        this.selectedTime = time;
       }
     }
   };
   
   </script>
+
   <style scoped>
   #star{
     width: 15px;
@@ -316,27 +350,47 @@
       color: #000;
   }
   
-  
   /*예약버튼*/
-  .reserve-btn, .favorite-btn {
+  .reserve-btn {
       width: 100%;
       padding: 15px;
       margin-top: 20px;
       border: none;
       cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
+      border-radius: 5px;
   }
-  
+  .favorite-btn{
+      width: 100%;
+      color:red;
+      margin-top: 20px;
+      border: none;
+      cursor: pointer;
+      font-size:40px;
+      box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
+      border-radius: 5px;
+  }
   .reserve-btn {
       background-color: #00c8c8;
       color: #fff;
   }
-  
-  .favorite-btn {
-      background-color: #fff;
-      border: 1px solid #ddd;
-      color: #f00;
+  /*시간 버튼*/ 
+  .time-btn {
+    width: 100px;
+    height: 50px;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 30px;
+    text-align: center; /* 텍스트 중앙 정렬 */
+    font-weight: bold; /* 텍스트 굵게 */
   }
-  
+
+  .time-btn.selected {
+  /* 선택된 버튼 스타일 */
+  background-color: #00c8c8;
+  color: white;
+  border-radius: 30px;
+  }
   /*description*/
   .description{
       padding-top:30px;
@@ -364,6 +418,7 @@
   .calendar{
       height: fit-content;
   }
+
   .calendar .controls {
     display: flex; /* 버튼을 가로로 나열 */
     justify-content: space-between; /* 버튼을 양 끝으로 배치 */
