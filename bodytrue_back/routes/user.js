@@ -22,6 +22,7 @@ const path = require("path");
 
 /* 상품 디테일 시작 */
 router.get('/prodetail/:pro_no', function(request, response, next){
+    
     const pro_no = request.params.pro_no;
     // console.log(`Received request for PRO_NO: ${request.params.pro_no}`);
     // console.log(pro_no);
@@ -37,7 +38,7 @@ router.get('/prodetail/:pro_no', function(request, response, next){
                     }
                     resolve(results);
                 });
-            });
+            }); 
 
             //리뷰 정보 가져오기
             const reviews = await new Promise((resolve, reject) => {

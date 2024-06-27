@@ -11,13 +11,9 @@ const path = require("path");
 
 //승호작성
 
-//프로그램 사진업로드/패스저장
+//프로그램 사진저장/프로그램 정보 저장
 
-
-
-//프로그램 정보 저장
-
-router.post("/패스명(bodytrue_join.html)", async (req, res) => {
+router.post('/createprogram', function (req, res) {
 
     const data = {
       //프론트에서 전달해주는 데이터
@@ -28,29 +24,110 @@ router.post("/패스명(bodytrue_join.html)", async (req, res) => {
       pro_enddate : req.body.end_date,
       pro_comment1 : req.body.img_textarea1,
       pro_comment2 : req.body.img_textarea2,
-      pro_tag : req.body.tag 
+      pro_tag : req.body.tag,
+
+      pro_img : req.body.image-upload,
+      pro_img1 : req.body.file-input1,
+      pro_img2 : req.body.file-input2,
+      pro_imgprice : req.body.file-input3,
     };
-  
-    db.query("INSERT INTO PROGRAM (PRO_NAME, PRO_TEL,PRO_ADD1,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)values ?,?,?,?,?,?,?,?",
-        [data.pro_name, data.pro_tel, data.pro_add, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag], 
-        (err, results, fields) => {
-            //쿼리 실행
-            if (err) {
-                res.send({
-                // 에러 발생 시
-                code: 400,
-                failed: "error occurred",
-                error: err,
-                });
-            } else {
-                res.send({
-                //쿼리 실행 성공시
-                code: 200,
-                message: "프로그램등록 성공",
-                });
+    console.log(goods);
+
+        try {
+                // 이미지를 제외한 굿즈 정보 먼저 입력
+                db.query("INSERT INTO PROGRAM (PRO_NAME, PRO_TEL,PRO_ADD1,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)values (?,?,?,?,?,?,?,?)", 
+                    [data.pro_name, data.pro_tel, data.pro_add, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag],
+                     function (error, results, fields) {
+                    if (error) {
+                        return response.status(200).json({
+                            message: 'fail'
+                        })
+                    }
+                    try {
+                        const pastDir0 = `${__dirname}` + `../../uploads/` + data.pro_img
+                        const pastDir1 = `${__dirname}` + `../../uploads/` + data.pro_img1
+                        const pastDir2 = `${__dirname}` + `../../uploads/` + data.pro_img2
+                        const pastDir3 = `${__dirname}` + `../../uploads/` + data.pro_imgprice
+
+                        const newDir = `${__dirname}` + `../../uploads/uploadGoods/`;
+                        if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
+
+                        const extension = data.pro_img.substring(data.pro_img.lastIndexOf('.'))
+
+                        // 등록 상품의 번호 불러오기
+                        db.query("select pro_no from program where = ?", 
+                            [data.pro_name], 
+                            function (error, results, fields) {
+
+                            const filename = results[0].pro_no
+
+                            // 이미지 폴더 및 이름(상품번호-타입) 변경
+                            // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
+                            fs.rename(pastDir0, newDir + filename + '-0' + extension, (err) => {
+                                if (err) {
+                                    throw err;
+                                }
+                            });
+                            fs.rename(pastDir1, newDir + filename + '-1' + extension, (err) => {
+                                if (err) {
+                                    throw err;
+                                }
+                            });
+                            fs.rename(pastDir2, newDir + filename + '-2' + extension, (err) => {
+                                if (err) {
+                                    throw err;
+                                }
+                            });
+                            fs.rename(pastDir3, newDir + filename + '-3' + extension, (err) => {
+                                if (err) {
+                                    throw err;
+                                }
+                            });
+
+                            // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
+                            db.query(`insert into img (img_type,img_path,img_pro_no) values (?,?,?)`,
+                                 [0,filename + '-0' + extension,filename], 
+                                 function (error, results, fields) {
+                                if (error) {
+                                    throw error;
+                                }db.query(`insert into img (img_type,img_path,img_pro_no) values (?,?,?)`,
+                                         [1,filename + '-1' + extension,filename], 
+                                         function (error, results, fields) {
+                                        if (error) {
+                                            throw error;
+                                        }db.query(`insert into img (img_type,img_path,img_pro_no) values (?,?,?)`,
+                                                 [2,filename + '-2' + extension,filename], 
+                                                 function (error, results, fields) {
+                                                if (error) {
+                                                    throw error;
+                                                }db.query(`insert into img (img_type,img_path,img_pro_no) values (?,?,?)`,
+                                                         [3,filename + '-3' + extension,filename], 
+                                                         function (error, results, fields) {
+                                                        if (error) {
+                                                            throw error;
+                                                        }
+                                        
+                                    })
+                                
+                            })
+
+                        })
+
+                    })
+                })
+            }catch(err){
+                console.log(err);
             }
-    });
-});
+                    
+                })
+
+    } catch {
+        return response.status(200).json({
+            message: 'DB_error'
+        })
+    }
+})
+        
 
 //내프로그램 리스트
 
@@ -121,12 +198,7 @@ console.log(req.params);
     });
 
 
-})
-
-//사진은 가져오는걸로
-
-
-
+});
 
 
 //트레이너 정보수정
