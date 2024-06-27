@@ -28,10 +28,10 @@ import MainPage from '../views/MainPage.vue'
 
 
 //회창작성
-
-
+import Trainer from '../views/Trainer.vue'
+import Admin from '../views/Admin.vue'
+import AdminUser from '../views/AdminUser.vue'
 //회창작성완
-
 
 const routes = [
   {
@@ -46,8 +46,22 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+  },
+  {
+    path: '/trainer',
+    name: 'Trainer',
+    component: Trainer
+  },
+  {
+    path: '/admin',
+    name: 'Admin',
+    component: Admin
+  },
+  {
+    path: '/adminuser',
+    name: 'AdminUser',
+    component: AdminUser
   }
-
   //승호작성
 
 
