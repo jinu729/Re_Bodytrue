@@ -57,13 +57,13 @@
       <div class="calendar">
         <div class="controls">
           <button @click="previousWeek" class="prev2">이전</button>
-          <span>{{ currentYear }}년 {{ currentMonth + 1 }}월 {{ weekRange }}</span>
+          <span>{{ currentYear }}년 {{ weekRange }}</span>
           <button @click="nextWeek" class="next2">다음</button>
         </div>
         <div class="days">
           <div class="day-name" v-for="dayName in dayNames" :key="dayName">{{ dayName }}</div>
-          <div class="day" v-for="day in weekDays" :key="day.fullDate" :class="{ 'selected': isSelected(day.fullDate), 'empty': !day.isInCurrentMonth }" @click="day.isInCurrentMonth && selectDate(day)">
-            {{ day.isInCurrentMonth ? day.date : '' }}
+          <div class="day" v-for="day in weekDays" :key="day.fullDate" :class="{ 'selected': isSelected(day.fullDate) }" @click="selectDate(day)">
+            {{ day.date }}
           </div>
         </div>
         <div class="times">
@@ -72,12 +72,13 @@
         <div>
           <h4><p v-if="selectedDate">선택된 날짜: {{ selectedDate.year }}년 {{ selectedDate.month + 1 }}월 {{ selectedDate.date }}일</p></h4>
           <h4><p v-if="selectedTime">선택된 시간: {{ selectedTime }}</p></h4>
-          <button @click="checklogin('saveDate')" class="reserve-btn">예약</button>
+          <button @click="checklogin" class="reserve-btn">예약</button>
         </div>
       </div>
-      <button class="favorite-btn" @click="checklogin('favorite-btn')">♥</button>
+      <button class="favorite-btn" @click="makePlike">♥</button>
     </div>
   </div>
+  
 </template>
   
   <script>
@@ -92,13 +93,15 @@
         weekDays: [], // 현재 주의 날짜 목록
         selectedDate: null, // 선택된 날짜 정보
         dayNames: ['일', '월', '화', '수', '목', '금', '토'], // 요일 이름
-        program: {}, //프로그램 데이터를 객체로 저장
-        times: ['오전 8:00', '오전 9:00', '오전 10:00', '오전 11:00', '오후 12:00', '오후 13:00', '오후 14:00', '오후 15:00', '오후 16:00', '오후 17:00', '오후 18:00', '오후 19:00'], //시간들 배열 나열해줌 
+        // program: {}, //프로그램 데이터를 객체로 저장
+        times: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00'], //시간들 배열 나열해줌 
         selectedTime: null, //선택된 시간 정보
-        programdetail:[], //프로그램 디테일 배열로 저장
-        review:[] //프로그램 리뷰 배열로 저장 
+        programdetail:{}, //프로그램 디테일 배열로 저장
+        review:[], //프로그램 리뷰 배열로 저장 
+        pro_no: this.$route.params.pro_no
       };
     },
+
     computed: {
       user(){
         return this.$store.state.user;
@@ -135,25 +138,17 @@
         return '';
       }
     },
+
     created() {
       this.initWeek(); // 컴포넌트가 생성될 때 주를 초기화
       this.pro_comment();
       //id값 임의로 넣어주기 위함
-      // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1});
+      // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
       console.log("store",this.$store.state.user);
       console.log("user_no",this.$store.state.user.user_no);
     },
+
     methods: {
-      //로그인확인
-      checklogin(){
-        if(this.user.user_no==''){
-          alert('로그인 해주세요.');
-          this.$router.push({ path: '/login'});
-          return;
-        }
-        //로그인 되어있으면 saveDate() 메서드 호출
-        this.saveDate();
-      },  
       // 현재 주의 날짜를 계산하여 weekDays에 저장
       initWeek() {
         const currentDateObj = new Date(this.currentYear, this.currentMonth, this.currentDate); // 현재 날짜 객체 생성
@@ -185,12 +180,16 @@
           const selectedDateObj = new Date(this.selectedDate.year, this.selectedDate.month, this.selectedDate.date);
           const endDateObj = new Date(this.formattedEndDate)
           if(selectedDateObj > endDateObj){
-            alert('선택된 날짜는 프로그램 종료 날짜를 넘어섰습니다. 다시 선택해주세요.')
+            alert('선택된 날짜는 프로그램 종료 날짜를 넘어섰습니다. 다시 선택해주세요.');
+            return false;
           } else{
               console.log('선택된 날짜:', this.selectedDate);
+              return true;
           }
         }
+        return false;
       },
+
       // 이전 주로 이동
       previousWeek() {
         const currentDateObj = new Date(this.currentYear, this.currentMonth, this.currentDate);
@@ -210,23 +209,114 @@
         this.initWeek(); // 주를 다시 초기화
       },
 
-      //pro_comment메소드 시작, 메소드를 통해서 서버단의 데이터베이스값 가져옴 
-      pro_comment(){
+      //로그인확인
+      checklogin(){
+        if(this.user.user_no==''){
+          alert('로그인 해주세요.');
+          this.$router.push({ path: '/login'});
+        } else{
+          //로그인 되어있으면 예약진행하기전 유효성 검사후 예약진행
+          if(this.saveDate()){
+              this.makeReserve();
+          }
+        }
+      },
+      
+      async makeReserve(){
+        try{
+          //필요한 데이터 수집
+          const cal_pro_no = this.pro_no;
+          console.log("cal_pro_no", cal_pro_no);
+          const cal_user_no = this.user.user_no;
+          const cal_tr_no = this.programdetail.pro_tr_no;
+          // 선택한 날짜와 시간을 합쳐서 cal_startdate를 생성
+          const cal_startdate = `${this.selectedDate.year}-${String(this.selectedDate.month + 1).padStart(2, '0')}-${String(this.selectedDate.date).padStart(2, '0')} ${this.selectedTime}:00`;
+          console.log("cal_startdate", cal_startdate);
+
+          const startDateObj = new Date(`${cal_startdate} UTC`);
+          
+          // 1시간을 더해서 cal_enddate를 계산
+          const endDateObj = new Date(startDateObj.getTime() + 60 * 60 * 1000);
+          const cal_enddate = endDateObj.toISOString().slice(0, 19).replace('T', ' ');
+
+          console.log("cal_enddate", cal_enddate);
+
+          //서버로 요청 보내기
+          const response = await axios.post('http://localhost:3000/user/calendarin', {
+            pro_no: cal_pro_no,
+            user_no: cal_user_no,
+            tr_no: cal_tr_no,
+            startdate: cal_startdate,
+            enddate: cal_enddate,
+          });
+
+          //성공시 처리
+          console.log('예약 성공:', response.data);
+          alert('예약이 성공적으로 완료되었습니다.');
+        } catch(error){
+          //에러처리
+          console.error('예약 실패:', error);
+          alert('예약 중 오류가 발생했습니다.');
+        }
+      },
+      
+      //상품 디테일 정보 
+      async pro_comment(){
         const pro_no = this.$route.params.pro_no;
         console.log(pro_no);
-        axios.get(`http://localhost:3000/user/prodetail/${pro_no}`)
-            .then(response =>{
-                this.program = response.data; //데이터를 받아서 저장
-                this.programdetail = this.program.productDetails[0];
-                console.log(this.programdetail);
-                this.review = this.program.reviews;
-                console.log(this.review);
-            })
-            .catch(error => {
-                console.error('프로그램 정보를 불러오는 중 오류 발생', error);
-            });
+        try{
+          const response = await axios.get(`http://localhost:3000/user/prodetail/${pro_no}`);
+          const data = response.data;
+          this.programdetail = data.productDetails[0];
+          console.log("programdetail",this.programdetail);
+          this.review = data.reviews;
+          console.log("review",this.review);
+        } catch(error){
+          console.error('프로그램 정보를 불러오는 중 오류 발생', error);
+        }
       },
+      // //pro_comment메소드 시작, 메소드를 통해서 서버단의 데이터베이스값 가져옴 
+      // pro_comment(){
+      //   const pro_no = this.$route.params.pro_no;
+      //   console.log(pro_no);
+      //   axios.get(`http://localhost:3000/user/prodetail/${pro_no}`)
+      //       .then(response =>{
+      //           this.program = response.data; //데이터를 받아서 저장
+      //           console.log("program",this.program);
+      //           this.programdetail = this.program.productDetails[0];
+      //           console.log(this.programdetail);
+      //           this.review = this.program.reviews;
+      //           console.log(this.review);
+      //       })
+      //       .catch(error => {
+      //           console.error('프로그램 정보를 불러오는 중 오류 발생', error);
+      //       });
+      // },
 
+      //찜하기
+      async makePlike(){
+        if(this.user.user_no==''){
+          alert('로그인 해주세요.');
+          this.$router.push({ path: '/login'});
+        } else{
+          //로그인 되어있으면 찜하기 진행
+          const plike_pro_no = this.pro_no;
+          console.log("plike_pro_no",plike_pro_no);
+          const plike_user_no = this.user.user_no;
+          console.log("plike_user_no", plike_user_no);
+
+          try{
+            const response = await axios.post('http://localhost:3000/user/makeplike', {
+            plike_user_no: plike_user_no,
+            plike_pro_no: plike_pro_no,
+            });
+          console.log('찜하기 성공',response.data);
+          alert('찜목록에 추가되었습니다.');
+        }catch(error){
+          console.error('찜하는 도중 오류 발생', error);
+        }
+      }
+     },
       //times 메소드
       selectTime(time){
         this.selectedTime = time;
@@ -383,6 +473,7 @@
     border-radius: 30px;
     text-align: center; /* 텍스트 중앙 정렬 */
     font-weight: bold; /* 텍스트 굵게 */
+    font-size: 15px;
   }
 
   .time-btn.selected {
