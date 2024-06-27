@@ -3,6 +3,12 @@ const router = express.Router();
 const db = require('../db.js');
 const sql = require('../sql.js');
 
+const fs = require('fs');
+const multer = require('multer');
+const path = require("path");
+
+
+
 //승호작성
 
 //프로그램 사진업로드/패스저장
@@ -72,7 +78,7 @@ router.post("/패스명", async(req,res)=>{
 
     const tr_no = req.params.tr_no
 
-    db.query("SELECT USER_NAME,PRO_NAME,RE_DATE,RE_COMMENT,RE_RATE FROM REVIEW R JOIN USER U ON R.RE_USER_NO = U.USER_NO JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO JOIN TRAINER T ON R.RE_TR_NO = T.TR_NO WHERE TR_NO = ?;",tr_no,(err,results)=>{
+    db.query("SELECT USER_NAME,PRO_NAME,RE_DATE,RE_COMMENT,RE_RATE FROM REVIEW R JOIN USER U ON R.RE_USER_NO = U.USER_NO JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO JOIN TRAINER T ON R.RE_TR_NO = T.TR_NO WHERE TR_NO = ?",tr_no,(err,results)=>{
         if (err) {
             res.send({
             // 에러 발생 시
@@ -93,11 +99,13 @@ router.post("/패스명", async(req,res)=>{
 //트레이너 정보 가져오기
 
 //정보
-router.post("/패스명", async(req,res)=>{
+router.get("/1", async(req,res)=>{
 
-    const tr_no = req.params.tr_no
+    // const tr_no = req.params.tr_no
+    const tr_no = 1
+console.log(req.params);
 
-    db.query("SELECT TR_NAME,TR_EMAIL,TR_TEL FROM TRAINER WHERE TR_NO = ?;",tr_no,(err,results)=>{
+    db.query(`SELECT TR_NAME,TR_EMAIL,TR_TEL,img_path FROM TRAINER t join img i on t.tr_no = i.img_tr_no WHERE TR_NO = ?`,tr_no,(err,results)=>{
         if (err) {
             res.send({
             // 에러 발생 시
@@ -106,12 +114,18 @@ router.post("/패스명", async(req,res)=>{
             error: err,
             });
         } else {
-            res.send
+            
+            res.send(results)
+            console.log(results);
         }
-    })
+    });
+
+
 })
 
 //사진은 가져오는걸로
+
+
 
 
 
