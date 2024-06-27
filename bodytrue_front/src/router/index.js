@@ -17,7 +17,7 @@ import ProgramList from '../views/ProgramList.vue'
 
 //은미작성
 import ProgramDetail from '../views/ProgramDetail.vue'
-
+import UserMyPage from '../views/UserMypage.vue'
 //은미작성완
 
 
@@ -81,6 +81,11 @@ const routes = [
     path: '/user/prodetail/:pro_no', 
     name: 'ProgramDetail',
     component: ProgramDetail
+  },
+  {
+    path: '/user/mypage/:user_no',
+    name: 'UserMyPage',
+    component: UserMyPage
   }
 
 //은미작성완
