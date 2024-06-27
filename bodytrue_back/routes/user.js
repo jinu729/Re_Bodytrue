@@ -98,6 +98,37 @@ router.get('/prodetail/:pro_no', function(request, response, next){
 
 
 //재영작성
+router.get('/users', (req, res) => {
+    const sql = 'SELECT * FROM users';
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error querying database:', err);
+            res.status(500).json({ error: 'Error querying database' });
+            return;
+        }
+        res.json(results);
+    });
+});
+
+// 사용자 상세 정보 조회
+router.get('/users/:id', (req, res) => {
+    const userId = req.params.id;
+    const sql = 'SELECT * FROM users WHERE id = ?';
+
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error('Error querying database:', err);
+            res.status(500).json({ error: 'Error querying database' });
+            return;
+        }
+        if (results.length === 0) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+        res.json(results[0]);
+    });
+});
 
 
 //재영작성완
