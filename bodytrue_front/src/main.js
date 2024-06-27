@@ -35,5 +35,8 @@ import VueSweetalert2 from 'vue-sweetalert2';
 
 //회창작성완
 
-
-createApp(App).use(router).use(store).use(VueSweetalert2).mount('#app')
+const app = createApp(App)
+app.use(router);
+app.use(store);
+app.use(VueSweetalert2);
+app.mount('#app');

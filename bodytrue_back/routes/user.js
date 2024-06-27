@@ -130,7 +130,7 @@ router.post('/makeplike', function(request, response, next) {
 /* 마이페이지 시작 */
 router.post('/mypage/:user_no', function(request, response, next){
     const user_no = request.params.user_no;
-
+    
     db.query(`select user_name, user_email, user_tel from user where user_no = ?`,[user_no], function(error, result, field){
         if(error){
             console.error(error);

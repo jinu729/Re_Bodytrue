@@ -15,10 +15,10 @@ const store = createStore({
         }
     },
     mutations: {
-        user(state, data){
+        setUser(state, data){
             state.user = data;
         },
-        trainer(state, data){
+        setTrainer(state, data){
             state.trainer = data;
         }
     },

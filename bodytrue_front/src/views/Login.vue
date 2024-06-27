@@ -114,14 +114,16 @@ export default {
                             user_email: res.data.email,
                             user_no: res.data.user_no,
                         };
-                        this.setUser(userPayload);
-                        console.log(res.data.email);
+                        this.$store.commit('setUser',userPayload);
+                        // this.setUser(userPayload);
+                        console.log("user_email",res.data.email);
                     } else {
                         const trainerPayload = {
                             tr_email: res.data.email,
                             tr_no: res.data.tr_no,
                         };
-                        this.setTrainer(trainerPayload);
+                        this.$store.commit('setTrainer',trainerPayload);
+                        // this.setTrainer(trainerPayload);
                     }
 
                     this.$swal({

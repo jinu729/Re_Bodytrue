@@ -277,6 +277,8 @@ export default {
                 }
                 });
                 console.log('폼 제출 성공', response.data);
+                alert('회원 가입을 축하드립니다.');
+                this.$router.push({ path: '/login'});
             } catch (error) {
                 console.error('폼 제출 중 오류 발생', error);
             }
