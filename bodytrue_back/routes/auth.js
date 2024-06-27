@@ -31,20 +31,20 @@ router.post("/join", async (req, res) => {
       [user.USER_EMAIL, user.USER_PWD, user.USER_NAME, user.USER_SEX, user.USER_ADDNO, user.USER_ADD1, user.USER_ADD2, user.USER_TEL], 
       (err, results, fields) => {
           //쿼리 실행
-          if (err) {
-              res.send({
-              // 에러 발생 시
-              code: 400,
-              failed: "error occurred",
-              error: err,
-              });
-          } else {
-              res.send({
-              //쿼리 실행 성공시
-              code: 200,
-              message: "회원가입 성공",
-              });
-          }
+            if (err) {
+                res.send({
+                // 에러 발생 시
+                code: 400,
+                failed: "error occurred",
+                error: err,
+                });
+            } else {
+                res.send({
+                //쿼리 실행 성공시
+                code: 200,
+                message: "회원가입 성공",
+                });
+            }
   });
 });
 
@@ -53,6 +53,7 @@ router.post("/패스명(bodytrue_join.html)", async (req, res) => {
 
   const email = req.body.email1 + '@' + req.body.email2;
   const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
+
   const tr = {
     //프론트에서 전달해주는 데이터
     tr_email: email,
@@ -192,29 +193,47 @@ router.post("/패스명(bodytrue_findId.html)",async(req,res)=>{
 
 //회원 로그인
 
-router.post("패스명",async(req,res)=>{
+router.post("/login_user",async(req,res)=>{
 
   const data={
     user_email : req.body.email,
     user_pwd : req.body.pwd
   }
 
+  console.log(data.user_email);
+  console.log(data.user_pwd);
+  console.log("------------");
+
   db.query('select user_no, user_email, user_name from user where user_email = ? and user_pwd = ?',
     [data.user_email,data.user_pwd],
     function(err,results,fields){
+
+      console.log(results.length);
+      console.log(data.user_email);
+
     if (err) {
         res.send({
         // 에러 발생 시
         code: 400,
         failed: "error occurred",
-        error: err,
+        error: err,x
         });
     } else {
-        res.send({
-        //쿼리 실행 성공시
-        code: 200,
-        message: "로그인성공",
-        });
+        if( results.length === 0){
+            res.send({
+            //쿼리 실행 성공시
+            code: 401,
+            message: "로그인실패",
+            });
+          }else{
+            res.send({
+              //쿼리 실행 성공시
+              code: 200,
+              message: "로그인성공",
+              });
+            
+        }
+        
     }
   });
 });
@@ -316,7 +335,7 @@ router.post("/패스명",async(req,res)=>{
         user_social : 2
     };
 
-    db.query("insert into user (user_email,user_name,user_social) values (?,?,?)",
+    db.query("insert into user (user_email,user_name,user_social) values (?,?,2)",
         [user.user_email,user.user_name,user.user_social],
         (err)=>{
             if (err) {
@@ -468,6 +487,8 @@ router.post("/trainer_join", async (req, res) => {
 
   const email = req.body.email1 + '@' + req.body.email2;
   const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
+
+
   const user = {
     //프론트에서 전달해주는 데이터
     USER_EMAIL: req.body.email,
@@ -504,36 +525,98 @@ router.post("/trainer_join", async (req, res) => {
 
 //회원 로그인
 
-router.post("패스명",async(req,res)=>{
+router.post("/login_user",async(req,res)=>{
 
-  const data={
-    user_email : req.body.email,
-    user_pwd : req.body.pwd
-  }
+  // const data={
+  //   user_email : req.body.email,
+  //   user_pwd : req.body.pwd
+  // }
+  const user_email = req.body.email;
+  const user_pwd = req.body.pwd;
+  console.log("req.body",req.body);
+  console.log("req.email",user_email);
+  console.log("req.pwd",user_pwd);
 
-  db.query('select user_no, user_email, user_name from user where user_email = ? and user_pwd = ?',
-    [data.user_email,data.user_pwd],
+  db.query('select user_no, user_email, user_name, user_pwd from user where user_email = ?',
+    [user_email],
     function(err,results,fields){
     if (err) {
+        // console.error("Database Query Error:", err);
         res.send({
         // 에러 발생 시
         code: 400,
         failed: "error occurred",
         error: err,
         });
+        console.log("res.send",res.send);
     } else {
+      // console.log("-------------------------------------------");
+      if (results.length > 0) {
+        const user = results[0];
+        console.log("-------------------------------------------");
+        console.log("user",user);
+        console.log(user.user_email);
+        if (user.user_pwd === user_pwd) {
+          res.send({
+            // 로그인 성공 시
+            code: 200,
+            message: "로그인 성공",
+            data: {
+              user_no: user.user_no,
+              user_email: user.user_email,
+              user_name: user.user_name,
+              user_pwd: user.user_pwd,
+            }
+          });
+        } else {
+          res.send({
+            // 비밀번호 불일치 시
+            code: 401,
+            message: "비밀번호가 일치하지 않습니다.",
+          });
+        }
+      } else {
         res.send({
-        //쿼리 실행 성공시
-        code: 200,
-        message: "로그인성공",
+          // 이메일이 존재하지 않을 시
+          code: 404,
+          message: "사용자를 찾을 수 없습니다.",
         });
+      }
     }
   });
 });
 
+// router.post("/login_user",async(req,res)=>{
+
+//   const data={
+//     user_email : req.body.email,
+//     user_pwd : req.body.pwd
+//   }
+
+//   db.query('select user_no, user_email, user_name, user_pwd from user where user_email = ? and user_pwd = ?',
+//     [data.user_email,data.user_pwd],
+//     function(err,results,fields){
+      
+//     if (results[0] == null) {
+//         res.send({
+//         // 에러 발생 시
+//         code: 400,
+//         failed: "error occurred",
+//         error: err,
+//         });
+//     } else {
+//         res.send({
+//         //쿼리 실행 성공시
+//         code: 200,
+//         message: "로그인성공",
+//         });
+//     }
+//   });
+// });
+
 //트레이너 로그인
 
-router.post("패스명",async(req,res)=>{
+router.post("/login_tr",async(req,res)=>{
 
   const data={
     tr_email : req.body.email,
@@ -550,6 +633,7 @@ router.post("패스명",async(req,res)=>{
         failed: "error occurred",
         error: err,
         });
+        console.log(err)
     } else {
         res.send({
         //쿼리 실행 성공시

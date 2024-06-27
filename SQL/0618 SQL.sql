@@ -293,7 +293,12 @@ select * from faq;
 insert into faq (faq_q) values ("새로운질문");
 update faq set faq_a = "새로운질문에대한 답" where faq_no = 3;
 
-select * from trainer;
+select * from  user;
+
+select * from user;
 
 select * from img;
+
+select user_no, IFNULL(max(user_email),"악") AS user_email, user_name from user where user_email = "MSH980@GMAIL.COM" and user_pwd = "1234";
+
 COMMIT;

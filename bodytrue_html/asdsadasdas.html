@@ -1,0 +1,54 @@
+<style scoped>
+    .image-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 20px;
+    }
+    
+    .image-item {
+        width: calc(25% - 10px);
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .image-item img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    
+    .image-grid .second-row {
+        justify-content: flex-start; /* 두 번째 줄 이미지 왼쪽 정렬 */
+    }
+    </style>
+    
+    <div class="image-grid">
+        <!-- 첫 번째 줄 이미지 아이템 -->
+        <div class="image-item">
+            <img src="image1.jpg" alt="Image 1">
+        </div>
+        <div class="image-item">
+            <img src="image2.jpg" alt="Image 2">
+        </div>
+        <div class="image-item">
+            <img src="image3.jpg" alt="Image 3">
+        </div>
+        <div class="image-item">
+            <img src="image4.jpg" alt="Image 4">
+        </div>
+        <!-- 두 번째 줄 이미지 아이템 -->
+        <div class="image-item second-row">
+            <img src="image5.jpg" alt="Image 5">
+        </div>
+        <div class="image-item second-row">
+            <img src="image6.jpg" alt="Image 6">
+        </div>
+        <!-- 추가 이미지 아이템 -->
+        <!-- 필요에 따라 계속해서 추가할 수 있습니다 -->
+    </div>
+    

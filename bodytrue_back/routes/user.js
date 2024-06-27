@@ -19,12 +19,13 @@ const path = require("path");
 
 
 //은미작성
-//상품 상세 페이지
+
+/* 상품 디테일 시작 */
 router.get('/prodetail/:pro_no', function(request, response, next){
+    
     const pro_no = request.params.pro_no;
     // console.log(`Received request for PRO_NO: ${request.params.pro_no}`);
     // console.log(pro_no);
-
 
     //쿼리문 여러개 실행해야해서 async/await 사용
     async function getProductDetail(pro_no){
@@ -37,7 +38,7 @@ router.get('/prodetail/:pro_no', function(request, response, next){
                     }
                     resolve(results);
                 });
-            });
+            }); 
 
             //리뷰 정보 가져오기
             const reviews = await new Promise((resolve, reject) => {
@@ -89,15 +90,94 @@ router.get('/prodetail/:pro_no', function(request, response, next){
     
 });
 
-// router.post("/calendarin", function(request, response, next)=>{
+//예약하기
+router.post('/calendarin', function(request, response, next) {
 
-// });
+    const cal_pro_no = request.body.pro_no;
+    const cal_user_no = request.body.user_no;
+    const cal_tr_no = request.body.tr_no;
+    const cal_startdate = request.body.startdate;
+    const cal_enddate = request.body.enddate;
 
+    db.query(`insert into calendar (cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate) values (?, ?, ?, ?, ?)`, 
+        [cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate], function(error, result, field){
+
+            if(error){
+                console.error(error);
+                return response.status(500).json({ error : '예약에러' });
+            }
+            response.json(result);
+    });
+});
+
+//찜하기
+router.post('/makeplike', function(request, response, next) {
+
+    const plike_user_no = request.body.plike_user_no;
+    const plike_pro_no = request.body.plike_pro_no;
+
+    db.query(`insert into plike(plike_user_no, plike_pro_no) values (?, ?)`, [plike_user_no, plike_pro_no], function(error, result, field){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error : '좋아요에러'});
+        }
+        response.json(result);
+        console.log(result);
+    });
+});
+/* 상품 디테일 끝 */
+
+/* 마이페이지 시작 */
+router.post('/mypage/:user_no', function(request, response, next){
+    const user_no = request.params.user_no;
+
+    db.query(`select user_name, user_email, user_tel from user where user_no = ?`,[user_no], function(error, result, field){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '마이페이지 유저정보 에러'});
+        }
+        response.json(result);
+        console.log(result);
+    });
+});
+
+/* 마이페이지 끝 */
 
 //은미작성완
 
 
 //재영작성
+router.get('/users', (req, res) => {
+    const sql = 'SELECT * FROM users';
+
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error('Error querying database:', err);
+            res.status(500).json({ error: 'Error querying database' });
+            return;
+        }
+        res.json(results);
+    });
+});
+
+// 사용자 상세 정보 조회
+router.get('/users/:id', (req, res) => {
+    const userId = req.params.id;
+    const sql = 'SELECT * FROM users WHERE id = ?';
+
+    db.query(sql, [userId], (err, results) => {
+        if (err) {
+            console.error('Error querying database:', err);
+            res.status(500).json({ error: 'Error querying database' });
+            return;
+        }
+        if (results.length === 0) {
+            res.status(404).json({ error: 'User not found' });
+            return;
+        }
+        res.json(results[0]);
+    });
+});
 
 
 //재영작성완

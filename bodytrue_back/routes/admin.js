@@ -10,7 +10,7 @@ const path = require("path");
 
 //회원리스트 불러오기
 
-router.post("/userlist",async(req,res)=>{
+router.get("/userlist",async(req,res)=>{
     db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user",(err,results)=>{
         if (err) {
             res.send({
@@ -21,13 +21,14 @@ router.post("/userlist",async(req,res)=>{
             });
           } else {
             res.send(results);
+            console.log(results);
           }
     });
 });
 
 //이름 검색하기
 
-router.get("/2",async(req,res)=>{
+router.get("/searchname",async(req,res)=>{
 
     // const name = req.body.name;
     const name = "민승호";
@@ -74,7 +75,7 @@ router.post("/패스명",async(req,res)=>{
 
 //트레이너리스트 불러오기
 
-router.post("/패스명",async(req,res)=>{
+router.get("/trainerlist",async(req,res)=>{
 
 
     db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer",(err,results)=>{
@@ -140,7 +141,7 @@ router.post("/패스명",async(req,res)=>{
 
 //리뷰리스트 불러오기
 
-router.post("/패스명",async(req,res)=>{
+router.get("/reviewlist",async(req,res)=>{
 
     db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer",(err,results)=>{
         if (err) {
@@ -162,7 +163,7 @@ router.post("/패스명",async(req,res)=>{
 
 //질문 등록하기
 
-router.post("/패스명",async(req,res)=>{
+router.post("/insertQ",async(req,res)=>{
 
     const Q = req.body.Q
 
@@ -185,7 +186,7 @@ router.post("/패스명",async(req,res)=>{
 
 //답글 등록하기     얘 좀 이상함 동네사람들 이것좀보세요
 
-router.post("/패스명",async(req,res)=>{
+router.post("/insertA",async(req,res)=>{
 
     const data={
         A : req.body.A,
@@ -211,7 +212,7 @@ router.post("/패스명",async(req,res)=>{
 
 //질문 불러오기
 
-router.post("/패스명",async(req,res)=>{
+router.get("/loadQ",async(req,res)=>{
     
     db.query("select faq_q from faq",(err,results)=>{
         if (err) {
@@ -230,7 +231,7 @@ router.post("/패스명",async(req,res)=>{
 
 //답글 불러오기
 
-router.post("/패스명",async(req,res)=>{
+router.get("/loadA",async(req,res)=>{
     
     db.query("select faq_a from faq",(err,results)=>{
         if (err) {
@@ -248,7 +249,7 @@ router.post("/패스명",async(req,res)=>{
 
 //질문 수정하기
 
-router.post("/패스명",async(req,res)=>{
+router.post("/updateQ",async(req,res)=>{
 
     const data={
         Q : req.body.Q,
@@ -273,7 +274,7 @@ router.post("/패스명",async(req,res)=>{
 
 //답글 수정하기
 
-router.post("/패스명",async(req,res)=>{
+router.post("/updateA",async(req,res)=>{
 
     const data={
         A : req.body.A,
@@ -298,7 +299,7 @@ router.post("/패스명",async(req,res)=>{
 
 //FAQ 삭제하기
 
-router.post("/패스명",async(req,res)=>{
+router.post("/delFAQ",async(req,res)=>{
 
     const faq_no = req.body
 
