@@ -1,92 +1,107 @@
 <template>
-    <div class="adminuser">
-      <main class="admin_userlist-main">
-        <div class="admin_userlist-bodyheader">
-          &nbsp;&nbsp;회원 목록
+  <div class="adminuser">
+    <main class="admin_userlist-main">
+      <div class="admin_userlist-bodyheader">
+        &nbsp;&nbsp;회원 목록
+      </div>
+      <div class="admin_userlist-bodysearch">
+        <input 
+          v-model="searchTerm" 
+          type="text" 
+          class="search-input" 
+          placeholder="이름 검색" 
+          @keyup.enter="searchUsers"
+        >
+        <button class="search-button" @click="searchUsers">🔍</button>
+      </div>
+      <div class="admin_userlist-bodycontent">
+        <table>
+          <thead>
+            <tr>
+              <th>이메일</th>
+              <th>비밀번호</th>
+              <th>이름</th>
+              <th>핸드폰번호</th>
+              <th>성별</th>
+              <th>주소1</th>
+              <th>주소2</th>
+              <th>정지</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(user, index) in userList" :key="index">
+              <td>{{ user.user_email }}</td>
+              <td>{{ user.user_pwd }}</td>
+              <td>{{ user.user_name }}</td>
+              <td>{{ user.user_tel }}</td>
+              <td>{{ user.user_sex }}</td>
+              <td>{{ user.user_add1 }}</td>
+              <td>{{ user.user_add2 }}</td>
+              <td><button @click="banUser(user.user_no)">❌</button></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="admin_userlist-bodypaging">
+          <!-- 페이징 버튼은 필요에 따라 추가 -->
         </div>
-        <div class="admin_userlist-bodysearch">
-          <input v-model="searchTerm" type="text" id="name" class="search-input" placeholder="이름 검색">
-          <button @click="search" class="search-button">🔍</button>
-        </div>
-        <div class="admin_userlist-bodycontent">
-          <table>
-            <thead>
-              <tr>
-                <th>이메일</th>
-                <th>비밀번호</th>
-                <th>이름</th>
-                <th>핸드폰번호</th>
-                <th>성별</th>
-                <th>주소1</th>
-                <th>주소2</th>
-                <th>정지</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="user in paginatedData" :key="user.email">
-                <td>{{ user.email }}</td>
-                <td>{{ user.password }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.phone }}</td>
-                <td>{{ user.gender }}</td>
-                <td>{{ user.address1 }}</td>
-                <td>{{ user.address2 }}</td>
-                <td><button @click="banUser(user.email)">❌</button></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="admin_userlist-bodypaging">
-            <a v-for="page in totalPages" :key="page" href="#" @click.prevent="goToPage(page)" :class="{ active: currentPage === page }">{{ page }}</a>
-          </div>
-        </div>
-      </main>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        
-        name: 
-        searchTerm: '',
-        currentPage: 1,
-        rowsPerPage: 2,
-        users: [
-          { email: "bodytrue@email.com", password: "1234", name: "바디트루", phone: "010-1234-5678", gender: "여", address1: "서울시 종로구", address2: "창신동" }
-        ]
-      };
+      </div>
+    </main>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      searchTerm: '',
+      userList: []
+    };
+  },
+  methods: {
+    getUserList() {
+      axios.post('http://localhost:8081/userlist')
+        .then(response => {
+          this.userList = response.data;
+        })
+        .catch(error => {
+          console.error('Error fetching user list:', error);
+        });
     },
-    computed: {
-      filteredUsers() {
-        if (this.searchTerm === '') return this.users;
-        return this.users.filter(user => user.name.includes(this.searchTerm));
-      },
-      paginatedData() {
-        const start = (this.currentPage - 1) * this.rowsPerPage;
-        const end = start + this.rowsPerPage;
-        return this.filteredUsers.slice(start, end);
-      },
-      totalPages() {
-        return Math.ceil(this.filteredUsers.length / this.rowsPerPage);
-      }
+    searchUsers() {
+      axios.get('http://localhost:8081/search', {
+        params: {
+          name: this.searchTerm
+        }
+      })
+      .then(response => {
+        this.userList = response.data;
+      })
+      .catch(error => {
+        console.error('Error searching users:', error);
+      });
     },
-    methods: {
-      search() {
-        this.currentPage = 1;
-      },
-      goToPage(page) {
-        this.currentPage = page;
-      },
-      banUser(email) {
-        alert(`User ${email} banned`);
-        // 실제로 사용자를 정지하는 로직 추가
-      }
+    banUser(userNo) {
+      axios.post('http://localhost:8081/ban', {
+        user_no: userNo
+      })
+      .then(response => {
+        console.log('User banned:', response.data);
+        this.getUserList(); // 정지 후 목록 갱신
+      })
+      .catch(error => {
+        console.error('Error banning user:', error);
+      });
     }
-  };
-  </script>
-  
-  <style scoped>
+  },
+  mounted() {
+    this.getUserList();
+  }
+};
+</script>
+<style scoped>
+/* admin_userlist main 스타일 시작 */
 .admin_userlist-main {
     width: 100%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
     margin: 2px 0; /* 위아래 여백을 10px로 설정 */
@@ -200,4 +215,4 @@
 }
 /* 반응형 웹을 위한 미디어 쿼리 끝 */
 
-  </style>
+</style>
