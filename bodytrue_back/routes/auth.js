@@ -230,6 +230,8 @@ router.post("/login_user",async(req,res)=>{
               //쿼리 실행 성공시
               code: 200,
               message: "로그인성공",
+              email: results[0].user_email,
+              user_no: results[0].user_no
               });
             
         }

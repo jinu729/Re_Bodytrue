@@ -12,9 +12,9 @@
                 </div>
                 <div class="pro_right">
                     <span class="user_title">회원</span>
-                    <span class="user_name">홍길동</span>
-                    <span class="user_email">이메일 : bodytrue@bodytrue.com</span>
-                    <span class="user_phnumber">휴대전화번호 : 010-1111-1111</span>
+                    <span class="user_name">{{userData.user_name}}</span>
+                    <span class="user_email">{{userData.user_email}}</span>
+                    <span class="user_phnumber">{{userData.user_tel}}</span>
                     <div class="user_update">                        
                         <button class="update" type="button">정보수정</button>
                     </div>
@@ -236,60 +236,40 @@
 <script>
 import axios from 'axios';
 
-export default{
+export default {
     data(){
         return{
-            user_no : this.$router.params.user_no
+            userData: {
+                user_name: '',
+                user_email: '',
+                user_tel: ''
+            }
         };
     },
 
     created(){
-        this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
-        console.log("store",this.$store.state.user);
+        // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
+        const user_no = this.$route.params.user_no;
+        axios.post(`http://localhost:3000/user/mypage/${user_no}`)
+            .then(response =>{
+                this.userData = response.data[0];
+            })
+            .catch(error => {
+                console.error("마이페이지 에러발생",error);
+            })
     },
 
-    computed: {
-      user(){
-        return this.$store.state.user;
+    computed:{
+        user_no(){
+            return this.$store.state.user.user_no;
         },
-    },
-
-    methods: {
-        async userinfo(){
-            try{
-                if(!this.user_no){
-                    alert('로그인 하세용');
-                    this.$router.push({ path: '/login' });
-                    return;
-                }
-                const response = await axios.post(`http://localhost:3000/user/mypage/${user_no}`);
-                    this.user_no = response.data[0];
-
-            }catch (error){
-                console.error('에러발생',error);
-            }
+        user_email(){
+            return this.$store.state.user.user_email;
         }
-        
     }
+
 }
-
-    // // 이미지 사이즈 규격 설정 해야함
-    // const imageUpload = document.getElementById('image-upload');
-    // const profilePicture = document.getElementById('profile-picture');
-
-    // imageUpload.addEventListener('change', (event) => {
-    //     const file = event.target.files[0];
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onload = (e) => {
-    //             profilePicture.src = e.target.result;
-    //         }
-    //         reader.readAsDataURL(file);
-    //     }
-    // });
-
 </script>
-
 <style scoped>
 /* mypage */
 .mypage_main{
