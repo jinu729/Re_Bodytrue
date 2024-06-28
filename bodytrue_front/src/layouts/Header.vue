@@ -74,12 +74,13 @@ export default {
         logout() {
             this.setUser({ user_email: '', user_no: '' });
             this.setTrainer({ tr_email: '', tr_no: '' });
-            this.setAdmin({ user_email: '', user_no: '' ,user_auth: ''});
             localStorage.clear(); // 로컬 스토리지 비우기
             console.log(this.$store.state.user); // 상태 변화 확인
-            console.log(this.$store.state.trainer); // 상태 변화 확인
-            console.log(this.$store.state.admin); // 상태 변화 확인
             this.$router.push('/login'); // 로그인 페이지로 리다이렉트
+            localStorage.removeItem('userID'); // 로컬 스토리지에서 사용자 ID 제거
+            this.$store.commit('clearUser'); // Vuex 상태에서 사용자 정보 초기화
+            window.location.href = "/"; // 로그아웃 후 홈 페이지로 이동 (선택사항)
+
         }
     }
 }
