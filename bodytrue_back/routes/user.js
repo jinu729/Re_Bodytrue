@@ -147,39 +147,55 @@ router.post('/mypage/:user_no', function(request, response, next){
 
 
 //재영작성
-router.get('/users', (req, res) => {
-    const sql = 'SELECT * FROM users';
+// GET /programs 라우트 정의
+router.get('/programlist', (req, res) => {
 
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.error('Error querying database:', err);
-            res.status(500).json({ error: 'Error querying database' });
-            return;
+    db.query(`SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH),',',1) AS IMG_PATH
+                FROM PROGRAM P
+                LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+                LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+                LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+                GROUP BY P.PRO_NO;`,
+             (error, results, fields) => {
+        if (error) {
+            console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
+            return res.status(500).json({ error: '데이터베이스 오류' });
         }
-        res.json(results);
+        console.log(results);
+        res.json(results); // 결과를 JSON 형태로 응답
     });
-});
-
-// 사용자 상세 정보 조회
-router.get('/users/:id', (req, res) => {
-    const userId = req.params.id;
-    const sql = 'SELECT * FROM users WHERE id = ?';
-
-    db.query(sql, [userId], (err, results) => {
-        if (err) {
-            console.error('Error querying database:', err);
-            res.status(500).json({ error: 'Error querying database' });
-            return;
-        }
-        if (results.length === 0) {
-            res.status(404).json({ error: 'User not found' });
-            return;
-        }
-        res.json(results[0]);
     });
-});
 
 
+// Multer 설정: 이미지 업로드를 위한 미들웨어
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './uploads/program'); // 프로그램 이미지를 저장할 디렉토리
+    },
+    filename: function (req, file, cb) {
+      const ext = path.extname(file.originalname);
+      cb(null, 'image-' + Date.now() + ext); // 파일 이름 설정 (유니크하게 설정하는 것이 좋음)
+    }
+  });
+  
+  const upload = multer({ storage: storage });
+  
+  // 이미지 업로드 API
+  router.post('/uploadImage', upload.single('image'), (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+  
+    // 이미지가 업로드된 경로 (저장된 경로)를 데이터베이스에 저장할 수 있음
+    const imagePath = '/uploads/program/' + req.file.filename;
+  
+    // 여기서 imagePath를 데이터베이스에 저장하는 로직을 추가해야 함
+    // 예를 들어 IMG 테이블에 이미지 경로를 INSERT하는 쿼리를 실행
+  
+    // DB에 저장된 이미지 경로를 클라이언트에 응답할 수도 있음
+    res.json({ imagePath: imagePath });
+  });
+  
 //재영작성완
 
 
