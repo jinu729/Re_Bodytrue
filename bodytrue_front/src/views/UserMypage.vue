@@ -48,51 +48,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 1</td>
-                            <td>2024-06-18 09:00</td>
+                        <!--고유한 키값 설정해줘야해서 cal_startdate 키값으로 냅둠ㅇㅇ cal.pro_name은 중복값이 많으므로 탈락-->
+                        <tr v-for="cal in pagingData" :key="cal.cal_startdate">
+                            <td>{{ cal.pro_name }}</td>
+                            <td>{{ cal.tr_name }}</td>
+                            <td>{{ cal.cal_startdate }}</td>
                             <td></td>
                             <td><button class="re_btn">리뷰작성하기</button></td>
-                        </tr>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 1</td>
-                            <td>2024-06-18 11:00</td>
-                            <td></td>
-                            <td><button class="re_btn">리뷰작성하기</button></td>
-                        </tr>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 2</td>
-                            <td>2024-06-20 09:00</td>
-                            <td><button class="cal_btn">변경</button></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 2</td>
-                            <td>2024-06-22 09:00</td>
-                            <td><button class="cal_btn">변경</button></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 2</td>
-                            <td>2024-06-25 09:00</td>
-                            <td><button class="cal_btn">변경</button></td>
-                            <td></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="list_number">
+            <!--예약리스트 페이징-->
+            <div class="pagination">
                 <ul class="number_box">
-                    <li>1</li>
-                    <li>2</li>
-                    <li>3</li>
-                    <li>4</li>
-                    <li>5</li>
+                    <li name="number_box" v-for="page in totalPages" :key="page" 
+                    @click="changePage(page)" :class="{active: page === currentPage }">
+                    {{ page }}
+                    </li>
                 </ul>
             </div>
         </div>
@@ -112,51 +85,11 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 1</td>
-                            <td>2024-06-18 09:00</td>
-                            <td>5.0</td>
-                            <td>
-                                <button class="reupdate_btn">수정</button>
-                                <button class="reupdate_btn">취소</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 1</td>
-                            <td>2024-06-18 11:00</td>
-                            <td>4.0</td>
-                            <td>
-                                <button class="reupdate_btn">수정</button>
-                                <button class="reupdate_btn">취소</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 2</td>
-                            <td>2024-06-20 09:00</td>
-                            <td>1.0</td>
-                            <td>
-                                <button class="reupdate_btn">수정</button>
-                                <button class="reupdate_btn">취소</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 2</td>
-                            <td>2024-06-22 09:00</td>
-                            <td>2.0</td>
-                            <td>
-                                <button class="reupdate_btn">수정</button>
-                                <button class="reupdate_btn">취소</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>프로그램 1</td>
-                            <td>트레이너 2</td>
-                            <td>2024-06-25 09:00</td>
-                            <td>3.0</td>
+                        <tr v-for="re in reData" :key="re.cal_startdate">
+                            <td>{{ re.pro_name }}</td>
+                            <td>{{ re.tr_name }}</td>
+                            <td>{{ re.cal_startdate }}</td>
+                            <td>{{ re.re_rate || '리뷰작성안함'}}</td>
                             <td>
                                 <button class="reupdate_btn">수정</button>
                                 <button class="reupdate_btn">취소</button>
@@ -165,13 +98,12 @@
                     </tbody>
                 </table>
             </div>
-            <div class="list_number">
+            <div class="pagination">
                 <ul class="number_box">
-                    <li>1</li>
-                    <li>2</li>
-                    <li>3</li>
-                    <li>4</li>
-                    <li>5</li>
+                    <li name="number_box" v-for="repage in retotalPages" :key="repage"
+                    @click="rechangePage(page)" :class="{active: repage === recurrentPage }">
+                    {{ repage }}
+                    </li>
                 </ul>
             </div>
         </div>
@@ -243,20 +175,32 @@ export default {
                 user_name: '',
                 user_email: '',
                 user_tel: ''
-            }
+            },
+            calData: [],
+            reData:[],
+            plikeData:[],
+            currentPage: 1,
+            itemsPerPage: 5,
+            recurrentPage: 1,
+            reitemsPerPage: 5
         };
     },
 
     created(){
+        //내정보 불러오는 methods 생성
+        this.myinfo();
+        this.mycalcheck();
+        this.myrecheck();
+        this.myplike();
         // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
-        const user_no = this.$route.params.user_no;
-        axios.post(`http://localhost:3000/user/mypage/${user_no}`)
-            .then(response =>{
-                this.userData = response.data[0];
-            })
-            .catch(error => {
-                console.error("마이페이지 에러발생",error);
-            })
+        // const user_no = this.$route.params.user_no;
+        // axios.post(`http://localhost:3000/user/mypage/${user_no}`)
+        //     .then(response =>{
+        //         this.userData = response.data[0];
+        //     })
+        //     .catch(error => {
+        //         console.error("마이페이지 에러발생",error);
+        //     })
     },
 
     computed:{
@@ -265,7 +209,84 @@ export default {
         },
         user_email(){
             return this.$store.state.user.user_email;
+        },
+        //예약 현재 페이지 계산
+        pagingData(){
+            const start = (this.currentPage -1 )* this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.calData.slice(start, end);
+        },
+        totalPages(){
+            return Math.ceil(this.calData.length / this.itemsPerPage);
+        },
+        //리뷰 현재 페이지 계산
+        repagingData(){
+            const start = (this.recurrentPage -1 )* this.reitemsPerPage;
+            const end = start + this.reitemsPerPage;
+            return this.reData.slice(start,end);
+        },
+        retotalPages(){
+            return Math.ceil(this.reData.length / this.reitemsPerPage);
         }
+    },
+    methods:{
+        //내 정보 확인
+        async myinfo(){
+            const user_no = this.$route.params.user_no;
+            axios.post(`http://localhost:3000/user/mypage/${user_no}`)
+            .then(response => {
+                this.userData = response.data[0];
+            })
+            .catch(error => {
+                console.error("마이페이지 에러 발생", error);
+            })
+        },
+        //내 예약 확인
+        async mycalcheck(){
+            const user_no = this.$route.params.user_no;
+            try{
+                const response = await axios.post(`http://localhost:3000/user/mycalcheck`,{user_no:user_no});
+                const data = response.data
+                this.calData = data;
+                console.log("calData",this.calData);
+            } catch(error){
+                console.error('예약 정보 불러오는 중 오류 발생', error);
+            }
+        },
+        //내 리뷰 확인
+        async myrecheck(){
+            const user_no = this.$route.params.user_no;
+            try{
+                const response = await axios.post(`http://localhost:3000/user/myrecheck`,{user_no:user_no});
+                const data = response.data;
+                this.reData = data;
+                console.log("reData:", this.reData);
+            } catch(error){
+                console.error("리뷰정보 불러오는 중 에러 발생", error);
+            }
+        },
+        //내 찜 확인
+        async myplike(){
+            const user_no= this.$route.params.user_no;
+            try{
+                const response = await axios.post(`http://localhost:3000/user/myplike`,{user_no:user_no});
+                const data = response.data;
+                this.plikeData = data;
+                console.log("plikeData:", this.plikeData);
+            } catch(error){
+                console.error("찜 정보 불러오는 중 에러 발생", error);
+            }
+        },
+
+        //페이징
+        changePage(page){
+            this.currentPage = page;
+        },
+
+        rechangePage(repage){
+            this.recurrentPage = repage;
+        }
+
     }
 
 }
@@ -403,13 +424,13 @@ export default {
 }
 
 /* section3, section4 공통 */
-.list_number{
+.pagination{
     width: 100%;
     margin: 0 auto;
     text-align: center;
     padding-top: 10px;
 }
-.list_number .number_box{
+.pagination .number_box{
     display: flex;
     flex-wrap: wrap;
     text-align: center;
@@ -419,7 +440,7 @@ export default {
 .number_box li{
     width: 20px;
 }
-.number_box li:nth-child(1){
+.number_box li.active{
     background-color: aquamarine;
     border-radius: 5px;
     /* color: white; */

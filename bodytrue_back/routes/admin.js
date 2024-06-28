@@ -188,6 +188,94 @@ router.get("/reviewlist",async(req,res)=>{
 
 //리뷰 상세내용 불러오기
 
+router.get('/reviewdetail/:re_no', function(request, response, next){
+    
+  const re_no = request.params.re_no;
+
+  // console.log(re_no);
+ 
+
+  //쿼리문 여러개 실행해야해서 async/await 사용
+  async function getreviewDetail(re_no){
+      try{
+
+          //리뷰 상세정보 가져오기
+          const reviewDetails = await new Promise((resolve, reject) => {
+              db.query(`select re_pro_no from review where re_no = ?`,
+                 [re_no], 
+                 (error, results) => {
+                  if(error) {
+                      return reject(error);
+                  }else{
+                    const pro_no = results[0].re_pro_no
+
+                    db.query(`SELECT PRO_NAME,TR_NAME,USER_NAME,DATE_FORMAT(RE_DATE,"%y-%m-%d"),RE_COMMENT
+                         FROM PROGRAM P JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO JOIN USER U ON R.RE_USER_NO = U.USER_NO
+                         where pro_no = ?`,
+                        [pro_no], 
+                        (error, results) => {
+                          if(error) {
+                              return reject(error);
+                          }
+                          resolve(results);
+                              }); 
+                  }
+              });
+          }); 
+
+          //프로그램 썸네일사진 가져오기
+          const proImg = await new Promise((resolve, reject) => {
+            db.query(`select re_pro_no from review where re_no = ?`,
+              [re_no], 
+              (error, results) => {
+               if(error) {
+                   return reject(error);
+               }else{
+                
+                const pro_no = results[0].re_pro_no
+                 console.log(results);
+
+                        db.query(`SELECT IMG_PATH FROM IMG 
+                                WHERE IMG_PRO_NO = ? AND IMG_TYPE = 0`,
+                            [pro_no],
+                            (error, results) => {
+                    if(error){
+                        return reject(error);
+                    }
+                    resolve(results);
+                });
+               }
+           });
+          });
+
+          //리뷰 사진 가져오기
+          const reviewImg = await new Promise((resolve, reject) => {
+            db.query(`SELECT IMG_PATH FROM IMG
+                      WHERE IMG_RE_NO = ?;`,
+                        [re_no],
+                        (error, results) => {
+                if(error){
+                    return reject(error);
+                }
+                resolve(results);
+            });
+        });
+
+          //쿼리문 결과 합쳐서 응답보내기
+          response.json({
+            reviewDetails,
+            proImg,
+            reviewImg
+          });
+
+      } catch(error){
+          console.error(error);
+          response.status(500).json({ error: '서버에러'});
+      }
+  }
+  getreviewDetail(re_no);
+})
+
 //삭제하기
 
 //질문 등록하기

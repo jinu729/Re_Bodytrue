@@ -1,63 +1,61 @@
 <template>
-   <div>
-    <div class="sort_right">
-      &nbsp;&nbsp;
-      <select name="sort1" id="sort1" @change="handleSortChange">
-        <option value="마감순">마감순</option>
-        <option value="조회순">조회순</option>
-        <option value="평점순">평점순</option>
-      </select>
-    </div>
-    <main class="prolist_main">
-    <div class="prolist_list">
-        <!-- Program Items -->
-        <div v-for="(program, index) in programs" :key="index" class="program_item">
+    <div>
+      <div class="sort_right">
+        &nbsp;&nbsp;
+        <select name="sort1" id="sort1" @change="handleSortChange">
+          <option value="마감순">마감순</option>
+          <option value="조회순">조회순</option>
+          <option value="평점순">평점순</option>
+        </select>
+      </div>
+      <main class="prolist_main">
+        <div class="prolist_list">
+          <!-- Program Items -->
+          <div v-for="(program, index) in programList" :key="index" class="program_item">
             <div class="program_image">
-                <img id="proimage" :src="'../image/programlist/' + program.imageName">
+              <img :src="`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`" alt="Program Image">
             </div>
             <div class="program_details">
-                <p class="program_name">{{ program.name }} <span class="rating">★ {{ program.averageRating }}</span></p>
-                <p class="trainer_name">{{ program.trainerName }}</p>
+              <p class="program_name">{{ program.PRO_NAME }} </p>
+              <p class="trainer_name">{{ program.PRO_TRAINER }}</p>
+              <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG }}</span></p>
+
             </div>
+          </div>
         </div>
+      </main>
+      <!-- 이전 페이지로 가는 버튼 -->
+      <button v-if="currentPage > 1" @click="gotoPreviousPage">이전 페이지로</button>
+        
+        <!-- 다음 페이지로 가는 버튼 -->
+        <button v-if="currentPage < totalPages" @click="gotoNextPage">다음 페이지로</button>
     </div>
-</main>
-    </div>
-    
-</template>
+  </template>
 
 
 <script>
 import axios from 'axios';
 
-export default {
-    name: 'ProductList',
-    data() {
-        return {
-            programs: [] // 프로그램 데이터 배열
-        };
-    },
-    mounted() {
-        this.getPrograms(); // 컴포넌트가 마운트된 후 프로그램 데이터를 가져옴
-    },
-    methods: {
-    async getPrograms() {
+    export default {
+  name: 'ProgramList',
+  data() {
+    return {
+      programList: [] // 프로그램 데이터 배열
+    };
+  },
+  created(){
+    this.getProgramList();
+  },
+  mounted() {
+    this.getProgramList(); // 컴포넌트가 마운트된 후 프로그램 데이터를 가져옴
+  },
+  methods: {
+    async getProgramList() {
       try {
-        // 백엔드 엔드포인트 URL로 수정 필요
-        const response = await axios.get('http://localhost:3000/programs');
-        this.programs = response.data; // 가져온 데이터를 Vue 데이터에 할당
+        const response = await axios.get('http://localhost:3000/user/programlist'); // 백엔드 엔드포인트 URL
+        this.programList = response.data; // 가져온 데이터를 Vue 데이터에 할당
       } catch (error) {
         console.error('데이터를 가져오는 중 오류 발생:', error);
-      }
-    },
-    async handleSortChange(event) {
-      const sortType = event.target.value;
-      try {
-        // 백엔드 엔드포인트 URL로 정렬된 데이터 요청
-        const response = await axios.get(`http://localhost:3000/programs?sort=${sortType}`);
-        this.programs = response.data; // 정렬된 데이터를 Vue 데이터에 할당
-      } catch (error) {
-        console.error('정렬된 데이터를 가져오는 중 오류 발생:', error);
       }
     }
   }
@@ -109,13 +107,29 @@ export default {
     overflow: hidden;
     border-radius: 5px;
 }
-
+.program_name {
+  font-size: 18px;
+  font-weight: bold;
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  overflow: hidden; /* 넘치는 부분 숨김 */
+  text-overflow: ellipsis; /* 넘치는 부분에 ... 표시 */
+}
 /* 프로그램 이미지 스타일 */
-#proimage {
+.program_image {
     width: 100%;
             height: 200;
             object-fit: cover;
             border-radius: 5px;
+}
+.star-rating {
+    display: inline-block;
+    background-image: url('../image/review/star.png'); /* 별표 이미지 파일 경로로 대체 */
+    width: 15px; /* 별표 이미지의 너비 */
+    height: 15px; /* 별표 이미지의 높이 */
+    background-size: contain; /* 이미지 크기에 맞게 조정 */
+    line-height:20px;
+    text-indent: 22px; /* 텍스트를 숨기기 위해 사용 */
+
 }
 
 
