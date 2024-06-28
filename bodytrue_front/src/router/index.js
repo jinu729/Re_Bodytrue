@@ -31,7 +31,8 @@ import MainPage from '../views/MainPage.vue'
 //회창작성
 import Trainer from '../views/Trainer.vue'
 import Admin from '../views/Admin.vue'
-import AdminUser from '../views/AdminUser.vue'
+import AdminUser from '../views/userlist.vue'
+import AdminTrainer from '../views/trainerlist.vue'
 //회창작성완
 
 const routes = [
@@ -59,9 +60,14 @@ const routes = [
     component: Admin
   },
   {
-    path: '/adminuser',
+    path: '/admin/userlist',
     name: 'AdminUser',
     component: AdminUser
+  },
+  {
+    path: '/admin/trainerlist',
+    name: 'AdminTrainer',
+    component: AdminTrainer
   }
   //승호작성
 

@@ -30,8 +30,8 @@ router.get("/userlist",async(req,res)=>{
 
 router.get("/searchname",async(req,res)=>{
 
-    const name = req.body.name;
-    
+    // const name = req.body.name;
+    const name = req.query.name;
 
     db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user where user_name = ?",
         name,
@@ -52,7 +52,7 @@ router.get("/searchname",async(req,res)=>{
 
 //회원 정지하기
 
-router.post("/패스명",async(req,res)=>{
+router.post("/userban",async(req,res)=>{
 
     const ban_user_no = req.body;
 
@@ -76,8 +76,6 @@ router.post("/패스명",async(req,res)=>{
 //트레이너리스트 불러오기
 
 router.get("/trainerlist",async(req,res)=>{
-
-
     db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer",(err,results)=>{
         if (err) {
             res.send({
@@ -92,51 +90,82 @@ router.get("/trainerlist",async(req,res)=>{
     });
 });
 
+//트레이너이름 검색하기
+
+router.get("/search_tr_name",async(req,res)=>{
+
+  // const name = req.body.name;
+  const name = req.query.name;
+
+  db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer where tr_name = ?",
+      name,
+      (err,results)=>{
+      if (err) {
+          res.send({
+            // 에러 발생 시
+            code: 400,
+            failed: "error occurred",
+            error: err,
+          });
+        } else {
+          res.send(results);
+        // console.log(results);
+        }
+  });
+});
+
 
 //승인권한 변경
 
-router.post("/패스명",async(req,res)=>{
+router.post("/updatetr", async (req, res) => {
+  const { trainer_no } = req.body;
 
-    const admit_tr_no = req.body;
+  console.log(`Updating trainer no: ${trainer_no}`);  // 로그 추가
+  console.log(req.body);
 
-    db.query("update user set tr_admit = 1 where tr_no = ?",
-        admit_tr_no,
-        (err,results)=>{
-        if (err) {
-            res.send({
-              // 에러 발생 시
+  db.query("UPDATE trainer SET tr_admit = 1 WHERE tr_no = ?", [trainer_no], (err, results) => {
+      if (err) {
+          console.error('Error occurred:', err);  // 에러 로그 추가
+          res.status(400).send({
               code: 400,
               failed: "error occurred",
               error: err,
-            });
-          } else {
-            res.send(results);
-          }
-    });
-    
+          });
+      } else {
+          console.log('Trainer updated successfully:', results);  // 성공 로그 추가
+          res.status(200).send({
+              code: 200,
+              success: "Trainer updated successfully",
+              data: results,
+          });
+      }
+  });
 });
 
 //트레이너 삭제
 
-router.post("/패스명",async(req,res)=>{
+router.post("/trban", async (req, res) => {
+    const { trainer_no } = req.body;
 
-    const del_tr_no = req.body;
+    console.log(`Deleting trainer no: ${trainer_no}`);  // 로그 추가
 
-    db.query("delete from trainer where tr_no = ?",
-        del_tr_no,
-        (err,results)=>{
+    db.query("DELETE FROM trainer WHERE tr_no = ?", [trainer_no], (err, results) => {
         if (err) {
-            res.send({
-              // 에러 발생 시
-              code: 400,
-              failed: "error occurred",
-              error: err,
+            console.error('Error occurred:', err);  // 에러 로그 추가
+            res.status(400).send({
+                code: 400,
+                failed: "error occurred",
+                error: err,
             });
-          } else {
-            res.send(results);
-          }
+        } else {
+            console.log('Trainer deleted successfully:', results);  // 성공 로그 추가
+            res.status(200).send({
+                code: 200,
+                success: "Trainer deleted successfully",
+                data: results,
+            });
+        }
     });
-    
 });
 
 //리뷰리스트 불러오기

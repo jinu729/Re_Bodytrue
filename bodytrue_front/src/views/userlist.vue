@@ -29,7 +29,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, index) in userList" :key="index">
+            <tr v-for="(user, i) in userList" :key="i">
               <td>{{ user.user_email }}</td>
               <td>{{ user.user_pwd }}</td>
               <td>{{ user.user_name }}</td>
@@ -42,7 +42,9 @@
           </tbody>
         </table>
         <div class="admin_userlist-bodypaging">
-          <!-- 페이징 버튼은 필요에 따라 추가 -->
+          <button v-for="page in totalPages" :key="page" @click="gotoPage(page)">
+            {{ page }}
+          </button>
         </div>
       </div>
     </main>
@@ -56,12 +58,25 @@ export default {
   data() {
     return {
       searchTerm: '',
-      userList: []
+      userList: [],
+      currentPage: 1,
+      perPage: 10, //페이지 당 아이템 수
     };
+  },
+  computed: {
+    //현재 페이지의 데이터 계산
+    paginatedUsers() {
+      const start = (this.currentPage - 1) * this.perPage;
+      const end = start + this.perPage;
+      return this.userList.slice(start, end);
+    },
+    totalPages() {
+        return Math.ceil(this.userList.length / this.perPage);
+    }
   },
   methods: {
     getUserList() {
-      axios.post('http://localhost:8081/userlist')
+      axios.get('http://localhost:3000/admin/userlist')
         .then(response => {
           this.userList = response.data;
         })
@@ -70,7 +85,7 @@ export default {
         });
     },
     searchUsers() {
-      axios.get('http://localhost:8081/search', {
+      axios.get('http://localhost:3000/admin/searchname', {
         params: {
           name: this.searchTerm
         }
@@ -83,7 +98,7 @@ export default {
       });
     },
     banUser(userNo) {
-      axios.post('http://localhost:8081/ban', {
+      axios.post('http://localhost:3000/admin/userban', {
         user_no: userNo
       })
       .then(response => {
@@ -93,6 +108,9 @@ export default {
       .catch(error => {
         console.error('Error banning user:', error);
       });
+    },
+    gotoPage(page) {
+      this.currentPage = page;
     }
   },
   mounted() {
@@ -155,6 +173,7 @@ export default {
     border-collapse: collapse;
     display: flex;
     flex-direction: column;
+
 }
 
 
