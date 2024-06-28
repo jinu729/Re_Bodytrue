@@ -24,6 +24,7 @@ import UserMyPage from '../views/UserMypage.vue'
 //재영작성
 import MainPage from '../views/MainPage.vue'
 
+
 //재영작성완
 
 
@@ -106,6 +107,7 @@ const routes = [
 
 
 //재영작성
+
 
 //재영작성완
 

@@ -5,7 +5,10 @@
         <div class="login-container">
                 <div class="form_right">
                     <label for="user">
-                        <input type="radio" id="user" name="auth" v-model="user_auth" value="1" checked>회원 &nbsp;&nbsp;
+                        <input type="radio" id="user" name="auth" v-model="user_auth" value="1" >회원 &nbsp;&nbsp;
+                    </label>
+                    <label for="admin" hidden>
+                        <input type="radio" id="admin" name="auth" v-model="user_auth" value="0" hidden>관리자 &nbsp;&nbsp;
                     </label>
                     <label for="trainer">
                         <input type="radio" id="trainer" name="auth" v-model="user_auth" value="2"> 트레이너
@@ -67,7 +70,7 @@ import { mapMutations } from 'vuex';
 export default {
     data() {
         return {
-            user_auth: '1',
+            user_auth: '0',
             email: '',
             pwd: '',
         };
@@ -88,11 +91,11 @@ export default {
         methods: {
             ...mapMutations({
             setUser: 'user', // user 뮤테이션을 setUser 메서드로 매핑
-            setTrainer: 'trainer' // trainer 뮤테이션을 setTrainer 메서드로 매핑
+            setTrainer: 'trainer', // trainer 뮤테이션을 setTrainer 메서드로 매핑
+            setAdmin: 'admin', // user 뮤테이션을 setUser 메서드로 매핑
         }),
         async login() {
-            const endpoint = (this.user_auth === '1') ? 'login_user' : 'login_tr';
-
+            const endpoint = (this.user_auth === '0' || this.user_auth === '1') ? 'login_user' : 'login_tr';
             try {
                 console.log(endpoint);
                 const res = await axios({
@@ -104,8 +107,12 @@ export default {
                         user_auth: this.user_auth,
                     },
                 });
+
+               
+                console.log(res.data.data);
                 console.log(res.data);
                 console.log("res.data.email", res.data.email);
+                console.log("res.data.user_auth", res.data.user_auth);
 
                 if (res.data.code === 200) {
                     // 로그인 성공 시
@@ -113,47 +120,83 @@ export default {
                         const userPayload = {
                             user_email: res.data.email,
                             user_no: res.data.user_no,
+                            user_auth: res.data.user_auth,
                         };
                         this.$store.commit('setUser',userPayload);
                         // this.setUser(userPayload);
+                        window.location.href = "/";
+                        console.log(userPayload);
                         console.log("user_email",res.data.email);
-                    } else {
+                        console.log("user_auth",res.data.user_auth);
+                        //console.log({user_auth : userPayload.user_auth});
+                    } else if (this.user_auth === '2') {
                         const trainerPayload = {
                             tr_email: res.data.email,
                             tr_no: res.data.tr_no,
                         };
                         this.$store.commit('setTrainer',trainerPayload);
+                        window.location.href = "/tr_main";
+                        console.log("tr_email",res.data.email);
                         // this.setTrainer(trainerPayload);
+                    } else {
+                            const adminPayload = {
+                                user_email : res.data.email,
+                                user_no : res.data.user_no,
+                                user_auth: res.data.user_auth,
+                            };
+                        this.$store.commit('setUser',adminPayload);
+                        window.location.href = "/admin";
                     }
+
+                    // if(this.user_auth === '0'){
+                    //     const adminPayload = {
+                    //         user_email : res.data.email,
+                    //         user_no : res.data.user_no,
+                    //         user_auth : res.data.user_auth,
+                    //     };
+                    //     this.$store.commit('setUser',adminPayload);
+                    //     window.location.href = "/admin";
+                    // } else if(this.user_auth === '1'){
+                    //     const userPayload = {
+                    //         user_email : res.data.email,
+                    //         user_no : res.data.user_no,
+                    //         user_auth : res.data.user_auth,
+                    //     };
+                    //     this.$router.commit('setUser',userPayload);
+                    //     window.location.href = "/";
+                    // } else {
+                    //     const trainerPayload = {
+                    //         tr_email : res.data.email,
+                    //         tr_no : res.data.tr_no,
+                    //     };
+                    //     this.$store.commit('setTrainer',trainerPayload);
+                    // }
+
+
 
                     this.$swal({
                         position: 'top',
                         icon: 'success',
                         title: '로그인 성공!',
                         showConfirmButton: false,
-                        timer: 1000
+                        timer: 30000
                     });
 
-                    window.location.href = "/";
+                    // window.location.href = "/";
                 } else if (res.data.code === 401) {
                     // 비밀번호 오류 시
                     alert(res.data.error + "\n" + res.data.message);
-                    window.location.href = "/login";
+                    // window.location.href = "/login";
                 } else if (res.data.code === 404) {
                     // 존재하지 않는 이메일일 때
                     alert(res.data.error + "\n" + res.data.message);
-                    window.location.href = "/login";
+                    // window.location.href = "/login";
                 }
             } catch (err) {
                 alert(err);
             }
         },
 
-        // login() {
-        //     // 로그인 로직
-
-        //     console.log('로그인 시도', this.email, this.pwd, this.user_auth);
-        // },
         goEmailFind() {
             // 아이디 찾기 로직
             console.log('아이디 찾기');
@@ -164,6 +207,7 @@ export default {
         },
         goToJoin() {
             // 회원가입 페이지로 이동
+            this.$router.push({path: '/join'})
             console.log('회원가입 페이지로 이동');
         },
         loginKakao() {

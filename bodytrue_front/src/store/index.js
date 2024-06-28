@@ -7,6 +7,7 @@ const store = createStore({
             user: {
                 user_email: '',
                 user_no: '',
+                user_auth:'',
             },
             trainer:{
                 tr_email: '',
