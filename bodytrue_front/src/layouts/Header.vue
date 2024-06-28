@@ -28,7 +28,7 @@
                         <router-link class="icon" to="/join"><img src="../image/icon.png" alt="join">회원가입</router-link>
                     </li>
                     <li v-else class="item">
-                        <router-link class="icon" :to="`user/mypage/${user.user_no}`"><img src="../image/icon.png" alt="mypage">마이페이지</router-link>
+                        <router-link class="icon" :to="`/user/mypage/${user.user_no}`"><img src="../image/icon.png" alt="mypage">마이페이지</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
@@ -65,11 +65,11 @@ export default {
         },
         ...mapMutations(['setUser', 'setTrainer']),
         logout() {
-            // this.setUser({ user_email: '', user_no: '' });
-            // this.setTrainer({ tr_email: '', tr_no: '' });
-            // localStorage.clear(); // 로컬 스토리지 비우기
-            // console.log(this.$store.state.user); // 상태 변화 확인
-            // this.$router.push('/login'); // 로그인 페이지로 리다이렉트
+            this.setUser({ user_email: '', user_no: '' });
+            this.setTrainer({ tr_email: '', tr_no: '' });
+            localStorage.clear(); // 로컬 스토리지 비우기
+            console.log(this.$store.state.user); // 상태 변화 확인
+            this.$router.push('/login'); // 로그인 페이지로 리다이렉트
             localStorage.removeItem('userID'); // 로컬 스토리지에서 사용자 ID 제거
       this.$store.commit('clearUser'); // Vuex 상태에서 사용자 정보 초기화
       window.location.href = "/"; // 로그아웃 후 홈 페이지로 이동 (선택사항)

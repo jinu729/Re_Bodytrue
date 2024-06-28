@@ -41,12 +41,13 @@ router.get('/prodetail/:pro_no', function(request, response, next){
             }); 
 
             //리뷰 정보 가져오기
+            // 리뷰 정보 가져오기
             const reviews = await new Promise((resolve, reject) => {
                 db.query(`select user_name, pro_name, re_rate, re_comment, date_format(re_date,'%y-%m-%d') as re_date
                             from review r
                             join user u on r.re_user_no = u.user_no
                             join program p on r.re_pro_no = p.pro_no
-                            where pro_no = ?`,[pro_no],(error, results) => {
+                            where pro_no = ?`, [pro_no], (error, results) => {
                     if(error){
                         return reject(error);
                     }
@@ -99,6 +100,15 @@ router.post('/calendarin', function(request, response, next) {
     const cal_startdate = request.body.startdate;
     const cal_enddate = request.body.enddate;
 
+        // 데이터 수신 로그 추가
+        console.log("수신된 예약 데이터:", {
+            pro_no: cal_pro_no,
+            user_no: cal_user_no,
+            tr_no: cal_tr_no,
+            startdate: cal_startdate,
+            enddate: cal_enddate,
+          });
+
     db.query(`insert into calendar (cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate) values (?, ?, ?, ?, ?)`, 
         [cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate], function(error, result, field){
 
@@ -128,6 +138,8 @@ router.post('/makeplike', function(request, response, next) {
 /* 상품 디테일 끝 */
 
 /* 마이페이지 시작 */
+
+//내 정보 확인
 router.post('/mypage/:user_no', function(request, response, next){
     const user_no = request.params.user_no;
     
@@ -141,6 +153,61 @@ router.post('/mypage/:user_no', function(request, response, next){
     });
 });
 
+//내가 예약한 정보 확인
+router.post('/mycalcheck', function(request, response, next){
+    const cal_user_no = request.body.user_no; //요청 본문에서 user_no값 가져와야됨 그래서 vue에서 user_no : user_no 값 포함시키고있는거
+    
+    db.query(`select pro_name, tr_name, date_format(cal_startdate,'%y년%m월%d일 %h시') as cal_startdate from calendar c 
+            join program p on c.cal_pro_no = p.pro_no 
+            join trainer t on c.cal_tr_no = t.tr_no 
+            where cal_user_no = ?`,[cal_user_no], function(error, result, field){
+                if(error){
+                    console.error(error);
+                    return response.status(500).json({ error: '마이페이지 유저정보 에러' });
+                }
+                response.json(result);
+                console.log(result);
+            });
+});
+
+//내가 작성한 리뷰 정보 확인
+router.post('/myrecheck', function(request, response, next){
+    const cal_user_no = request.body.user_no;
+
+    db.query(`select pro_name, tr_name, date_format(cal_startdate,'%y년%m월%d일 %h시') as cal_startdate, re_rate 
+            from calendar c 
+            join program p on c.cal_pro_no = p.pro_no 
+            join trainer t on c.cal_tr_no = t.tr_no 
+            left join review r on c.cal_user_no = r.re_user_no and p.pro_no = r.re_pro_no 
+            where cal_user_no = ?`,[cal_user_no], function(error, result, field){
+                if(error){
+                    console.error(error);
+                    return response.status(500).json({ error: '마이페이지 리뷰정보 에러' });
+                }
+                response.json(result);
+                console.log(result);
+            });
+});
+
+//내가 찜한 리뷰 정보 확인
+router.post('/myplike', function(request, response, next){
+    const plike_user_no = request.body.user_no;
+
+    db.query(`select pro_name,tr_name,round(avg(re_rate),1) as rate_avg , date_format(pro_startdate,'%y-%m-%d') as startdate, date_format(pro_enddate,'%y-%m-%d') as enddate
+        from program p join trainer t on p.pro_tr_no = t.tr_no join review r on p.pro_no = r.re_pro_no
+        where pro_no in(
+                                        select plike_pro_no from plike
+                        where plike_user_no=?
+                                        )
+        group by re_pro_no`, [plike_user_no], function(error, result, field){
+            if(error){
+                console.error(error);
+                return response.status(500).json({ error: '마이페이지 찜 정보 에러' });
+            }
+            response.json(result);
+            console.log(result);
+        });
+}); 
 /* 마이페이지 끝 */
 
 //은미작성완

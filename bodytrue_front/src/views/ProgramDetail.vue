@@ -34,7 +34,7 @@
       </div>
       <div class="price-info" id="review1">
         <h2>리뷰</h2>
-        <div v-for="reviewItem in review" :key="reviewItem.re_data">
+        <div v-for="reviewItem in review" :key="reviewItem.re_no">
           <p>{{ reviewItem.user_name }} : {{ reviewItem.re_comment }} <img src="..\image\star.png" id="star"> {{ reviewItem.re_rate }} 작성 날짜: {{ reviewItem.re_date }}</p>
         </div>
         
@@ -142,8 +142,8 @@
     created() {
       this.initWeek(); // 컴포넌트가 생성될 때 주를 초기화
       this.pro_comment();
-      //id값 임의로 넣어주기 위함
 
+      //id값 임의로 넣어주기 위함
       // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
 
       console.log("store",this.$store.state.user);
@@ -199,6 +199,8 @@
         this.currentYear = currentDateObj.getFullYear(); // 연도 업데이트
         this.currentMonth = currentDateObj.getMonth(); // 월 업데이트
         this.currentDate = currentDateObj.getDate(); // 일 업데이트
+        this.selectedDate = null;
+        this.selectedTime = null;
         this.initWeek(); // 주를 다시 초기화
       },
       // 다음 주로 이동
@@ -208,6 +210,8 @@
         this.currentYear = currentDateObj.getFullYear(); // 연도 업데이트
         this.currentMonth = currentDateObj.getMonth(); // 월 업데이트
         this.currentDate = currentDateObj.getDate(); // 일 업데이트
+        this.selectedDate = null;
+        this.selectedTime = null;
         this.initWeek(); // 주를 다시 초기화
       },
 
@@ -217,6 +221,14 @@
           alert('로그인 해주세요.');
           this.$router.push({ path: '/login'});
         } else{
+          if(!this.selectedDate){
+            alert('날짜를 선택해주세요!');
+            return;
+          }
+          if(!this.selectedTime){
+            alert('시간을 선택해주세요!');
+            return
+          }
           //로그인 되어있으면 예약진행하기전 유효성 검사후 예약진행
           if(this.saveDate()){
               this.makeReserve();
@@ -242,6 +254,15 @@
           const cal_enddate = endDateObj.toISOString().slice(0, 19).replace('T', ' ');
 
           console.log("cal_enddate", cal_enddate);
+
+          // 데이터 확인 로그 추가
+    console.log("예약 요청 데이터:", {
+      pro_no: cal_pro_no,
+      user_no: cal_user_no,
+      tr_no: cal_tr_no,
+      startdate: cal_startdate,
+      enddate: cal_enddate,
+    });
 
           //서버로 요청 보내기
           const response = await axios.post('http://localhost:3000/user/calendarin', {
