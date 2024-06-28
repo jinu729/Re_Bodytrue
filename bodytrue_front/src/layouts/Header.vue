@@ -6,13 +6,14 @@
                     <router-link class="logo" to="/"><img src="../image/banner.png" alt="logo"></router-link>
                 </h1>
                 <div class="navbar">
-                    <ul class="menu_list">
+                    <ul class="menu_list" v-if="user.user_auth === '1' || user.user_auth === ''" >
                         <li class="list" @click="goToList(1)">다이어트</li>
                         <li class="list" @click="goToList(2)">체형교정</li>
                         <li class="list" @click="goToList(3)">대회</li>
                         <li class="list" @click="goToList(4)">체력증진</li>
                         <li class="list" @click="goToList(5)">홈트</li>
                     </ul>
+                    <ul v-else-if="user.user_auth === '0' || user.user_auth === '2'" ></ul>
                 </div>
             </div>
             <div class="nav_right">
@@ -28,7 +29,7 @@
                         <router-link class="icon" to="/join"><img src="../image/icon.png" alt="join">회원가입</router-link>
                     </li>
                     <li v-else class="item">
-                        <router-link class="icon" :to="`user/mypage/${user.user_no}`"><img src="../image/icon.png" alt="mypage">마이페이지</router-link>
+                        <router-link class="icon" :to="`/user/mypage/${user.user_no}`"><img src="../image/icon.png" alt="mypage">마이페이지</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
@@ -45,15 +46,21 @@ import { mapMutations } from 'vuex';
 export default {
     name : 'header',
     computed: {
-    user() {
-      return this.$store.state.user;    
-        }
+        user() {
+            return this.$store.state.user;    
+        },
+        // userAuth() {
+        //     return this.user.user_auth || '';  // 기본 값 설정
+        // }
     },
-    data() {
-        return {
-            sampleData: ''
-        };
-    },
+    created() {
+        console.log("this.user.user_auth",this.user.user_auth);
+    },  
+    // data() {
+    //     return {
+    //         user_auth: ''
+    //     };
+    // },
     methods: {
         async goToList(menu_list) {
             try {
@@ -63,16 +70,16 @@ export default {
                 console.error('전송 실패:', error);
          }
         },
-        ...mapMutations(['setUser', 'setTrainer']),
+        ...mapMutations(['setUser', 'setTrainer','setAdmin']),
         logout() {
-            // this.setUser({ user_email: '', user_no: '' });
-            // this.setTrainer({ tr_email: '', tr_no: '' });
-            // localStorage.clear(); // 로컬 스토리지 비우기
-            // console.log(this.$store.state.user); // 상태 변화 확인
-            // this.$router.push('/login'); // 로그인 페이지로 리다이렉트
-            localStorage.removeItem('userID'); // 로컬 스토리지에서 사용자 ID 제거
-      this.$store.commit('clearUser'); // Vuex 상태에서 사용자 정보 초기화
-      window.location.href = "/"; // 로그아웃 후 홈 페이지로 이동 (선택사항)
+            this.setUser({ user_email: '', user_no: '' });
+            this.setTrainer({ tr_email: '', tr_no: '' });
+            this.setAdmin({ user_email: '', user_no: '' ,user_auth: ''});
+            localStorage.clear(); // 로컬 스토리지 비우기
+            console.log(this.$store.state.user); // 상태 변화 확인
+            console.log(this.$store.state.trainer); // 상태 변화 확인
+            console.log(this.$store.state.admin); // 상태 변화 확인
+            this.$router.push('/login'); // 로그인 페이지로 리다이렉트
         }
     }
 }
@@ -135,14 +142,14 @@ header .nav_right{
     z-index: 7;
 }
 .nav_right .logged-in {
-    width: 250px;
+    /* width: 250px; */
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
 .nav_right .logged-out {
-    width: 300px;
+    /* width: 300px; */
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -151,9 +158,12 @@ header .nav_right{
     line-height: 35px;
     font-size: 18px;
     font-weight: bold;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 .icon_list .line{
-    line-height: 30px;
+    line-height: 41px;
 }
 .item .icon img{
     width: 18px;
