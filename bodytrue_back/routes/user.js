@@ -8,6 +8,23 @@ const path = require("path");
 
 //승호작성
 
+router.get('/programlist1', (req, res) => {
+    
+db.query(`SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH),',',1) AS IMG_PATH
+            FROM PROGRAM P
+            LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+            LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+            LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+            GROUP BY P.PRO_NO;`,
+         (error, results, fields) => {
+    if (error) {
+        console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
+        return res.status(500).json({ error: '데이터베이스 오류' });
+    }
+    res.json(results); // 결과를 JSON 형태로 응답
+});
+});
+
 
 //승호작성완
 
