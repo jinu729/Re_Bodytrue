@@ -157,7 +157,9 @@ router.post('/makeplike', function(request, response, next) {
 router.post('/mypage/:user_no', function(request, response, next){
     const user_no = request.params.user_no;
     
-    db.query(`select user_name, user_email, user_tel from user where user_no = ?`,[user_no], function(error, result, field){
+    db.query(`select user_name, user_email, user_tel from user where user_no = ?`,
+        [user_no],
+         function(error, result, field){
         if(error){
             console.error(error);
             return response.status(500).json({ error: '마이페이지 유저정보 에러'});
