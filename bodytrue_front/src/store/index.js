@@ -12,6 +12,7 @@ const store = createStore({
             trainer:{
                 tr_email: '',
                 tr_no: '',
+                tr_admit: '',
             }
         }
     },
