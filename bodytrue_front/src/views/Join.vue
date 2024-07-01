@@ -69,10 +69,10 @@
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
                             <label for="men">
-                                <input type="radio" id="sex" v-model="gender" name="men" value="M"> 남자 &nbsp;&nbsp;
+                                <input type="radio" id="men" v-model="gender" name="sex" value="M"> 남자 &nbsp;&nbsp;
                             </label>
                             <label for="women">
-                                <input type="radio" id="sex" v-model="gender" name="women" value="F"> 여자
+                                <input type="radio" id="women" v-model="gender" name="sex" value="F"> 여자
                             </label>
                         </div>                        
                     </div>                    
