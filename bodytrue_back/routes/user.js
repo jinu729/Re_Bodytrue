@@ -176,7 +176,7 @@ router.post('/mycalcheck', function(request, response, next){
     db.query(`select pro_no, pro_name, tr_no, tr_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate from calendar c 
             join program p on c.cal_pro_no = p.pro_no 
             join trainer t on c.cal_tr_no = t.tr_no 
-            where cal_user_no = ?`,[cal_user_no], function(error, result, field){
+            where cal_user_no = ? order by c.cal_startdate`,[cal_user_no], function(error, result, field){
                 if(error){
                     console.error(error);
                     return response.status(500).json({ error: '마이페이지 유저정보 에러' });
@@ -195,7 +195,7 @@ router.post('/myrecheck', function(request, response, next){
             join program p on c.cal_pro_no = p.pro_no 
             join trainer t on c.cal_tr_no = t.tr_no 
             left join review r on c.cal_user_no = r.re_user_no and p.pro_no = r.re_pro_no 
-            where cal_user_no = ?`,[cal_user_no], function(error, result, field){
+            where cal_user_no = ? order by c.cal_startdate DESC`,[cal_user_no], function(error, result, field){
                 if(error){
                     console.error(error);
                     return response.status(500).json({ error: '마이페이지 리뷰정보 에러' });
@@ -280,36 +280,88 @@ router.get('/programlist', (req, res) => {
         res.json(results); // 결과를 JSON 형태로 응답
     });
     });
+router.get('/programlist/:sortOption', (req, res) => {
+  const { sortOption } = req.params;
+
+  let sqlQuery = '';
+
+  switch (sortOption) {
+    case 'sortbyenddate':
+      sqlQuery = `
+        SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+        FROM PROGRAM P
+        LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+        LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+        LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+        GROUP BY P.PRO_NO
+        ORDER BY P.PRO_ENDDATE, P.PRO_NAME;
+      `;
+      break;
+    case 'sortbyviews':
+      sqlQuery = `
+        SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+        FROM PROGRAM P
+        LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+        LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+        LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+        GROUP BY P.PRO_NO
+        ORDER BY COUNT(R.RE_PRO_NO) DESC, P.PRO_NAME;
+      `;
+      break;
+    case 'sortbyrating':
+      sqlQuery = `
+        SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+        FROM PROGRAM P
+        LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+        LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+        LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+        GROUP BY P.PRO_NO
+        ORDER BY PRO_RATE_AVG DESC, P.PRO_NAME;
+      `;
+      break;
+    default:
+      sqlQuery = `
+        SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+        FROM PROGRAM P
+        LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+        LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+        LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+        GROUP BY P.PRO_NO;
+      `;
+      break;
+  }
+
+  db.query(sqlQuery, (error, results, fields) => {
+    if (error) {
+      console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
+      return res.status(500).json({ error: '데이터베이스 오류' });
+    }
+    res.json(results); // 정렬된 결과를 JSON 형태로 응답
+  });
+});
 
 
-// Multer 설정: 이미지 업로드를 위한 미들웨어
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './uploads/program'); // 프로그램 이미지를 저장할 디렉토리
-    },
-    filename: function (req, file, cb) {
-      const ext = path.extname(file.originalname);
-      cb(null, 'image-' + Date.now() + ext); // 파일 이름 설정 (유니크하게 설정하는 것이 좋음)
-    }
-  });
-  
-  const upload = multer({ storage: storage });
-  
-  // 이미지 업로드 API
-  router.post('/uploadImage', upload.single('image'), (req, res) => {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
-  
-    // 이미지가 업로드된 경로 (저장된 경로)를 데이터베이스에 저장할 수 있음
-    const imagePath = '/uploads/program/' + req.file.filename;
-  
-    // 여기서 imagePath를 데이터베이스에 저장하는 로직을 추가해야 함
-    // 예를 들어 IMG 테이블에 이미지 경로를 INSERT하는 쿼리를 실행
-  
-    // DB에 저장된 이미지 경로를 클라이언트에 응답할 수도 있음
-    res.json({ imagePath: imagePath });
-  });
+
+
+
+
+//     //조회-이름순//
+// SELECT PRO_NAME, ROUND(AVG(RE_RATE),1) AS RATE_AVG, PRO_CNT
+// FROM REVIEW R JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO
+// GROUP BY RE_PRO_NO
+// ORDER BY PRO_CNT DESC, PRO_NAME;
+
+// /* 평점-이름순으로 정렬 */
+// SELECT PRO_NAME, ROUND(AVG(RE_RATE),1) AS RATE_AVG
+// FROM REVIEW R JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO
+// GROUP BY RE_PRO_NO
+// ORDER BY RATE_AVG DESC, PRO_NAME;
+
+// //마감-이름순//
+// SELECT PRO_NAME, TR_NAME,  ROUND(AVG(RE_RATE),1) AS RATE_AVG, PRO_ENDDATE
+// FROM PROGRAM P JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO JOIN TRAINER T ON PRO_TR_NO = T.TR_NO JOIN CALENDAR C ON PRO_NO = C.CAL_PRO_NO
+// GROUP BY RE_PRO_NO
+// ORDER BY PRO_ENDDATE, PRO_NAME;
   
 //재영작성완
 
