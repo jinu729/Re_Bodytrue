@@ -5,13 +5,14 @@ const sql = require('../sql.js');
 const fs = require('fs');
 const multer = require('multer');
 const path = require("path");
+const { error } = require('console');
 
 //승호작성
 
 //회원리스트 불러오기
 
 router.get("/userlist",async(req,res)=>{
-    db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user",(err,results)=>{
+    db.query("select user_no,user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user",(err,results)=>{
         if (err) {
             res.send({
               // 에러 발생 시
@@ -52,31 +53,27 @@ router.get("/searchname",async(req,res)=>{
 
 //회원 정지하기
 
-router.post("/userban",async(req,res)=>{
+router.post('/deleteuser', (req, res, next) => {
+  const { user_no} = req.body;
 
-    const ban_user_no = req.body;
+  // console.log('Received request to delete trainer:', tr_name, tr_email); // 로그 추가
 
-    db.query("update user set user_ban = 1 where user_no = ?",
-        ban_user_no,
-        (err,results)=>{
-        if (err) {
-            res.send({
-              // 에러 발생 시
-              code: 400,
-              failed: "error occurred",
-              error: err,
-            });
-          } else {
-            res.send(results);
-          }
-    });
-    
+  const sql = 'UPDATE USER SET USER_BAN = 1 WHERE USER_NO=?';
+
+  db.query(sql, [user_no], function(err, results, fields) {
+    if (err) {
+      // console.error('Database error:', err); // 오류 로그 추가
+
+      return res.status(500).json({ error: '회원 정지 에러' });
+    }
+    return res.status(200).json({ message: '회원 정지' });
+  });
 });
 
 //트레이너리스트 불러오기
 
 router.get("/trainerlist",async(req,res)=>{
-    db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer",(err,results)=>{
+    db.query("select tr_no,tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer",(err,results)=>{
         if (err) {
             res.send({
               // 에러 발생 시
@@ -117,56 +114,46 @@ router.get("/search_tr_name",async(req,res)=>{
 
 //승인권한 변경
 
-router.post("/updatetr", async (req, res) => {
-  const { trainer_no } = req.body;
+router.post('/trupdate', (req, res, next) => {
+  const { tr_no,tr_admit} = req.body;
 
-  console.log(`Updating trainer no: ${trainer_no}`);  // 로그 추가
-  console.log(req.body);
+  // console.log('Received request to delete trainer:', tr_name, tr_email); // 로그 추가
 
-  db.query("UPDATE trainer SET tr_admit = 1 WHERE tr_no = ?", [trainer_no], (err, results) => {
-      if (err) {
-          console.error('Error occurred:', err);  // 에러 로그 추가
-          res.status(400).send({
-              code: 400,
-              failed: "error occurred",
-              error: err,
-          });
-      } else {
-          console.log('Trainer updated successfully:', results);  // 성공 로그 추가
-          res.status(200).send({
-              code: 200,
-              success: "Trainer updated successfully",
-              data: results,
-          });
-      }
+  const sql = 'UPDATE TRAINER SET TR_ADMIT = ? WHERE TR_NO=?';
+
+  db.query(sql, [tr_admit,tr_no], function(err, results, fields) {
+    if (err) {
+      // console.error('Database error:', err); // 오류 로그 추가
+
+      return res.status(500).json({ error: '승인 상태 업데이트 에러' });
+    }
+    return res.status(200).json({ message: '승인 상태 업데이트' });
   });
 });
 
 //트레이너 삭제
 
-router.post("/trban", async (req, res) => {
-    const { trainer_no } = req.body;
+router.post('/trdelete', (req, res, next) => {
+  const { tr_name, tr_email } = req.body;
 
-    console.log(`Deleting trainer no: ${trainer_no}`);  // 로그 추가
+  // console.log('Received request to delete trainer:', tr_name, tr_email); // 로그 추가
 
-    db.query("DELETE FROM trainer WHERE tr_no = ?", [trainer_no], (err, results) => {
-        if (err) {
-            console.error('Error occurred:', err);  // 에러 로그 추가
-            res.status(400).send({
-                code: 400,
-                failed: "error occurred",
-                error: err,
-            });
-        } else {
-            console.log('Trainer deleted successfully:', results);  // 성공 로그 추가
-            res.status(200).send({
-                code: 200,
-                success: "Trainer deleted successfully",
-                data: results,
-            });
-        }
-    });
+  const sql = 'DELETE FROM trainer WHERE tr_name = ? AND tr_email = ?';
+
+  db.query(sql, [tr_name, tr_email], function(err, results, fields) {
+    if (err) {
+      // console.error('Database error:', err); // 오류 로그 추가
+
+      return res.status(500).json({ error: '트레이너 정지 에러' });
+    }
+    return res.status(200).json({ message: '트레이너 정지' });
+  });
 });
+
+
+
+module.exports = router;
+
 
 //리뷰리스트 불러오기
 
