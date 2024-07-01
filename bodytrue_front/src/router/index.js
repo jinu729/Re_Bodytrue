@@ -88,7 +88,7 @@ const routes = [
     component: Login
   },
   {
-    path: '/prolist/:menu_list',
+    path: '/programlist',
     name: 'ProgramList',
     component: ProgramList
   }
@@ -99,12 +99,12 @@ const routes = [
 //은미작성
 ,
   {
-    path: '/user/prodetail/:pro_no', 
+    path: '/prodetail/:pro_no', 
     name: 'ProgramDetail',
     component: ProgramDetail
   },
   {
-    path: '/user/mypage/:user_no',
+    path: '/mypage/:user_no',
     name: 'UserMyPage',
     component: UserMyPage
   }

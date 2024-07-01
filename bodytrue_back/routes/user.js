@@ -30,23 +30,6 @@ db.query(`SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_
 
 
 //진우작성
-router.post('/myrecheck', function(request, response, next){
-    const cal_user_no = request.body.user_no;
-
-    db.query(`select pro_name, tr_name, date_format(cal_startdate,'%y년%m월%d일 %h시') as cal_startdate, re_rate 
-            from calendar c 
-            join program p on c.cal_pro_no = p.pro_no 
-            join trainer t on c.cal_tr_no = t.tr_no 
-            left join review r on c.cal_user_no = r.re_user_no and p.pro_no = r.re_pro_no 
-            where cal_user_no = ?`,[cal_user_no], function(error, result, field){
-                if(error){
-                    console.error(error);
-                    return response.status(500).json({ error: '마이페이지 리뷰정보 에러' });
-                }
-                response.json(result);
-                console.log(result);
-            });
-});
 
 //진우작성완
 
@@ -72,8 +55,6 @@ router.get('/prodetail/:pro_no', function(request, response, next){
                     resolve(results);
                 });
             }); 
-
-            //리뷰 정보 가져오기
             // 리뷰 정보 가져오기
             const reviews = await new Promise((resolve, reject) => {
                 db.query(`select user_name, pro_name, re_rate, re_comment, date_format(re_date,'%y-%m-%d') as re_date
@@ -98,7 +79,7 @@ router.get('/prodetail/:pro_no', function(request, response, next){
             console.error(error);
             response.status(500).json({ error: '서버에러'});
         }
-    }
+    } 
     getProductDetail(pro_no);
 
 
@@ -190,7 +171,7 @@ router.post('/mypage/:user_no', function(request, response, next){
 router.post('/mycalcheck', function(request, response, next){
     const cal_user_no = request.body.user_no; //요청 본문에서 user_no값 가져와야됨 그래서 vue에서 user_no : user_no 값 포함시키고있는거
     
-    db.query(`select pro_name, tr_name, date_format(cal_startdate,'%y년%m월%d일 %h시') as cal_startdate from calendar c 
+    db.query(`select pro_no, pro_name, tr_no, tr_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate from calendar c 
             join program p on c.cal_pro_no = p.pro_no 
             join trainer t on c.cal_tr_no = t.tr_no 
             where cal_user_no = ?`,[cal_user_no], function(error, result, field){
@@ -207,7 +188,7 @@ router.post('/mycalcheck', function(request, response, next){
 router.post('/myrecheck', function(request, response, next){
     const cal_user_no = request.body.user_no;
 
-    db.query(`select pro_name, tr_name, date_format(cal_startdate,'%y년%m월%d일 %h시') as cal_startdate, re_rate 
+    db.query(`select pro_no, pro_name, tr_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate, re_rate 
             from calendar c 
             join program p on c.cal_pro_no = p.pro_no 
             join trainer t on c.cal_tr_no = t.tr_no 
@@ -222,16 +203,16 @@ router.post('/myrecheck', function(request, response, next){
             });
 });
 
-//내가 찜한 리뷰 정보 확인
+//내가 찜한 정보 확인
 router.post('/myplike', function(request, response, next){
     const plike_user_no = request.body.user_no;
 
-    db.query(`select pro_name,tr_name,round(avg(re_rate),1) as rate_avg , date_format(pro_startdate,'%y-%m-%d') as startdate, date_format(pro_enddate,'%y-%m-%d') as enddate
-        from program p join trainer t on p.pro_tr_no = t.tr_no join review r on p.pro_no = r.re_pro_no
+    db.query(`select pro_no, pro_name,tr_name,round(avg(re_rate),1) as rate_avg , date_format(pro_startdate,'%y-%m-%d') as pro_startdate, 
+        date_format(pro_enddate,'%y-%m-%d') as pro_enddate
+        from program p 
+        join trainer t on p.pro_tr_no = t.tr_no join review r on p.pro_no = r.re_pro_no
         where pro_no in(
-                                        select plike_pro_no from plike
-                        where plike_user_no=?
-                                        )
+                    select plike_pro_no from plike where plike_user_no=?)
         group by re_pro_no`, [plike_user_no], function(error, result, field){
             if(error){
                 console.error(error);
@@ -241,6 +222,38 @@ router.post('/myplike', function(request, response, next){
             console.log(result);
         });
 }); 
+
+//찜 내역 삭제
+router.post('/delmyplike', function(request, response, next){
+    const plike_user_no = request.body.user_no;
+    const plike_pro_no = request.body.pro_no;
+
+    db.query(`delete from plike where plike_user_no = ? and plike_pro_no = ?`,[plike_user_no, plike_pro_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '찜삭제 오류' });
+        }
+        response.json(result);
+        console.log(result);
+    })
+});
+
+//리뷰 작성하기
+router.post('/makereview', function(request, response, next){
+    const {re_comment, re_user_no, re_pro_no, re_tr_no, re_rate} = request.body;
+
+    db.query(`insert into review (re_comment, re_user_no, re_pro_no, re_tr_no, re_rate) values (?, ?, ?, ?, ?)`,
+        [re_comment, re_user_no, re_pro_no, re_tr_no, re_rate], function(error, result){
+            if(error){
+                console.error(error);
+                return response.status(500).json({ error: '리뷰 작성 오류' });
+            }
+            response.json(result);
+            console.log(result);
+        })
+});
+
+
 /* 마이페이지 끝 */
 
 //은미작성완
