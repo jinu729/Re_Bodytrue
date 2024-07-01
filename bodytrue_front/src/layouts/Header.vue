@@ -27,8 +27,12 @@
                         <router-link class="icon" to="/" @click="gotologout"><img src="../image/icon.png" alt="logout">로그아웃</router-link>
                     </li>
                     <li class="line">|</li>
-                    <li class="item">
-                        <router-link class="icon" :to="`/user/mypage/${user.user_no}`"><img src="../image/icon.png" alt="mypage">마이페이지</router-link>
+
+                    <li v-if="!user.user_email" class="item">
+                        <router-link class="icon" to="/join"><img src="../image/icon.png" alt="join">회원가입</router-link>
+                    </li>
+                    <li v-else class="item">
+                        <router-link class="icon" :to="`/mypage/${user.user_no}`"><img src="../image/icon.png" alt="mypage">마이페이지</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
