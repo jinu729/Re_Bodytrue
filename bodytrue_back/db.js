@@ -1,10 +1,10 @@
 const db = {
     //디비연결
-    database: "bodytrue",
+    database: "TEST",
     connectionLimit: 10,
     host: "127.0.0.1",
     user: "root",
-    password: "1234",
+    password: "diamond84*",
     timezone: "GMT",
     charset: "utf8mb4",
   };
