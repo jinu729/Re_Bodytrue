@@ -33,9 +33,9 @@
           </div>
           <div class="action-buttons">
             <!-- 등록 버튼 클릭 시 폼 제출 -->
-            <button type="submit" class="submit-btn">등록</button>
+            <button type="submit" class="submit-btn" :disabled="isSubmitted">등록</button>
             <!-- 취소 버튼 클릭 시 close 이벤트 발생 -->
-            <button type="button" @click="$emit('close')" class="cancel-btn">취소</button>
+            <button type="button" @click="closeModal" class="cancel-btn">취소</button>
           </div>
         </form>
       </main>
@@ -57,7 +57,19 @@ export default {
       type: Object,
       required: true,
     },
+    isSubmitted:{
+      type:Boolean,
+      required: true,
+    }
   },
+  watch:{
+    isOpen(newval){
+      if(!newval){
+        this.resetReview();
+      }
+    }
+  },
+
   data() {
     return {
       // 로컬 데이터로 리뷰 코멘트와 평점을 관리
@@ -82,11 +94,22 @@ export default {
         const response = await axios.post('http://localhost:3000/user/makereview', review);
         console.log(response.data);
         // 성공적으로 전송되면 모달을 닫음
+        this.$emit('review-submitted'); //전송되면 등록버튼(리뷰재작성불가하도록) 막음
         this.$emit('close');
       } catch (error) {
         console.error(error);
       }
     },
+    closeModal(){
+      this.resetReview();
+      this.$emit('close');
+    },
+    //watch에서 isopen이 close 될때마다 reset하도록 수정해놨음
+    resetReview(){
+      this.reviewComment = '';
+      this.reviewRate = 0;
+    },
+
   },
 };
 </script>

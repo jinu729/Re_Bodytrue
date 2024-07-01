@@ -174,7 +174,7 @@ router.post('/mycalcheck', function(request, response, next){
     db.query(`select pro_no, pro_name, tr_no, tr_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate from calendar c 
             join program p on c.cal_pro_no = p.pro_no 
             join trainer t on c.cal_tr_no = t.tr_no 
-            where cal_user_no = ?`,[cal_user_no], function(error, result, field){
+            where cal_user_no = ? order by c.cal_startdate`,[cal_user_no], function(error, result, field){
                 if(error){
                     console.error(error);
                     return response.status(500).json({ error: '마이페이지 유저정보 에러' });
@@ -193,7 +193,7 @@ router.post('/myrecheck', function(request, response, next){
             join program p on c.cal_pro_no = p.pro_no 
             join trainer t on c.cal_tr_no = t.tr_no 
             left join review r on c.cal_user_no = r.re_user_no and p.pro_no = r.re_pro_no 
-            where cal_user_no = ?`,[cal_user_no], function(error, result, field){
+            where cal_user_no = ? order by c.cal_startdate DESC`,[cal_user_no], function(error, result, field){
                 if(error){
                     console.error(error);
                     return response.status(500).json({ error: '마이페이지 리뷰정보 에러' });
