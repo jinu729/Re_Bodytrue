@@ -13,7 +13,7 @@
           <!-- Program Items -->
           <div v-for="(program, index) in programList" :key="index" class="program_item">
             <div class="program_image">
-              <img :src="`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`" alt="Program Image">
+               <img :src="program.IMG_PATH ? require(`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`) : '/goodsempty.jpg'">
             </div>
             <div class="program_details">
               <p class="program_name">{{ program.PRO_NAME }} </p>
@@ -41,6 +41,7 @@ import axios from 'axios';
   data() {
     return {
       programList: [] // 프로그램 데이터 배열
+      ,imageBasePath: '../../uploads/program' // 이미지 기본 경로
     };
   },
   created(){
