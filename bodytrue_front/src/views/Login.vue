@@ -1,6 +1,6 @@
 <template>
     <body>
-        <h1 style="text-align: center;">로그인</h1>
+        <h1 style="text-align: center; margin-top: 20px">로그인</h1>
         <div class="line-center"></div>
         <div class="login-container">
                 <div class="form_right">
@@ -18,13 +18,13 @@
                 <div class="form-group">
                     <label for="email">아이디</label>
                     <div class="input-with-icon">
-                        <input type="text" id="email" name="email" v-model="email" placeholder="Username">
+                        <input type="text" id="email" name="email" v-model="email" placeholder="이메일 주소">
                     </div>
                 </div>  
                 <div class="form-group">
                     <label for="password">비밀번호</label>
                     <div class="input-with-icon">
-                        <input type="password" id="pwd" name="pwd" v-model="pwd" placeholder="Password">
+                        <input type="password" id="pwd" name="pwd" v-model="pwd" placeholder="비밀번호">
                     </div>
                 </div>
                 <div class="form-group forgot-password">
@@ -56,7 +56,7 @@
                     <button id="special-button" class="button" type="button" @click="loginNaver" >네이버 로그인</button>
                 </div>
             </form>
-            <div>
+            <div style="text-align: center">
                 <button class="close" @click="cancel">취소</button>
             </div>
         </div>
@@ -130,66 +130,61 @@ export default {
                         console.log("user_auth",res.data.user_auth);
                         //console.log({user_auth : userPayload.user_auth});
                     } else if (this.user_auth === '2') {
-                        const trainerPayload = {
-                            tr_email: res.data.email,
-                            tr_no: res.data.tr_no,
-                        };
-                        this.$store.commit('setTrainer',trainerPayload);
-                        window.location.href = "/tr_main";
-                        console.log("tr_email",res.data.email);
-                        // this.setTrainer(trainerPayload);
+                        const tr_admit = res.data.tr_admit || 0;
+                        if (tr_admit === 1) {
+                                const trainerPayload = {
+                                    tr_email: res.data.email,
+                                    tr_no: res.data.tr_no,
+                                    tr_admit: res.data.tr_admit,
+                                };
+                                this.$store.commit('setTrainer', trainerPayload);
+                                window.location.href = "/trainer";
+                                console.log("trainerpayload", trainerPayload);
+                            } else {
+                                // tr_admit이 1이 아닐 때 처리
+                                console.log("트레이너 승인 대기 중");
+                                alert("트레이너 승인이 필요합니다.");
+                            }
                     } else {
+                        //     const adminPayload = {
+                        //         user_email : res.data.email,
+                        //         user_no : res.data.user_no,
+                        //         user_auth: res.data.user_auth,
+                        //     };
+                        // this.$store.commit('setUser',adminPayload);
+                        // window.location.href = "/admin";
+                        const user_auth = res.data.user_auth;
+                        if(user_auth === 0){
                             const adminPayload = {
                                 user_email : res.data.email,
                                 user_no : res.data.user_no,
                                 user_auth: res.data.user_auth,
                             };
-                        this.$store.commit('setUser',adminPayload);
-                        window.location.href = "/admin";
+                            this.$store.commit('setUser',adminPayload);
+                            window.location.href = "/admin";
+                            console.log(user_auth);
+                        } else{
+                            console.log("관리자가 아닙니다.");
+                            alert("관리자가 아닙니다.")
+                        }
                     }
 
-                    // if(this.user_auth === '0'){
-                    //     const adminPayload = {
-                    //         user_email : res.data.email,
-                    //         user_no : res.data.user_no,
-                    //         user_auth : res.data.user_auth,
-                    //     };
-                    //     this.$store.commit('setUser',adminPayload);
-                    //     window.location.href = "/admin";
-                    // } else if(this.user_auth === '1'){
-                    //     const userPayload = {
-                    //         user_email : res.data.email,
-                    //         user_no : res.data.user_no,
-                    //         user_auth : res.data.user_auth,
-                    //     };
-                    //     this.$router.commit('setUser',userPayload);
-                    //     window.location.href = "/";
-                    // } else {
-                    //     const trainerPayload = {
-                    //         tr_email : res.data.email,
-                    //         tr_no : res.data.tr_no,
-                    //     };
-                    //     this.$store.commit('setTrainer',trainerPayload);
-                    // }
-
-
-
-                    this.$swal({
-                        position: 'top',
-                        icon: 'success',
-                        title: '로그인 성공!',
-                        showConfirmButton: false,
-                        timer: 30000
-                    });
+                    // this.$swal({
+                    //     position: 'top',
+                    //     icon: 'success',
+                    //     title: '로그인 성공!',
+                    //     showConfirmButton: false,
+                    //     timer: 3000
+                    // });
 
                     // window.location.href = "/";
                 } else if (res.data.code === 401) {
                     // 비밀번호 오류 시
-                    alert(res.data.error + "\n" + res.data.message);
+                    alert(res.data.message);
                     // window.location.href = "/login";
                 } else if (res.data.code === 404) {
                     // 존재하지 않는 이메일일 때
-                    alert(res.data.error + "\n" + res.data.message);
+                    alert(res.data.message);
                     // window.location.href = "/login";
                 }
             } catch (err) {
@@ -220,6 +215,7 @@ export default {
         },
         cancel() {
             // 취소 로직
+            this.$router.push({path: "/"})
             console.log('취소');
         }
     }
@@ -233,15 +229,17 @@ body {
     
 }
 .close {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 10px; /* 하단에 배치 */
+    width: 100px;
     font-size: 20px;
     cursor: pointer;
     color: #202627; /* 색상 변경 */
     border: none;
-    background: none;
+    /* background: none; */
+    color: white;
+    background-color: #00C7AE;
+    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
+    border-radius: 5px;
+    margin-top: 25px;
 
 }
 
@@ -262,8 +260,9 @@ body {
 /* 로그인 폼을 감싸는 컨테이너 스타일 */
 .login-container {
     max-width: 600px; /* 최대 너비 설정 */
-    height: 800px;
-    margin: 20px auto; /* 가운데 정렬을 위한 마진 설정 */
+    /* height: 800px; */
+    margin:  auto; /* 가운데 정렬을 위한 마진 설정 */
+    margin-top: 20px;
     background: #fff; /* 배경색 설정 */
     padding: 20px; /* 안쪽 여백 설정 */
     border-radius: 8px; /* 테두리 반경 설정 */
@@ -298,6 +297,9 @@ body {
     border-radius: 4px; /* 테두리 반경 설정 */
     box-sizing: border-box; /* 요소의 전체 너비에 패딩 및 테두리를 포함하도록 설정 */
     font-size: 16px; /* 폰트 크기 설정 */
+    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
+    border-radius: 5px;
+
 }
 /* 라디오 버튼 스타일 */
 .form_right input[type="radio"] {
@@ -317,7 +319,7 @@ body {
     font-weight: bold; /* 폰트 굵기 설정 */
     font-size: 16px;
     cursor: pointer;
-    border-radius: 4px;
+    /* border-radius: 4px; */
     width: 100%;
     text-align: center; /* 텍스트 가운데 정렬 */
     display: block; /* 인라인 요소를 블록 요소로 변환하여 전체 너비를 차지하도록 설정 */
@@ -346,11 +348,14 @@ body {
     background-color: #00C7AE ; /* 배경색 설정 */
     color: #fff; /* 글자색 설정 */
     border: none; /* 테두리 없음 */
-    padding: 18px 20px; /* 안쪽 여백 설정 */
     font-size: 16px; /* 폰트 크기 설정 */
+    height: 50px;
     cursor: pointer; /* 마우스 커서 모양 설정 */
     border-radius: 4px; /* 테두리 반경 설정 */
     width: 100%; /* 너비 100% 설정 */
+    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
+    border-radius: 5px;
+
 }
 
 /* 로그인 버튼 호버 효과 스타일 */
@@ -415,6 +420,9 @@ body {
     border: 1px solid #ccc; /* 테두리 설정 */
     border-radius: 4px; /* 테두리 반경 설정 */
     font-size: 16px; /* 폰트 크기 설정 */
+    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
+    border-radius: 5px;
+
 }
 
 </style>

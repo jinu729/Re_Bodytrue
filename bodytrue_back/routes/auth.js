@@ -626,7 +626,7 @@ router.post("/login_tr",async(req,res)=>{
   const tr_email = req.body.email;
   const tr_pwd = req.body.pwd;
 
-  db.query('select tr_no, tr_email, tr_name, tr_pwd from trainer where tr_email = ?',
+  db.query('select tr_no, tr_email, tr_name, tr_pwd, tr_admit from trainer where tr_email = ?',
     [tr_email],
     function(err,results,fields){
       if (err) {
@@ -645,6 +645,7 @@ router.post("/login_tr",async(req,res)=>{
         console.log("-------------------------------------------");
         console.log("tr",tr);
         console.log(tr.tr_email);
+        console.log(tr.tr_admit);
         if (tr.tr_pwd === tr_pwd) {
           res.send({
             // 로그인 성공 시
@@ -655,9 +656,11 @@ router.post("/login_tr",async(req,res)=>{
               tr_email: tr.tr_email,
               tr_name: tr.tr_name,
               tr_pwd: tr.tr_pwd,
+              tr_admit: tr.tr_admit
             },
             email: results[0].tr_email,
-            user_no: results[0].tr_no
+            user_no: results[0].tr_no,
+            tr_admit: tr.tr_admit,
           });
         } else {
           res.send({
