@@ -5,6 +5,7 @@ const sql = require('../sql.js');
 const fs = require('fs');
 const multer = require('multer');
 const path = require("path");
+const { log } = require('console');
 
 //승호작성
 
@@ -164,12 +165,14 @@ router.post("/패스명(bodytrue_findPw.html)",async(req,res)=>{
 
 //아이디찾기
 
-router.post("/패스명(bodytrue_findId.html)",async(req,res)=>{
-
+router.post("/findId",async(req,res)=>{
+    console.log(req.body);
     const data = {
-        user_name : req.body.username,
-        user_email : req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3
+        user_name : req.body.user_name,
+        // user_tel : req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3
+        user_tel : req.body.user_tel
       };
+      console.log(data);
 
     db.query('select user_email from user where user_name = ? and user_tel = ?',
         [data.user_name,data.user_tel],
@@ -182,11 +185,19 @@ router.post("/패스명(bodytrue_findId.html)",async(req,res)=>{
             error: err,
             });
         } else {
-            res.send({
-            //쿼리 실행 성공시
-            code: 200,
-            message: "아이디(이메일)찾기 성공",
+          if (results.length > 0) {
+            const user_email = results[0].user_email;
+            res.status(200).json({
+                code: 200,
+                message: "아이디(이메일) 찾기 성공",
+                user_email: user_email
             });
+        } else {
+            res.status(404).json({
+                code: 404,
+                message: "일치하는 사용자가 없습니다."
+            });
+          }
         }
     });
 });
