@@ -56,7 +56,7 @@
                             <td>{{ cal.tr_name }}</td>
                             <td>{{ cal.cal_startdate }}</td>
                             <td><button @click="goToUpdateCal" class="re_btn">예약 변경하기</button></td>
-                            <td><button @click="openReviewModal(cal)" class="re_btn">리뷰작성하기</button></td>
+                            <td><button @click="openReviewModal(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -69,10 +69,10 @@
             <!--예약리스트 페이징-->
             <div class="pagination">
                 <ul class="number_box">
-                    <li name="number_box" v-for="page in totalPages" :key="page" 
-                    @click="changePage(page)" :class="{active: page === currentPage }">
-                    {{ page }}
-                    </li>
+                    <li @click="prevPageGroup" :class="{disabled: currentPageGroup === 1}"><img src="../image/prev.png"/></li>
+                    <li v-for="page in currentGroupPages" :key="page" @click="changePage(page)" :class="{active: page === currentPage}">
+                    {{ page }}</li>
+                    <li @click="nextPageGroup" :class="{disabled: currentPageGroup === pageGroups.length}"><img src="../image/next.png"/></li>
                 </ul>
             </div>
         </div>
@@ -115,10 +115,10 @@
             <!--리뷰 리스트 페이징-->
             <div class="pagination">
                 <ul class="number_box">
-                    <li name="number_box" v-for="page in retotalPages" :key="page"
-                    @click="rechangePage(page)" :class="{active: page === recurrentPage }">
-                    {{ page }}
-                    </li>
+                    <li @click="prevRePageGroup" :class="{disabled: reCurrentPageGroup === 1}"><img src="../image/prev.png"/></li>
+                    <li v-for="page in currentReGroupPages" :key="page" @click="rechangePage(page)" :class="{active: page === recurrentPage}">
+                    {{ page }}</li>
+                    <li @click="nextRePageGroup" :class="{disabled: reCurrentPageGroup === rePageGroups.length}"><img src="../image/next.png"/></li>
                 </ul>
             </div>
         </div>
@@ -157,7 +157,8 @@
                 </div>
             </div>
         </div>
-         <ReviewModal :isOpen="isReviewModalOpen" :reviewData="reviewData" @close="closeReviewModal" />
+         <ReviewModal :isOpen="isReviewModalOpen" :reviewData="reviewData" 
+         @close="closeReviewModal" @review-submitted="handleReviewSubmitted" />
     </div>
 </template>
 
@@ -169,6 +170,7 @@ export default {
     components:{
         ReviewModal,
     },
+    
     data(){
         return{
             userData: {
@@ -179,11 +181,14 @@ export default {
             calData: [],
             reData:[],
             plikeData:[],
-            currentPage: 1,
+            //페이징용
+            currentPage: 1, //예약
             itemsPerPage: 5,
-            recurrentPage: 1,
+            recurrentPage: 1, //리뷰
             reitemsPerPage: 5,
-            moreplikeCount: 1,
+            moreplikeCount: 1,//좋아요
+            currentPageGroup: 1, // 예약 페이지 그룹
+            reCurrentPageGroup: 1, // 리뷰 페이지 그룹
             //모달용
             isReviewModalOpen: false,
             reviewData: {
@@ -242,9 +247,43 @@ export default {
         },
         moreplikeData(){
             return this.plikeData.slice(0, this.moreplikeCount);
+        },
+        pageGroups() {
+        const groups = [];
+        for (let i = 1; i <= this.totalPages; i += 5) {
+            groups.push({
+            start: i,
+            end: Math.min(i + 4, this.totalPages),
+                });
+            }
+            return groups;
+        },
+        rePageGroups() {
+        const groups = [];
+        for (let i = 1; i <= this.retotalPages; i += 5) {
+            groups.push({
+            start: i,
+            end: Math.min(i + 4, this.retotalPages),
+                });
+            }
+            return groups;
+        },
+        currentGroupPages() {
+        const group = this.pageGroups[this.currentPageGroup - 1];
+        if (group) {
+            return Array.from({ length: group.end - group.start + 1 }, (_, i) => group.start + i);
+            }
+            return [];
+        },
+        currentReGroupPages() {
+        const group = this.rePageGroups[this.reCurrentPageGroup - 1];
+        if (group) {
+            return Array.from({ length: group.end - group.start + 1 }, (_, i) => group.start + i);
+            }
+            return [];
         }
-
     },
+
     methods:{
         //내 정보 확인
         async myinfo(){
@@ -301,12 +340,61 @@ export default {
 
         //페이징
         changePage(page){
-            this.currentPage = page;
+            if(page > 0 && page <= this.totalPages){
+                this.currentPage = page;
+            }
         },
 
         rechangePage(repage){
-            this.recurrentPage = repage;
+            if(repage > 0 && repage <= this.retotalPages){
+                this.recurrentPage = repage;
+            }
         },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.changePage(this.currentPage - 1);
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.changePage(this.currentPage + 1);
+      }
+    },
+    prevRePage() {
+      if (this.recurrentPage > 1) {
+        this.rechangePage(this.recurrentPage - 1);
+      }
+    },
+    nextRePage() {
+      if (this.recurrentPage < this.retotalPages) {
+        this.rechangePage(this.recurrentPage + 1);
+      }
+    },
+    nextPageGroup() {
+      if (this.currentPageGroup < this.pageGroups.length) {
+        this.currentPageGroup++;
+        this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
+      }
+    },
+    prevPageGroup() {
+      if (this.currentPageGroup > 1) {
+        this.currentPageGroup--;
+        this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
+      }
+    },
+    nextRePageGroup() {
+      if (this.reCurrentPageGroup < this.rePageGroups.length) {
+        this.reCurrentPageGroup++;
+        this.rechangePage(this.rePageGroups[this.reCurrentPageGroup - 1].start);
+      }
+    },
+    prevRePageGroup() {
+      if (this.reCurrentPageGroup > 1) {
+        this.reCurrentPageGroup--;
+        this.rechangePage(this.rePageGroups[this.reCurrentPageGroup - 1].start);
+      }
+    },
+
         //찜 목록 더보기
         showmore(){
             return this.moreplikeCount += 1; //한번에 보여줄 개수 3개
@@ -355,6 +443,34 @@ export default {
         closeReviewModal(){
             this.isReviewModalOpen = false;
         },
+        handleReviewSubmitted(){
+            this.isSubmitted = true;
+        },
+        //현재날짜 > 예약날짜 일때만 리뷰버튼 오픈
+        isReviewenabled(cal_startdate){
+            const currentDate = new Date();
+
+            //지금 cal_startdate가 yy년mm월dd일 H시 이렇게 포맷되어있어서 바꿔줘야됨 
+            const dateParts = cal_startdate.match(/(\d{2})년(\d{2})월(\d{2})일 (\d{2})시/);
+            if (!dateParts) {
+                console.error('데이터포맷오류:', cal_startdate);
+                return false; // Default to disabling the button if parsing fails
+            }
+            //stratdate 데이터포맷 
+            const year = 2000 + parseInt(dateParts[1], 10);
+            const month = parseInt(dateParts[2], 10) - 1;
+            const day = parseInt(dateParts[3], 10);
+            const hour = parseInt(dateParts[4], 10);
+
+            const startdate = new Date(year, month, day, hour);
+            
+            console.log('오늘 날짜:', currentDate);
+            console.log('예약 날짜:', startdate);
+            // console.log('비교:', currentDate > startdate);
+            //오늘 날짜 > 예약날짜 일 경우에만 리뷰버튼 오픈
+            return currentDate > startdate;
+        },
+
     }
 
 }
@@ -502,7 +618,7 @@ export default {
         display: flex;
         flex-wrap: wrap;
         text-align: center;
-        width: 100px;
+        width: 150px;
         margin: 0 auto;
     }
     .number_box li{
@@ -512,6 +628,9 @@ export default {
         background-color: #00c8c8;
         border-radius: 5px;
         /* color: white; */
+    }
+    .number_box img{
+        width:15px;
     }
 
     /* section4 = review */
