@@ -11,6 +11,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Join from '../views/Join.vue'
 import Login from '../views/Login.vue'
 import ProgramList from '../views/ProgramList.vue'
+import FindId from '../views/FindId.vue'
+// import test from '../views/test.vue'
 
 //진우작성완
 
@@ -69,6 +71,11 @@ const routes = [
     name: 'AdminTrainer',
     component: AdminTrainer
   }
+  // {
+  //   path: '/test',
+  //   name: 'test',
+  //   component: test
+  // }
   //승호작성
 
 
@@ -88,10 +95,16 @@ const routes = [
     component: Login
   },
   {
-    path: '/programlist',
+    path: '/prolist/:menu_list',
     name: 'ProgramList',
     component: ProgramList
+  },
+  {
+    path: '/findid',
+    name: 'FindId',
+    component: FindId
   }
+
 
 //진우작성완
 
