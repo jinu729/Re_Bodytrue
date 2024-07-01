@@ -10,7 +10,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 //진우작성
 import Join from '../views/Join.vue'
 import Login from '../views/Login.vue'
-import ProgramList from '../views/ProgramList.vue'
 
 //진우작성완
 
@@ -23,7 +22,7 @@ import UserMyPage from '../views/UserMypage.vue'
 
 //재영작성
 import MainPage from '../views/MainPage.vue'
-
+import ProgramList from '../views/ProgramList.vue'
 
 //재영작성완
 
@@ -88,7 +87,7 @@ const routes = [
     component: Login
   },
   {
-    path: '/programlist',
+    path: '/prolist/:menu_list',
     name: 'ProgramList',
     component: ProgramList
   }
