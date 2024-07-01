@@ -1,78 +1,86 @@
 <template>
-    <div class="adminuser">
-      <main class="admin_userlist-main">
-        <div class="admin_userlist-bodyheader">
-          &nbsp;&nbsp;트레이너 관리
+  <div class="adminuser">
+    <main class="admin_userlist-main">
+      <div class="admin_userlist-bodyheader">
+        &nbsp;&nbsp;트레이너 관리
+      </div>
+      <div class="admin_userlist-bodysearch">
+        <input 
+          v-model="searchTerm" 
+          type="text" 
+          class="search-input" 
+          placeholder="이름 검색" 
+          @keyup.enter="searchTrainers"
+        >
+        <button class="search-button" @click="searchTrainers">🔍</button>
+      </div>
+      <div class="admin_userlist-bodycontent">
+        <table>
+          <thead>
+            <tr>
+              <th>이메일</th>
+              <th>비밀번호</th>
+              <th>이름</th>
+              <th>핸드폰번호</th>
+              <th>성별</th>
+              <th>주소1</th>
+              <th>주소2</th>
+              <th>승인</th>
+              <th>정지</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(trainer, i) in trainerList" :key="i">
+              <td>{{ trainer.tr_email }}</td>
+              <td>{{ trainer.tr_pwd }}</td>
+              <td>{{ trainer.tr_name }}</td>
+              <td>{{ trainer.tr_tel }}</td>
+              <td>{{ trainer.tr_sex }}</td>
+              <td>{{ trainer.tr_add1 }}</td>
+              <td>{{ trainer.tr_add2 }}</td>
+              <td>
+                <button @click="updateAdmit(trainer, true)" :disabled="trainer.tr_admit === 1">✔</button>
+                <button @click="updateAdmit(trainer, false)" :disabled="trainer.tr_admit === 0">❌</button>
+              </td>
+              <td>
+                <button @click="Trdelete(trainer, true)" :disabled="trainer.tr_ban === 1">✔</button>
+                <button @click="Trdelete(trainer, false)" :disabled="trainer.tr_ban === 0">❌</button>
+            </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="admin_userlist-bodypaging">
+          <button v-for="page in totalPages" :key="page" @click="gotoPage(page)">
+            {{ page }}
+          </button>
         </div>
-        <div class="admin_userlist-bodysearch">
-          <input 
-            v-model="searchTerm" 
-            type="text" 
-            class="search-input" 
-            placeholder="이름 검색" 
-            @keyup.enter="searchTrainers"
-          >
-          <button class="search-button" @click="searchTrainers">🔍</button>
-        </div>
-        <div class="admin_userlist-bodycontent">
-          <table>
-            <thead>
-              <tr>
-                <th>이메일</th>
-                <th>비밀번호</th>
-                <th>이름</th>
-                <th>핸드폰번호</th>
-                <th>성별</th>
-                <th>주소1</th>
-                <th>주소2</th>
-                <th>승인</th>
-                <th>정지</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(trainer, i) in trainerList" :key="i">
-                <td>{{ trainer.tr_email }}</td>
-                <td>{{ trainer.tr_pwd }}</td>
-                <td>{{ trainer.tr_name }}</td>
-                <td>{{ trainer.tr_tel }}</td>
-                <td>{{ trainer.tr_sex }}</td>
-                <td>{{ trainer.tr_add1 }}</td>
-                <td>{{ trainer.tr_add2 }}</td>
-                <td><button @click="updateTr(trainer.tr_no)">✔</button></td>
-                <td><button @click="banTr(trainer.tr_no)">❌</button></td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="admin_userlist-bodypaging">
-            <button v-for="page in totalPages" :key="page" @click="gotoPage(page)">
-              {{ page }}
-            </button>
-          </div>
-        </div>
-      </main>
-    </div>
-  </template>
+      </div>
+    </main>
+  </div>
+</template>
+
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
-    data() {
-        return {
-            searchTerm: '',
-            trainerList: [],
-            currentPage: 1,
-            perPage: 10, //페이지 당 아이템 수
-        };
-    },
-    computed: {
-    //현재 페이지의 데이터 계산
+  data() {
+    return {
+      searchTerm: '',
+      trainerList: [],
+      currentPage: 1,
+      perPage: 10, // 페이지 당 아이템 수
+    };
+  },
+  computed: {
+    // 현재 페이지의 데이터 계산
     paginatedTrainers() {
       const start = (this.currentPage - 1) * this.perPage;
       const end = start + this.perPage;
       return this.trainerList.slice(start, end);
     },
     totalPages() {
-        return Math.ceil(this.trainerList.length / this.perPage);
+      return Math.ceil(this.trainerList.length / this.perPage);
     }
   },
   methods: {
@@ -87,45 +95,61 @@ export default {
     },
     searchTrainers() {
       axios.get('http://localhost:3000/admin/search_tr_name', {
-        params: {
-          name: this.searchTerm
-        }
-      })
-      .then(response => {
-        this.trainerList = response.data;
-      })
-      .catch(error => {
-        console.error('Error searching users:', error);
-      });
-    },
-    banTr(trainerNo) {
-      axios.post('http://localhost:3000/admin/trban', {
-        trainer_no: trainerNo
-      })
-      .then(response => {
-        console.log('Trainer banned:', response.data);
-        this.getTrainerList(); // 정지 후 목록 갱신
-      })
-      .catch(error => {
-        console.error('Error banning trainer:', error);
-      });
-    },
-    updateTr(trainerno) {
-        axios.post('http://localhost:3000/admin/updatetr', {
-        trainer_no: trainerno
-      })
+          params: {
+            name: this.searchTerm
+          }
+        })
         .then(response => {
-          if (response.data.code == 200){
-            //성공
-            console.log('Trainer updated:', response.data);
-            this.getTrainerList(); // 승인 후 목록 갱신
-          }else{
-            //실패
-            console.error('Error updating trainer:', response.data);
+          this.trainerList = response.data;
+        })
+        .catch(error => {
+          console.error('Error searching users:', error);
+        });
+    },
+    Trdelete(tr_name, isDeleted) {
+      const newDeleteStatus = isDeleted ? 1 : 0;
+      axios({
+          url: 'http://localhost:3000/admin/trdelete',
+          method: 'POST',
+          data: {
+            tr_no: trainer.te_no,
+            tr_ban: newDeleteStatus
+          }
+        })
+        .then(res => {
+          if (res.data.message === '삭제 상태 업데이트') {
+            Swal.fire('삭제 업데이트', `트레이너가 ${isDelete ? '삭제' : '미삭제'} 처리되었습니다.`, 'success');
+            trainer.tr_ban = newDeleteStatus; // 삭제 상태 업데이트 반영
+          } else {
+            console.warn('Unexpected response:', res.data);
           }
         })
         .catch(error => {
-          console.error('Error updating trainer:', error);
+          console.error('Error deleting trainer:', error);
+          Swal.fire('에러', '트레이너 삭제 중 오류가 발생했습니다.', 'error');
+        });
+    },
+    updateAdmit(trainer, isAdmitted) {
+      const newAdmitStatus = isAdmitted ? 1 : 0;
+      axios({
+          url: 'http://localhost:3000/admin/trupdate',
+          method: 'POST',
+          data: {
+            tr_no: trainer.tr_no,
+            tr_admit: newAdmitStatus
+          }
+        })
+        .then(res => {
+          if (res.data.message === '승인 상태 업데이트') {
+            Swal.fire('승인 업데이트', `트레이너가 ${isAdmitted ? '승인' : '미승인'} 처리되었습니다.`, 'success');
+            trainer.tr_admit = newAdmitStatus; // 상태 업데이트 반영
+          } else {
+            console.warn('Unexpected response:', res.data);
+          }
+        })
+        .catch(error => {
+          console.error('Error updating trainer admit status:', error);
+          Swal.fire('에러', '승인 상태 업데이트 중 오류가 발생했습니다.', 'error');
         });
     },
     gotoPage(page) {
@@ -214,6 +238,7 @@ export default {
 .admin_userlist-bodypaging{
     padding-top: 15px;
 }
+
 
 /* admin_userlist main 스타일 끝 */
 

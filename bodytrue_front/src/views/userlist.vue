@@ -37,7 +37,7 @@
               <td>{{ user.user_sex }}</td>
               <td>{{ user.user_add1 }}</td>
               <td>{{ user.user_add2 }}</td>
-              <td><button @click="banUser(user.user_no)">❌</button></td>
+              <td><button @click="deleteuser(user.user_no)">❌</button></td>
             </tr>
           </tbody>
         </table>
@@ -97,26 +97,58 @@ export default {
         console.error('Error searching users:', error);
       });
     },
-    banUser(userNo) {
-      axios.post('http://localhost:3000/admin/userban', {
-        user_no: userNo
+    deleteuser(user_no) {
+      console.log('user_no',user_no);
+      axios({
+        url: 'http://localhost:3000/admin/deleteuser',
+        method: 'POST',
+        data: {
+          user_no: user_no
+        }
       })
-      .then(response => {
-        console.log('User banned:', response.data);
-        this.getUserList(); // 정지 후 목록 갱신
+      
+      .then(res => {
+        if (res.data.message === '회원 정지') {
+          alert('회원정지 되었습니다.');
+          this.getUserList(); //정지 후 목록 다시 불러오기
+        } else {
+          console.warn('404:', res.data);
+        }
       })
       .catch(error => {
         console.error('Error banning user:', error);
-      });
+        alert('Error banning user'); // 사용자에게 에러 피드백
+      }
+    )},
+      gotoPage(page) {
+        this.currentPage = page;
+      }
     },
-    gotoPage(page) {
-      this.currentPage = page;
+    mounted() {
+      this.getUserList();
     }
-  },
-  mounted() {
-    this.getUserList();
-  }
 };
+
+//     banUser(userNo) {
+//       axios.post('http://localhost:3000/admin/userban', {
+//         user_no: userNo
+//       })
+//       .then(response => {
+//         console.log('User banned:', response.data);
+//         this.getUserList(); // 정지 후 목록 갱신
+//       })
+//       .catch(error => {
+//         console.error('Error banning user:', error);
+//       });
+//     },
+//     gotoPage(page) {
+//       this.currentPage = page;
+//     }
+//   },
+//   mounted() {
+//     this.getUserList();
+//   }
+// };
 </script>
 <style scoped>
 /* admin_userlist main 스타일 시작 */
