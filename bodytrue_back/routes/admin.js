@@ -31,7 +31,7 @@ router.get("/userlist",async(req,res)=>{
 router.get("/searchname",async(req,res)=>{
 
     // const name = req.body.name;
-    const name = req.query.name;
+    const name = "req.query.name";
 
     db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user where user_name = ?",
         name,
@@ -99,19 +99,19 @@ router.get("/search_tr_name",async(req,res)=>{
 
   db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer where tr_name = ?",
       name,
-      (err,results)=>{
-      if (err) {
-          res.send({
-            // 에러 발생 시
-            code: 400,
-            failed: "error occurred",
-            error: err,
-          });
-        } else {
-          res.send(results);
+        (err,results)=>{
+        if (err) {
+            res.send({
+              // 에러 발생 시
+              code: 400,
+              failed: "error occurred",
+              error: err,
+            });
+          } else {
+            res.send(results);
         // console.log(results);
         }
-  });
+    });
 });
 
 
@@ -153,18 +153,18 @@ router.post("/trban", async (req, res) => {
         if (err) {
             console.error('Error occurred:', err);  // 에러 로그 추가
             res.status(400).send({
-                code: 400,
-                failed: "error occurred",
-                error: err,
+              code: 400,
+              failed: "error occurred",
+              error: err,
             });
-        } else {
+          } else {
             console.log('Trainer deleted successfully:', results);  // 성공 로그 추가
             res.status(200).send({
                 code: 200,
                 success: "Trainer deleted successfully",
                 data: results,
             });
-        }
+          }
     });
 });
 

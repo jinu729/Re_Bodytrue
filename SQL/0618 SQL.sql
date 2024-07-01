@@ -299,6 +299,9 @@ select * from user;
 
 select * from img;
 
-select user_no, IFNULL(max(user_email),"악") AS user_email, user_name from user where user_email = "MSH980@GMAIL.COM" and user_pwd = "1234";
+select count(*),user_no, (user_email), user_name from user where user_email = "MSH980@GMAIL.COM" and user_pwd = "1234";
+
+select count(*) as user_email from user
+where user_no = (select user_no from user where user_email = "MSH980@GMAIL.COM" and user_pwd = "1234");
 
 COMMIT;
