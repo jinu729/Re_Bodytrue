@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 //승호작성
 import test from '../views/test'
-import Trainer_programcreate from '../views/trainer_programcreate'
+import TrainerCreatePro from '../views/TrainerCreatePro'
 //승호작성완
 
 
@@ -86,9 +86,9 @@ const routes = [
   }
   ,
   {
-    path: '/trainer_programcreate',
-    name: 'Trainer_programcreate',
-    component: Trainer_programcreate
+    path: '/TrainerCreatePro/:tr_no',
+    name: 'TrainerCreatePro',
+    component: TrainerCreatePro
   }
 
 

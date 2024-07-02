@@ -163,7 +163,7 @@ router.post("/패스명(bodytrue_findPw.html)",async(req,res)=>{
     });
 });
 
-//아이디찾기
+//회원 아이디찾기
 
 router.post("/findId",async(req,res)=>{
     console.log(req.body);
@@ -200,6 +200,45 @@ router.post("/findId",async(req,res)=>{
           }
         }
     });
+});
+
+//트레이너 아이디찾기
+
+router.post("/findId",async(req,res)=>{
+  console.log(req.body);
+  const data = {
+      tr_name : req.body.user_name,
+      // user_tel : req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3
+      tr_tel : req.body.user_tel
+    };
+    console.log(data);
+
+  db.query('select tr_email from trainer where tr_name = ? and tr_tel = ?',
+      [data.tr_name,data.tr_tel],
+      function(err,results,fields){
+      if (err) {
+          res.send({
+          // 에러 발생 시
+          code: 400,
+          failed: "error occurred",
+          error: err,
+          });
+      } else {
+        if (results.length > 0) {
+          const user_email = results[0].user_email;
+          res.status(200).json({
+              code: 200,
+              message: "아이디(이메일) 찾기 성공",
+              user_email: user_email
+          });
+      } else {
+          res.status(404).json({
+              code: 404,
+              message: "일치하는 사용자가 없습니다."
+          });
+        }
+      }
+  });
 });
 
 //회원 로그인

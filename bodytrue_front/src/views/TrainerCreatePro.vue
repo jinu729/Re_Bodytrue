@@ -10,7 +10,7 @@
                     <div class="img-box">
                         <img id="profile-picture" class="profile-picture" src="" alt="Profile Picture">
                     </div>
-                    <input type="file" id="image-upload" accept="image/*" ref="img" @change="imgUpload()">
+                    <input type="file" id="image-upload" accept="image/*" ref="img" @change="uploadFile($event.target.files, 0)">
                     <label for="image-upload" class="file-upload-label" style="padding-left: 50px;">썸네일이미지 선택</label><br>   
                     <span>사이즈(256 * 256)이내</span>
                 </div>
@@ -73,7 +73,7 @@
                         <div class="img_content">
                             <span>상세 이미지 - 1</span>
                         </div>
-                        <input type="file" class="prcimg_upload" id="file-input1" accept="image/png, image/jpeg" ref="img" @change="imgUpload()">                        
+                        <input type="file" class="prcimg_upload" id="file-input1" accept="image/png, image/jpeg" ref="img" @change="uploadFile2($event.target.files, 1)">                        
                     </div>
                     <div class="preview-container" id="preview-container"></div>
                     <div class="img_textarea">
@@ -85,7 +85,7 @@
                         <div class="img_content">
                             <span>상세 이미지 - 2</span>
                         </div>
-                        <input type="file" class="prcimg_upload" id="file-input2" accept="image/png, image/jpeg" ref="img" @change="imgUpload()">
+                        <input type="file" class="prcimg_upload" id="file-input2" accept="image/png, image/jpeg" ref="img" @change="uploadFile3($event.target.files, 2)">
                     </div>
                     <div class="preview-container" id="preview-container2"></div>
                     <div class="img_textarea">
@@ -100,7 +100,7 @@
                         <div class="img_content">
                             <span>가격</span>
                         </div>
-                        <input type="file" class="prcimg_upload" id="file-input3" accept="image/png, image/jpeg" ref="img" @change="imgUpload()">
+                        <input type="file" class="prcimg_upload" id="file-input3" accept="image/png, image/jpeg" ref="img" @change="uploadFile4($event.target.files, 3)">
                     </div>
                     <div class="preview-container" id="preview-container3"></div>
                 </div>
@@ -108,7 +108,7 @@
             </form>
         </div>
         <div class="prc_btn">
-            <button type="submit" name="create" id="prc_create">등록</button>
+            <button type="submit" name="create" id="prc_create" @click="ProInsert">등록</button>
             <button type="button" name="cancle" id="prc_cancel">취소</button>
         </div>
     </div>    
@@ -118,55 +118,309 @@
 //사악하디 사악한 숭메마녀에게 저주를 받아버린 뷰에요!! 어느 용기있는 용자가와서 이 저주받은 뷰를 해방시켜줄거에요!
 
 import axios from 'axios';
+
 export default {
     data(){
         return {
-            prcn_text:"",
-            phn_text:"",
-            adddress_text:"",
-            start_date:"",
-            end_date:"",
-            img_textarea1:"",
-            img_textarea2:"",
-            tags:"",
-            programImage:""
+            fileName: '상품 이미지를 업로드 하세요',
+            fileName2: '상품 상세 이미지를 업로드 하세요',
+            program:{
+                prcn_text:"",
+                phn_text:"",
+                adddress_text:"",
+                start_date:"",
+                end_date:"",
+                img_textarea1:"",
+                img_textarea2:"",
+                tags:"",
+
+                pro_img:"",
+                pro_img1:"",
+                pro_img2:"",
+                pro_imgprice:""
+            }
         }
 
     },
+     computed: {
+      trainer(){
+        return this.$store.state.trainer;
+      },
+     },
 
     method:{
-          async imgUpload(){
-            this.input.programImage=this.ref.img.files; 
-        },
+        async uploadFile(file, type) {
 
-        async onSubmitForm() {
-            const data = {
-                prcn_text:this.prcn_text,
-                phn_text:this.phn_text,
-                adddress_text: this.adddress_text,
-                start_date: this.start_date,
-                end_date: this.end_date,
-                img_textarea1: this.img_textarea1,
-                img_textarea2: this.img_textarea2,
-                tags: this.tags,
-
-
-            };
-            console.log('Sending data:', data);
-
-            try {
-                const response = await axios.post(`http://localhost:3000/admin/createprogram`, data, { 
-                });
-                console.log('폼 제출 성공', response.data);
-                alert('회원 가입을 축하드립니다.');
-                this.$router.push({ path: '/Trainer'});
-            } catch (error) {
-                console.error('폼 제출 중 오류 발생', error);
+            let name = "";
+            if (file) {
+                name = file[0].name;
+            }
+            else {
+                return;     // 파일 미선택 시 반환
             }
 
-    }
+            const formData = new FormData();
+
+            formData.append('img', file[0]);
+            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
+            for (let key of formData.keys()) {
+                console.log(key, ":", formData.get(key));
+            }
+
+            try {
+                axios({
+                    url: `http://localhost:3000/trainer/upload_img`,
+                    method: 'POST',
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    data: formData
+                })
+                    .then((res) => {
+                        if (res.data.message == 'success') {
+                            if (type == 0) {
+                                this.data.pro_img = name;
+                            }
+                            else if (type == 1) {
+                                this.data.pro_img1 = name;
+                            }
+                            else if (type == 2) {
+                                this.data.pro_img2 = name;
+                            }
+                            else if (type == 3) {
+                                this.data.pro_imgprice = name;
+                            }
+                        }
+                        else {
+                            this.$swal("DB 에러");
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    })
+                return true;
+
+            } catch (err) {
+                console.log(err);
+                return false;
+            }
+
+        },
+        async uploadFile2(file, type) {
+
+            let name = "";
+            if (file) {
+                name = file[0].name;
+            }
+            else {
+                return;     // 파일 미선택 시 반환
+            }
+
+            const formData = new FormData();
+
+            formData.append('img', file[0]);
+            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
+            for (let key of formData.keys()) {
+                console.log(key, ":", formData.get(key));
+            }
+
+            try {
+                axios({
+                    url: `http://localhost:3000/trainer/upload_img`,
+                    method: 'POST',
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    data: formData
+                })
+                    .then((res) => {
+                        if (res.data.message == 'success') {
+                            if (type == 0) {
+                                this.data.pro_img = name;
+                            }
+                            else if (type == 1) {
+                                this.data.pro_img1 = name;
+                            }
+                            else if (type == 2) {
+                                this.data.pro_img2 = name;
+                            }
+                            else if (type == 3) {
+                                this.data.pro_imgprice = name;
+                            }
+                        }
+                        else {
+                            this.$swal("DB 에러");
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    })
+                return true;
+
+            } catch (err) {
+                console.log(err);
+                return false;
+            }
+
+        },async uploadFile3(file, type) {
+
+            let name = "";
+            if (file) {
+                name = file[0].name;
+            }
+            else {
+                return;     // 파일 미선택 시 반환
+            }
+
+            const formData = new FormData();
+
+            formData.append('img', file[0]);
+            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
+            for (let key of formData.keys()) {
+                console.log(key, ":", formData.get(key));
+            }
+
+            try {
+                axios({
+                    url: `http://localhost:3000/trainer/upload_img`,
+                    method: 'POST',
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    data: formData
+                })
+                    .then((res) => {
+                        if (res.data.message == 'success') {
+                            if (type == 0) {
+                                this.data.pro_img = name;
+                            }
+                            else if (type == 1) {
+                                this.data.pro_img1 = name;
+                            }
+                            else if (type == 2) {
+                                this.data.pro_img2 = name;
+                            }
+                            else if (type == 3) {
+                                this.data.pro_imgprice = name;
+                            }
+                        }
+                        else {
+                            this.$swal("DB 에러");
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    })
+                return true;
+
+            } catch (err) {
+                console.log(err);
+                return false;
+            }
+
+        },async uploadFile4(file, type) {
+
+            let name = "";
+            if (file) {
+                name = file[0].name;
+            }
+            else {
+                return;     // 파일 미선택 시 반환
+            }
+
+            const formData = new FormData();
+
+            formData.append('img', file[0]);
+            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
+            for (let key of formData.keys()) {
+                console.log(key, ":", formData.get(key));
+            }
+
+            try {
+                axios({
+                    url:`http://localhost:3000/trainer/upload_img`,
+                    method: 'POST',
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    data: formData
+                })
+                    .then((res) => {
+                        if (res.data.message == 'success') {
+                            if (type == 0) {
+                                this.data.pro_img = name;
+                            }
+                            else if (type == 1) {
+                                this.data.pro_img1 = name;
+                            }
+                            else if (type == 2) {
+                                this.data.pro_img2 = name;
+                            }
+                            else if (type == 3) {
+                                this.data.pro_imgprice = name;
+                            }
+                        }
+                        else {
+                            this.$swal("DB 에러");
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    })
+                return true;
+
+            } catch (err) {
+                console.log(err);
+                return false;
+            }
+
+        },
+        ProInsert() {
+            const tr_no = this.$route.params.tr_no;
+                axios({
+                    url: `http://localhost:3000/trainer/createprogram/:${tr_no}`,
+                    method: "POST",
+                    data: {
+                        prcn_text:"",
+                        phn_text:"",
+                        adddress_text:"",
+                        start_date:"",
+                        end_date:"",
+                        img_textarea1:"",
+                        img_textarea2:"",
+                        tags:"",
+
+                        pro_img:"",
+                        pro_img1:"",
+                        pro_img2:"",
+                        pro_imgprice:""
+                    },
+                })
+                    .then((res) => {
+                        if (res.data.message == 'add_complete') {
+                            this.$swal({
+                                position: 'top',
+                                icon: 'success',
+                                title: '상품 등록 성공!',
+                                showConfirmButton: false,
+                                timer: 1000
+                            })
+                                .then(() => {
+                                    window.location.href = "http://localhost:8080/admin/goodsList";
+                                })
+                        } else if (res.data.message == 'already_exist_goods') {
+                            this.$swal("이미 등록된 상품입니다.");
+                        }
+                        else if (res.data.message == '파일 변경 실패') {
+                            this.$swal("파일 변경 실패");
+                        }
+                        else {
+                            this.$swal("상품 등록 실패");
+                        }
+                    })
+                    .catch(() => {
+                        this.$swal("오류 발생")
+                    })
+            }
+        },
+          
     
-}
 }
 </script>
 <style scoped>

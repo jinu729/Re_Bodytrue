@@ -106,29 +106,29 @@ export default {
           console.error('Error searching users:', error);
         });
     },
-    Trdelete(tr_name, isDeleted) {
-      const newDeleteStatus = isDeleted ? 1 : 0;
-      axios({
-          url: 'http://localhost:3000/admin/trdelete',
-          method: 'POST',
-          data: {
-            tr_no: trainer.te_no,
-            tr_ban: newDeleteStatus
-          }
-        })
-        .then(res => {
-          if (res.data.message === '삭제 상태 업데이트') {
-            Swal.fire('삭제 업데이트', `트레이너가 ${isDelete ? '삭제' : '미삭제'} 처리되었습니다.`, 'success');
-            trainer.tr_ban = newDeleteStatus; // 삭제 상태 업데이트 반영
-          } else {
-            console.warn('Unexpected response:', res.data);
-          }
-        })
-        .catch(error => {
-          console.error('Error deleting trainer:', error);
-          Swal.fire('에러', '트레이너 삭제 중 오류가 발생했습니다.', 'error');
-        });
-    },
+    // Trdelete(tr_name, isDeleted) {
+    //   const newDeleteStatus = isDeleted ? 1 : 0;
+    //   axios({
+    //       url: 'http://localhost:3000/admin/trdelete',
+    //       method: 'POST',
+    //       data: {
+    //         tr_no: trainer.te_no,
+    //         tr_ban: newDeleteStatus
+    //       }
+    //     })
+    //     .then(res => {
+    //       if (res.data.message === '삭제 상태 업데이트') {
+    //         Swal.fire('삭제 업데이트', `트레이너가 ${isDelete ? '삭제' : '미삭제'} 처리되었습니다.`, 'success');
+    //         trainer.tr_ban = newDeleteStatus; // 삭제 상태 업데이트 반영
+    //       } else {
+    //         console.warn('Unexpected response:', res.data);
+    //       }
+    //     })
+    //     .catch(error => {
+    //       console.error('Error deleting trainer:', error);
+    //       Swal.fire('에러', '트레이너 삭제 중 오류가 발생했습니다.', 'error');
+    //     });
+    // },
     updateAdmit(trainer, isAdmitted) {
       const newAdmitStatus = isAdmitted ? 1 : 0;
       axios({

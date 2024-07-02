@@ -13,10 +13,32 @@ const path = require("path");
 
 //프로그램 사진저장/프로그램 정보 저장
 
-router.post('/createprogram', function (req, res) {
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, cb) {
+            cb(null, 'uploads/');
+        },
+        filename(req, file, cb) {
+            cb(null, file.originalname);
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
+});
+
+
+router.post('/upload_img', upload.single('img'), (request, response) => {
+    setTimeout(() => {
+        return response.status(200).json({
+            message: 'success'
+        })
+    }, 2000);
+})
+
+router.post('/createprogram/:tr_no', function (req, res) {
 
     const data = {
       //프론트에서 전달해주는 데이터
+      tr_no : req.params.tr_no,
       pro_name : req.body.prcn_text,
       pro_tel : req.body.phn_text,
       pro_add : req.body.adddress_text,
@@ -26,15 +48,15 @@ router.post('/createprogram', function (req, res) {
       pro_comment2 : req.body.img_textarea2,
       pro_tag : req.body.tags,
 
-      pro_img : req.body.programImage[0],
-      pro_img1 : req.body.programImage[1],
-      pro_img2 : req.body.programImage[2],
-      pro_imgprice : req.body.programImage[3],
+      pro_img : req.body.pro_img,
+      pro_img1 : req.body.pro_img1,
+      pro_img2 : req.body.pro_img2,
+      pro_imgprice : req.body.pro_imgprice,
     };
-    console.log(goods);
+    console.log(data);
 
         try {
-                // 이미지를 제외한 굿즈 정보 먼저 입력
+                // 이미지를 제외한 프로그램 정보 먼저 입력
                 db.query("INSERT INTO PROGRAM (PRO_NAME, PRO_TEL,PRO_ADD1,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)values (?,?,?,?,?,?,?,?)", 
                     [data.pro_name, data.pro_tel, data.pro_add, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag],
                      function (error, results, fields) {
@@ -49,7 +71,7 @@ router.post('/createprogram', function (req, res) {
                         const pastDir2 = `${__dirname}` + `../../uploads/` + data.pro_img2
                         const pastDir3 = `${__dirname}` + `../../uploads/` + data.pro_imgprice
 
-                        const newDir = `${__dirname}` + `../../uploads/uploadGoods/`;
+                        const newDir = `${__dirname}` + `../../uploads/trainer/`;
                         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
 
                         const extension = data.pro_img.substring(data.pro_img.lastIndexOf('.'))
