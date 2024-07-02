@@ -44,7 +44,7 @@
                             <th>프로그램</th>
                             <th>트레이너</th>
                             <th>예약시간</th>
-                            <th>예약시간 변경</th>
+                            <th>예약 취소</th>
                             <th>리뷰작성</th>
                         </tr>
                     </thead>
@@ -55,7 +55,7 @@
                             <td @click="goToProdetail(cal.pro_no)">{{ cal.pro_name }}</td>
                             <td>{{ cal.tr_name }}</td>
                             <td>{{ cal.cal_startdate }}</td>
-                            <td><button @click="goToUpdateCal" class="re_btn">예약 변경하기</button></td>
+                            <td><button @click="deletecal(cal.pro_no, cal.cal_startdate)" class="re_btn">예약 취소하기</button></td>
                             <td><button @click="openReviewModal(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
                         </tr>
                     </tbody>
@@ -82,25 +82,25 @@
             </div>
             <div class="review_table">
                 <!--리뷰 내역이 있을 경우에만 보여줌-->
-                <table v-if="filterRedata.length > 0" class="table_list">
+                <table v-if="reData.length > 0" class="table_list">
                     <thead>
                         <tr>
                             <th>프로그램</th>
                             <th>트레이너</th>
-                            <th>예약시간</th>
+                            <th>작성날짜</th>
                             <th>평점</th>
-                            <th>리뷰수정</th>
+                            <th>리뷰수정/삭제</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="re in repagingData" :key="re.re_no">
                             <td @click="goToProdetail(re.pro_no)">{{ re.pro_name }}</td>
                             <td>{{ re.tr_name }}</td>
-                            <td>{{ re.cal_startdate }}</td>
+                            <td>{{ re.re_date }}</td>
                             <td>{{ re.re_rate}}</td>
                             <td>
-                                <button class="reupdate_btn">수정</button>
-                                <button class="reupdate_btn">취소</button>
+                                <button @click="updatere(re.re_no, re.re_comment)" class="reupdate_btn">수정</button>
+                                <button @click="deletere(re.re_no)" class="reupdate_btn">삭제</button>
                             </td>
                         </tr>
                     </tbody>
@@ -158,7 +158,7 @@
             </div>
         </div>
          <ReviewModal :isOpen="isReviewModalOpen" :reviewData="reviewData" 
-         @close="closeReviewModal" @review-submitted="handleReviewSubmitted" />
+         @close="closeReviewModal" @review-submitted="handleReviewSubmitted"/>
     </div>
 </template>
 
@@ -201,12 +201,19 @@ export default {
             }
         };
     },
+    mounted(){
+        console.log("마운트됨");
+        this.myrecheck();
+        this.mycalcheck();
+        // this.deletecal();
+        // this.deletere();
+    },
 
     created(){
         //내정보 불러오는 methods 생성
         this.myinfo();
         this.mycalcheck();
-        this.myrecheck();
+        // this.myrecheck();
         this.myplike();
         // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
         // const user_no = this.$route.params.user_no;
@@ -232,18 +239,18 @@ export default {
         totalPages(){
             return Math.ceil(this.calData.length / this.itemsPerPage);
         },
-        //필터 리뷰데이터값
-        filterRedata(){
-            return this.reData.filter(item => item.re_rate !== null);
-        },
+        // //필터 리뷰데이터값
+        // filterRedata(){
+        //     return this.reData.filter(item => item.re_rate !== null);
+        // },
         //리뷰 현재 페이지 계산
         repagingData(){
             const start = (this.recurrentPage - 1 )* this.reitemsPerPage;
             const end = start + this.reitemsPerPage;
-            return this.filterRedata.slice(start,end);
+            return this.reData.slice(start,end);
         },
         retotalPages(){
-            return Math.ceil(this.filterRedata.length / this.reitemsPerPage);
+            return Math.ceil(this.reData.length / this.reitemsPerPage);
         },
         moreplikeData(){
             return this.plikeData.slice(0, this.moreplikeCount);
@@ -316,9 +323,19 @@ export default {
                 let data = response.data;
                 console.log("필터전 데이터값",data);
                 //필터메서드 이용해서 re_rate값이 not null 인 경우에만 true, 새로운 배열에 할당
-                data = data.filter(item => item.re_rate !== null);
-                console.log("필터후 데이터값", data);
-                
+                // data = data.filter(item => item.re_rate !== null);
+                // console.log("필터후 데이터값", data);
+
+                // // re_no 값이 고유한지 확인
+                // const reNoSet = new Set();
+                // data.forEach(item => {
+                //     if (reNoSet.has(item.re_no)) {
+                //     console.warn("중복된 re_no 발견:", item.re_no);
+                //     } else {
+                //     reNoSet.add(item.re_no);
+                //     }
+                // });
+                            
                 this.reData = data;
                 console.log("user_no",user_no);
             } catch(error){
@@ -350,50 +367,50 @@ export default {
                 this.recurrentPage = repage;
             }
         },
-    prevPage() {
-      if (this.currentPage > 1) {
-        this.changePage(this.currentPage - 1);
-      }
-    },
-    nextPage() {
-      if (this.currentPage < this.totalPages) {
-        this.changePage(this.currentPage + 1);
-      }
-    },
-    prevRePage() {
-      if (this.recurrentPage > 1) {
-        this.rechangePage(this.recurrentPage - 1);
-      }
-    },
-    nextRePage() {
-      if (this.recurrentPage < this.retotalPages) {
-        this.rechangePage(this.recurrentPage + 1);
-      }
-    },
-    nextPageGroup() {
-      if (this.currentPageGroup < this.pageGroups.length) {
-        this.currentPageGroup++;
-        this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
-      }
-    },
-    prevPageGroup() {
-      if (this.currentPageGroup > 1) {
-        this.currentPageGroup--;
-        this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
-      }
-    },
-    nextRePageGroup() {
-      if (this.reCurrentPageGroup < this.rePageGroups.length) {
-        this.reCurrentPageGroup++;
-        this.rechangePage(this.rePageGroups[this.reCurrentPageGroup - 1].start);
-      }
-    },
-    prevRePageGroup() {
-      if (this.reCurrentPageGroup > 1) {
-        this.reCurrentPageGroup--;
-        this.rechangePage(this.rePageGroups[this.reCurrentPageGroup - 1].start);
-      }
-    },
+        prevPage() {
+        if (this.currentPage > 1) {
+            this.changePage(this.currentPage - 1);
+        }
+        },
+        nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.changePage(this.currentPage + 1);
+        }
+        },
+        prevRePage() {
+        if (this.recurrentPage > 1) {
+            this.rechangePage(this.recurrentPage - 1);
+        }
+        },
+        nextRePage() {
+        if (this.recurrentPage < this.retotalPages) {
+            this.rechangePage(this.recurrentPage + 1);
+        }
+        },
+        nextPageGroup() {
+        if (this.currentPageGroup < this.pageGroups.length) {
+            this.currentPageGroup++;
+            this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
+        }
+        },
+        prevPageGroup() {
+        if (this.currentPageGroup > 1) {
+            this.currentPageGroup--;
+            this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
+        }
+        },
+        nextRePageGroup() {
+        if (this.reCurrentPageGroup < this.rePageGroups.length) {
+            this.reCurrentPageGroup++;
+            this.rechangePage(this.rePageGroups[this.reCurrentPageGroup - 1].start);
+        }
+        },
+        prevRePageGroup() {
+        if (this.reCurrentPageGroup > 1) {
+            this.reCurrentPageGroup--;
+            this.rechangePage(this.rePageGroups[this.reCurrentPageGroup - 1].start);
+        }
+        },
 
         //찜 목록 더보기
         showmore(){
@@ -423,10 +440,6 @@ export default {
         goToProdetail(pro_no){
             this.$router.push(`/prodetail/${pro_no}`);
         },
-        //예약 변경하기
-        goToUpdateCal(){
-            this.$router.push(`/calupdate`);
-        },
         //리뷰작성하기 위해 모달창 오픈 
         openReviewModal(cal){
             console.log("cal.tr_no",cal.tr_no);
@@ -438,13 +451,14 @@ export default {
                re_comment: '',
                re_rate:0,
             };
+            console.log("reviewData", this.reviewData);
             this.isReviewModalOpen = true;
         },
         closeReviewModal(){
             this.isReviewModalOpen = false;
         },
         handleReviewSubmitted(){
-            this.isSubmitted = true;
+            this.myrecheck(); //작성완료되면 리뷰다시불러옴
         },
         //현재날짜 > 예약날짜 일때만 리뷰버튼 오픈
         isReviewenabled(cal_startdate){
@@ -469,6 +483,78 @@ export default {
             // console.log('비교:', currentDate > startdate);
             //오늘 날짜 > 예약날짜 일 경우에만 리뷰버튼 오픈
             return currentDate > startdate;
+        },
+
+        //예약 삭제하기
+        async deletecal(cal_pro_no, cal_startdate){
+            console.log("cal_pro_no",cal_pro_no);
+            const cal_user_no = this.$route.params.user_no;
+            console.log("cal_user_no",cal_user_no);
+            console.log("=============");
+            console.log("cal_startdate",cal_startdate);
+
+            //지금 cal_startdate가 yy년mm월dd일 H시 이렇게 포맷되어있어서 바꿔줘야됨 
+            // cal_startdate 포맷이 yy년mm월dd일 H시MM분SS초 인 경우
+    const dateParts = cal_startdate.match(/(\d{2})년(\d{2})월(\d{2})일 (\d{2})시/);
+            if (!dateParts) {
+                console.error('데이터포맷오류:', cal_startdate);
+                return false; // Default to disabling the button if parsing fails
+            }
+            //stratdate 데이터포맷 
+            const year = 2000 + parseInt(dateParts[1], 10);
+            const month = parseInt(dateParts[2], 10) - 1;
+            const day = parseInt(dateParts[3], 10);
+            const hour = parseInt(dateParts[4], 10);
+            // const minute = parseInt(dateParts[5],10);
+            // const second = parseInt(dateParts[6],10);
+
+            const formatcal_startdate = new Date(year, month, day, hour);
+            console.log("예약한시작",formatcal_startdate);
+            
+
+            try{
+                const response = await axios.post(`http://localhost:3000/user/deletecal`, {
+                pro_no: cal_pro_no,
+                user_no: cal_user_no,
+                cal_startdate: formatcal_startdate.toISOString()
+                });
+                console.log("예약 삭제 성공", response.data);
+                alert('예약 목록에서 삭제 되었습니다.');
+
+                window.location.reload();
+                // this.calData = response.data;
+            } catch(error){
+                console.error("예약 삭제도중 에러 발생",error);
+            }
+        },
+
+        //리뷰 삭제하기
+        async deletere(re_no){
+            console.log("re_no",re_no);
+            try{
+                const response = await axios.post(`http://localhost:3000/user/deletere`, {re_no: re_no});
+                console.log("리뷰 삭제 성공", response.data);
+                alert('리뷰 목록에서 삭제 되었습니다.');
+            } catch(error){
+                console.error("리뷰 삭제 도중 에러 발생",error);
+            }
+        },
+        
+        //리뷰 수정하기
+        async updatere(re_no, re_comment){
+            console.log("re_no", re_no);
+            console.log("re_comment", re_comment);
+            try{
+                const response = await axios.post(`http://localhost:3000/user/updatere`,
+                    {
+                        re_no: re_no,
+                        re_comment: re_comment
+                    }
+                );
+                console.log("리뷰 수정 성공", response.data);
+            } catch(error){
+                console.error('리뷰 수정 도중 에러 발생', error);
+            }
         },
 
     }
