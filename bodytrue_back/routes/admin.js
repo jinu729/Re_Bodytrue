@@ -131,16 +131,16 @@ router.post('/trupdate', (req, res, next) => {
   });
 });
 
-//트레이너 삭제
+//트레이너 정지
 
-router.post('/trdelete', (req, res, next) => {
-  const { tr_name, tr_email } = req.body;
+router.post('/trban', (req, res, next) => {
+  const { tr_no, tr_ban } = req.body;
 
   // console.log('Received request to delete trainer:', tr_name, tr_email); // 로그 추가
 
-  const sql = 'DELETE FROM trainer WHERE tr_name = ? AND tr_email = ?';
+  const sql = 'UPDATE TRAINER SET tr_ban=? WHERE tr_no=?';
 
-  db.query(sql, [tr_name, tr_email], function(err, results, fields) {
+  db.query(sql, [tr_ban, tr_no], function(err, results, fields) {
     if (err) {
       // console.error('Database error:', err); // 오류 로그 추가
 
@@ -149,6 +149,26 @@ router.post('/trdelete', (req, res, next) => {
     return res.status(200).json({ message: '트레이너 정지' });
   });
 });
+
+
+//트레이너 삭제
+
+// router.post('/trdelete', (req, res, next) => {
+//   const { tr_no, tr_ban } = req.body;
+
+//   // console.log('Received request to delete trainer:', tr_name, tr_email); // 로그 추가
+
+//   const sql = 'DELETE FROM trainer WHERE tr_no = ?';
+
+//   db.query(sql, [tr_ban, tr_no], function(err, results, fields) {
+//     if (err) {
+//       // console.error('Database error:', err); // 오류 로그 추가
+
+//       return res.status(500).json({ error: '트레이너 정지 에러' });
+//     }
+//     return res.status(200).json({ message: '트레이너 정지' });
+//   });
+// });
 
 
 
@@ -316,7 +336,7 @@ router.post("/insertA",async(req,res)=>{
 
 //질문 불러오기
 
-router.get("/loadQ",async(req,res)=>{
+router.get("/qlist",async(req,res)=>{
     
     db.query("select faq_q from faq",(err,results)=>{
         if (err) {
@@ -327,6 +347,7 @@ router.get("/loadQ",async(req,res)=>{
               error: err,
             });
           } else {
+            console.log(results);
             res.send(results);
           }
     });
@@ -335,7 +356,7 @@ router.get("/loadQ",async(req,res)=>{
 
 //답글 불러오기
 
-router.get("/loadA",async(req,res)=>{
+router.get("/alist",async(req,res)=>{
     
     db.query("select faq_a from faq",(err,results)=>{
         if (err) {
