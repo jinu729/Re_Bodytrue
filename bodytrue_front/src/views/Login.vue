@@ -28,7 +28,7 @@
                     </div>
                 </div>
                 <div class="form-group forgot-password">
-                    <a @click.prevent="goEmailFind">아이디 찾기</a>
+                    <a @click="goEmailFind">아이디 찾기</a>
                     <span>|</span>
                     <a @click.prevent="goPwdFind">비밀번호 찾기</a>
                 </div>
@@ -60,19 +60,26 @@
                 <button class="close" @click="cancel">취소</button>
             </div>
         </div>
+        <FindIdModal :isOpen="isFindIdModalOpen" @close="closeFindIdModal" />
     </body>
 
 </template>
 <script>
 import axios from 'axios';
 import { mapMutations } from 'vuex';
+import FindIdModal from '../views/FindId.vue';
 
 export default {
+        components:{
+            FindIdModal,
+        },
         data() {
             return {
                 user_auth: '0',
-                email: '',
+                // email: '',
                 pwd: '',
+                // 모달
+                isFindIdModalOpen: false,
                 // rememberMe: false,
             };
         },
@@ -82,7 +89,15 @@ export default {
             },
             isLoggedIn() {
                 return !!this.$store.state.user.user_email || !!this.$store.state.trainer.tr_email;
-            }
+            },
+            email: {
+                get() {
+                    return this.$store.getters.userEmail;
+                },  
+                set(value) {
+                    this.$store.dispatch('updateUserEmail', value);
+                }
+    }
         }, 
         created() {
             if (!this.isLoggedIn) {
@@ -201,7 +216,9 @@ export default {
 
         goEmailFind() {
             // 아이디 찾기 로직
-            console.log('아이디 찾기');
+            this.isFindIdModalOpen = true;
+            console.log(this.isFindIdModalOpen);
+            // console.log('아이디 찾기');
         },
         goPwdFind() {
             // 비밀번호 찾기 로직
@@ -224,7 +241,10 @@ export default {
             // 취소 로직
             this.$router.push({path: "/"})
             console.log('취소');
-        }
+        },
+        closeFindIdModal(){
+            this.isFindIdModalOpen = false;
+        },
     }
 }
 </script>

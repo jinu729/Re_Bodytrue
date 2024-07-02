@@ -22,7 +22,18 @@ const store = createStore({
         },
         setTrainer(state, data){
             state.trainer = data;
+        },
+        setUserEmail(state, email) {
+            state.user.user_email = email;
         }
+    },
+    actions: {
+        updateUserEmail({ commit }, email) {
+            commit('setUserEmail', email);
+        }
+    },
+    getters: {
+        userEmail: state => state.user.user_email
     },
 
     plugins: [

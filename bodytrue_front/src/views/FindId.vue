@@ -1,5 +1,5 @@
 <template>
-    <div  class="popup">
+    <div v-if="isOpen"  class="popup">
         <div class="popup-content">
                 <form action="">
                     <div class="form-group">
@@ -9,109 +9,164 @@
                 </form>
             <h2>아이디 찾기</h2>
             <form @submit.prevent="submitFindid">
+                <div class="form_right">
+                    <label for="user">
+                        <input type="radio" id="user" name="auth" v-model="user_auth" value="1"> 회원 &nbsp;&nbsp;
+                    </label>
+                    <label for="trainer">
+                        <input type="radio" id="trainer" name="auth" v-model="user_auth" value="2"> 트레이너
+                    </label>
+                </div>         
                 <div class="form-group">
                     <label for="username">이름</label>
-                    <input type="text" id="username" v-model="user_name" name="username" required>
+                    <input type="text" id="username" v-model="user_name" name="user_name" placeholder="이름" required>
                 </div>
                 <div class="form-group">
-                    <label for="birthdate">전화번호</label>
-                    <!-- <input type="number" id="number1" name="number1" required>
-                    <input type="number" id="number1" name="number1" required>
-                    <input type="number" id="number1" name="number1" required> -->
+                    <label for="user_tel">전화번호</label>
                     <select name="number1" v-model="number1" id="number1">
-                                <option value="010">010</option>
-                                <option value="011">011</option>
-                                <option value="012">012</option>
+                                <option style="text-align: center;" value="010">010</option>
+                                <option style="text-align: center;" value="011">011</option>
+                                <option style="text-align: center;" value="012">012</option>
                             </select>
                             <span> - </span>
                             <input type="text" name="number2" v-model="number2" id="number2">
                             <span> - </span>
                             <input type="text" name="number3" v-model="number3" id="number3">
-                    <button type="submit">아이디 찾기</button>
-                </div>
-                <div class="form-group">
-                    <input type="passview" id="username" name="username" required>
-                </div>
-                <div class="form-group">
-                    <button type="click" onclick="location.href='/login'">로그인</button>
+                    <button type="button" @click="checkEmail">아이디 찾기</button>
                 </div>
                 <div>
-                    <button class="close" onclick="closePopup()">취소</button>
+                    <p style="text-align: center; height: 80px; line-height: 80px;">{{ user_email }}</p>
+                </div>
+                <div>
+                    <button class="close"  @click="goToLogin">로그인</button>
+                </div>
+                <div>
+                    <button class="close" @click="closeModal">취소</button>
                 </div>
             </form>
         </div>
     </div>
 </template>
 <script>
+import axios from 'axios';
 export default {
+    props: {
+        isOpen: {
+        type: Boolean,
+        required: true,
+        },
+    },
     data() {
         return {
             user_name: '',
             number1: '010',
             number2: '',
             number3: '',
+            user_email: '',
+            user_auth: '1'
         };
     },
+    // mounted: {
+    //     // console.log(user_email);
+    // },  
     methods: {
         async submitFindid(){
             
+        },
+        async checkEmail(){
+            // 이름 및 핸드폰번호로 이메일 찾기
+            const data = {
+                user_name : this.user_name,
+                user_tel : `${this.number1}-${this.number2}-${this.number3}`
+            };
+            console.log(data);
+
+            try{
+                const response = await axios.post(`http://localhost:3000/auth/findId`, data, {
+                    headers: {
+                    'Content-Type': 'application/json'
+                }
+                });
+                console.log(response.data);
+                this.user_email = response.data.user_email;
+            } catch(error){
+                console.error(error);
+            }
+        },
+        goToLogin(){
+            // 로그인
+            this.$store.dispatch('updateUserEmail', this.user_email);
+            this.$emit('close');
+            this.$router.push({ path: '/login' });
+        },
+        closeModal() {
+            // 모달 닫기 및 폼 초기화
+            this.resetForm();
+            this.$emit('close');
+        },
+        resetForm() {
+            // 폼 초기화
+            this.user_auth = '1';
+            this.user_name = '';
+            this.number1 = '010';
+            this.number2 = '';
+            this.number3 = '';
+            this.user_email = '';
         }
     }
 }
 </script>
 <style scoped>
 /* 전반적인 페이지 스타일 */
-body {
-    font-family: Arial, sans-serif; /* 전체 페이지의 폰트 설정 */
-    background-color: #f5f5f5; /* 배경색 설정 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
+
+.popup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 500px;
 }
 #number1{
-    height: 22px;
+    width: 80px;
+    height: 40px;
     font-size: 16px;
+    text-align: center;
+    border-radius: 5px;
 }
 #number2, #number3{
     height: 20px;
-    width: 50px;
+    width: 80px;
     font-size: 16px;
 }
-.popup-overlay {
-    display: none;
-    position: fixed;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: auto;
-}
 
-.popup {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-    position: relative;
-}
+
 
 .close {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    /* position: absolute;
+    left: 50%; */
+    /* transform: translateX(-50%); */
+    width: 500px;
+    height: 40px;
     bottom: 10px; /* 하단에 배치 */
-    font-size: 20px;
+    font-size: 16px;
     cursor: pointer;
     color: #202627; /* 색상 변경 */
     border: none;
-    background: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    color: white;
+    background-color: #00C7AE;
+    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
 
 }
 
@@ -135,6 +190,21 @@ body {
     margin-bottom: 20px;
     overflow: hidden; /* 내부 요소의 오버플로우를 숨김 */
 }
+.form_right{
+    
+    text-align: center;
+    font-size: 16px;
+    height: 40px;
+}
+.form_right input[type="radio"] {
+    width: 15px; /* 라디오 버튼의 가로 크기 */
+    height: 15px; /* 라디오 버튼의 세로 크기 */
+    border-radius: 50%; /* 원형 모양으로 설정 */
+    border: 2px solid #007bff; /* 테두리 스타일 및 색상 설정 */
+    outline: none; /* 포커스 상태에서의 외곽선 제거 */
+    cursor: pointer; /* 마우스 커서 모양 설정 */
+    margin-right: 3px; /* 라디오 버튼 사이의 간격 설정 */
+}
 
 .form-group label {
     font-weight: bold;
@@ -146,7 +216,7 @@ body {
 }
 
 .form-group input[type="number"] {
-    width: 20%; /* 입력 필드 너비 설정 */
+    width: 200px; /* 입력 필드 너비 설정 */
     margin-top: 10px; /* 위 여백 설정 */
     margin-right: 15px; /* 우측 여백 설정 */
     padding: 10px; /* 안쪽 여백 설정 */
@@ -159,12 +229,13 @@ body {
 
 .form-group input[type="text"],
 .form-group input[type="email"] {
-    width: calc(70% - 10px); /* 입력 필드 너비 설정 */
+    width: 450px; /* 입력 필드 너비 설정 */
+    height: 50px;
     margin-top: 10px; /* 위 여백 설정 */
     padding: 10px; /* 안쪽 여백 설정 */
     border: 1px solid #ccc; /* 테두리 설정 */
     border-radius: 4px; /* 테두리 반경 설정 */
-    box-sizing: border-box; /* 요소의 전체 너비에 패딩 및 테두리를 포함하도록 설정 */
+    /* box-sizing: border-box; 요소의 전체 너비에 패딩 및 테두리를 포함하도록 설정 */
     font-size: 16px; /* 폰트 크기 설정 */
     /* float: left; 왼쪽 정렬 */
 }
@@ -191,7 +262,9 @@ body {
     border-radius: 4px;
     float: right; /* 우측 정렬 */
     margin-top: 10px; /* 위 여백 설정 */
-    width: 30%; /* 너비 설정 */
+    width: 150px; /* 너비 설정 */
+    height: 40px;
+    line-height: 15px;
 }
 .form-group button[type="click"] {
     background-color: #00C7AE; /* 배경색 설정 */
@@ -251,17 +324,13 @@ body {
     width: 50%;
     background-color: #00c7ac8a; /* 배경색 설정 */
     margin-top: 0%; /* 위 여백 설정 */
+    border-radius: 0 5px 5px 0;
 }
 
 .form-group button:hover {
     background-color: #0056b3;
 }
 
-/* 반응형 조정 */
-@media (max-width: 768px) {
-    .popup {
-        width: 90%;
-    }
-}
+
 
 </style>
