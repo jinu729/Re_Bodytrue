@@ -2,17 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 
 //승호작성
+
 import test from '../views/test'
 import TrainerCreatePro from '../views/TrainerCreatePro'
+
 //승호작성완
 
 
 //진우작성
 import Join from '../views/Join.vue'
 import Login from '../views/Login.vue'
-
-import FindId from '../views/FindId.vue'
-// import test from '../views/test.vue'
 
 //진우작성완
 
@@ -71,13 +70,7 @@ const routes = [
     name: 'AdminTrainer',
     component: AdminTrainer
   }
-  // {
-  //   path: '/test',
-  //   name: 'test',
-  //   component: test
-  // }
   //승호작성
-
   ,
   {
     path: '/test',
@@ -90,8 +83,6 @@ const routes = [
     name: 'TrainerCreatePro',
     component: TrainerCreatePro
   }
-
-
 //승호작성완
 
 
@@ -111,13 +102,7 @@ const routes = [
     path: '/prolist/:menu_list',
     name: 'ProgramList',
     component: ProgramList
-  },
-  {
-    path: '/findid',
-    name: 'FindId',
-    component: FindId
   }
-
 
 //진우작성완
 
