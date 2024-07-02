@@ -10,16 +10,16 @@
           <option value="평점순">평점순</option>
         </select>
       </div>
+
       <main class="prolist_main">
         <div class="prolist_list">
           <!-- 프로그램 목록을 순회하며 표시 -->
-          <div v-for="(program, index) in programList" :key="index" class="program_item">
+          <div v-for="(program, index) in pagedProgramList" :key="index" class="program_item">
+            <!-- 프로그램 상세 페이지로 이동하는 링크 -->
+            <router-link :to="`/prodetail/${program.PRO_NO}`" class="page-button">
             <div class="program_image">
-              <!-- 프로그램 상세 페이지로 이동하는 링크 -->
-              <router-link :to="`/prodetail/${program.PRO_NO}`" class="page-button">
                 <!-- 이미지 표시 -->
                 <img :src="program.IMG_PATH ? require(`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`) : '/goodsempty2.jpg'" alt="상품 이미지">
-              </router-link>
             </div>
             <div class="program_details">
               <!-- 프로그램 이름 표시 -->
@@ -29,9 +29,24 @@
               <!-- 평점 표시 -->
               <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG }}</span></p>
             </div>
+            </router-link>
           </div>
         </div>
       </main>
+      <!-- 페이징 -->
+    <div class="pagination">
+      <ul class="number_box">
+        <li @click="prevPageGroup" :class="{disabled: currentPageGroup === 1}">
+          <img src="../image/prev.png"/>
+        </li>
+        <li v-for="page in currentGroupPages" :key="page" @click="changePage(page)" :class="{active: page === currentPage}">
+          {{ page }}
+        </li>
+        <li @click="nextPageGroup" :class="{disabled: currentPageGroup === pageGroups.length}">
+          <img src="../image/next.png"/>
+        </li>
+      </ul>
+    </div>
     </div>
   </template>
   
@@ -42,14 +57,43 @@
     name: 'ProgramList',
     data() {
       return {
-        programList: [], // 프로그램 목록 데이터
-        imageBasePath: '../../uploads/program', // 이미지 기본 경로
+      programList: [], // 프로그램 목록 데이터
+      currentPage: parseInt(this.$route.query.page) || 1, // 현재 페이지, // 현재 페이지
+      itemsPerPage: 12, // 페이지당 항목 수
+      currentPageGroup: 1, // 현재 페이지 그룹
       };
     },
     created() {
       // 컴포넌트 생성 시 프로그램 목록을 가져옴
       this.getProgramList();
     },
+    computed: {
+    totalPages() {
+      return Math.ceil(this.programList.length / this.itemsPerPage);
+    },
+    pagedProgramList() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.programList.slice(start, end);
+    },
+    pageGroups() {
+      const groups = [];
+      for (let i = 1; i <= this.totalPages; i += 5) {
+        groups.push({
+          start: i,
+          end: Math.min(i + 4, this.totalPages),
+        });
+      }
+      return groups;
+    },
+    currentGroupPages() {
+      const group = this.pageGroups[this.currentPageGroup - 1];
+      if (group) {
+        return Array.from({ length: group.end - group.start + 1 }, (_, i) => group.start + i);
+      }
+      return [];
+    },
+  },
     methods: {
       async getProgramList() {
         // 현재 라우터의 쿼리 파라미터를 가져와 정렬 옵션을 설정
@@ -81,10 +125,33 @@
       },
       handleSortChange(event) {
         const selectedSortOption = event.target.value;
-        this.$router.push({ name: 'ProgramList', params: { menu_list: this.$route.params.menu_list }, query: { sort: selectedSortOption } }); // 쿼리 파라미터 설정
+        this.$router.push({ name: 'ProgramList', query: { sort: selectedSortOption } }); // 쿼리 파라미터 설정
+      },
+      changePage(page) {
+      if (page > 0 && page <= this.totalPages) {
+        this.currentPage = page;
+        this.$router.push({ name: 'ProgramList', query: { sort: this.$route.query.sort, page: this.currentPage } }); // URL에 페이지 번호 포함
+      }
+    },
+    prevPageGroup() {
+      if (this.currentPageGroup > 1) {
+        this.currentPageGroup--;
+        this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
+      }
+    },
+    nextPageGroup() {
+      if (this.currentPageGroup < this.pageGroups.length) {
+        this.currentPageGroup++;
+        this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
+      }
+    },
+    },
+    watch: {
+      '$route.query.sort': 'getProgramList', // 쿼리 파라미터가 변경될 때마다 목록을 다시 가져옴
+      '$route.query.page'(newPage) {
+        this.currentPage = parseInt(newPage) || 1;
       },
     }
-    
   };
   </script>
 
@@ -177,6 +244,31 @@
     text-indent: 22px; /* 텍스트를 숨기기 위해 사용 */
 
 }
+.pagination{
+        width: 100%;
+        margin: 0 auto;
+        text-align: center;
+        padding-top: 10px;
+    }
+    .pagination .number_box{
+        display: flex;
+        flex-wrap: wrap;
+        text-align: center;
+        width: 150px;
+        margin: 0 auto;
+    }
+    .number_box li{
+        width: 20px;
+    }
+    .number_box li.active{
+        background-color: #00c8c8;
+        border-radius: 5px;
+        /* color: white; */
+        cursor: pointer;
+    }
+    .number_box img{
+        width:15px;
+    }
 
 
 </style>
