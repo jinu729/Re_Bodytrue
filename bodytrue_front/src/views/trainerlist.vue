@@ -105,6 +105,7 @@ export default {
           console.error('Error searching users:', error);
         });
     },
+
     Trban(trainer, isBaned) {
       const newBanStatus = isBaned ? 1 : 0;
       console.log('trainer.tr_no',trainer.tr_no,);

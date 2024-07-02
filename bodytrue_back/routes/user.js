@@ -315,105 +315,83 @@ router.post('/updatere',function(request, response, next){
 
 //재영작성
 // GET /programs 라우트 정의
+// 기본 프로그램 목록 가져오기
 router.get('/programlist', (req, res) => {
+    db.query(`
+      SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+      FROM PROGRAM P
+      LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+      LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+      LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
 
-    db.query(`SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH),',',1) AS IMG_PATH
-                FROM PROGRAM P
-                LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
-                LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
-                LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
-                GROUP BY P.PRO_NO;`,
-             (error, results, fields) => {
-        if (error) {
-            console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
-            return res.status(500).json({ error: '데이터베이스 오류' });
-        }
-        console.log(results);
-        res.json(results); // 결과를 JSON 형태로 응답
+      GROUP BY P.PRO_NO;
+    `, (error, results, fields) => {
+      if (error) {
+        console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
+        return res.status(500).json({ error: '데이터베이스 오류' });
+      }
+      res.json(results); // 기본 프로그램 목록을 JSON 형태로 응답
     });
-    });
-router.get('/programlist/:sortOption', (req, res) => {
-  const { sortOption } = req.params;
-
-  let sqlQuery = '';
-
-  switch (sortOption) {
-    case 'sortbyenddate':
-      sqlQuery = `
-        SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
-        FROM PROGRAM P
-        LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
-        LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
-        LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
-        GROUP BY P.PRO_NO
-        ORDER BY P.PRO_ENDDATE, P.PRO_NAME;
-      `;
-      break;
-    case 'sortbyviews':
-      sqlQuery = `
-        SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
-        FROM PROGRAM P
-        LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
-        LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
-        LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
-        GROUP BY P.PRO_NO
-        ORDER BY COUNT(R.RE_PRO_NO) DESC, P.PRO_NAME;
-      `;
-      break;
-    case 'sortbyrating':
-      sqlQuery = `
-        SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
-        FROM PROGRAM P
-        LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
-        LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
-        LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
-        GROUP BY P.PRO_NO
-        ORDER BY PRO_RATE_AVG DESC, P.PRO_NAME;
-      `;
-      break;
-    default:
-      sqlQuery = `
-        SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
-        FROM PROGRAM P
-        LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
-        LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
-        LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
-        GROUP BY P.PRO_NO;
-      `;
-      break;
-  }
-
-  db.query(sqlQuery, (error, results, fields) => {
-    if (error) {
-      console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
-      return res.status(500).json({ error: '데이터베이스 오류' });
-    }
-    res.json(results); // 정렬된 결과를 JSON 형태로 응답
   });
-});
+  
+  // 정렬된 프로그램 목록 가져오기
+  router.get('/programlist/sortbyenddate', (req, res) => {
+    db.query(`
+      SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+      FROM PROGRAM P
+      LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+      LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+      LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+      GROUP BY P.PRO_NO
+      ORDER BY P.PRO_ENDDATE, P.PRO_NAME;
+    `, (error, results, fields) => {
+      if (error) {
+        console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
+        return res.status(500).json({ error: '데이터베이스 오류' });
+      }
+      res.json(results); // 정렬된 프로그램 목록을 JSON 형태로 응답
+    });
+  });
+  
+  router.get('/programlist/sortbyviews', (req, res) => {
+    db.query(`
+      SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+      FROM PROGRAM P
+      LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+      LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+      LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+      GROUP BY P.PRO_NO
+      ORDER BY PRO_CNT DESC, P.PRO_NAME;
+    `, (error, results, fields) => {
+      if (error) {
+        console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
+        return res.status(500).json({ error: '데이터베이스 오류' });
+      }
+      res.json(results); // 정렬된 프로그램 목록을 JSON 형태로 응답
+    });
+  });
+  
+  router.get('/programlist/sortbyrating', (req, res) => {
+    db.query(`
+      SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+      FROM PROGRAM P
+      LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
+      LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
+      LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+      GROUP BY P.PRO_NO
+      ORDER BY PRO_RATE_AVG DESC, P.PRO_NAME;
+    `, (error, results, fields) => {
+      if (error) {
+        console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
+        return res.status(500).json({ error: '데이터베이스 오류' });
+      }
+      res.json(results); // 정렬된 프로그램 목록을 JSON 형태로 응답
+    });
+  });
 
 
 
 
-
-
-//     //조회-이름순//
-// SELECT PRO_NAME, ROUND(AVG(RE_RATE),1) AS RATE_AVG, PRO_CNT
-// FROM REVIEW R JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO
-// GROUP BY RE_PRO_NO
-// ORDER BY PRO_CNT DESC, PRO_NAME;
-
-// /* 평점-이름순으로 정렬 */
-// SELECT PRO_NAME, ROUND(AVG(RE_RATE),1) AS RATE_AVG
-// FROM REVIEW R JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO
-// GROUP BY RE_PRO_NO
-// ORDER BY RATE_AVG DESC, PRO_NAME;
-
-// //마감-이름순//
-// SELECT PRO_NAME, TR_NAME,  ROUND(AVG(RE_RATE),1) AS RATE_AVG, PRO_ENDDATE
-// FROM PROGRAM P JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO JOIN TRAINER T ON PRO_TR_NO = T.TR_NO JOIN CALENDAR C ON PRO_NO = C.CAL_PRO_NO
-// GROUP BY RE_PRO_NO
-// ORDER BY PRO_ENDDATE, PRO_NAME;
   
 //재영작성완
 
