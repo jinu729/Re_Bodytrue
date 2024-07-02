@@ -33,7 +33,7 @@
           </div>
           <div class="action-buttons">
             <!-- 등록 버튼 클릭 시 폼 제출 -->
-            <button type="submit" class="submit-btn" :disabled="isSubmitted">등록</button>
+            <button type="submit" class="submit-btn">등록</button>
             <!-- 취소 버튼 클릭 시 close 이벤트 발생 -->
             <button type="button" @click="closeModal" class="cancel-btn">취소</button>
           </div>
@@ -55,10 +55,6 @@ export default {
     },
     reviewData: {
       type: Object,
-      required: true,
-    },
-    isSubmitted:{
-      type:Boolean,
       required: true,
     }
   },
@@ -93,9 +89,9 @@ export default {
         // 서버에 리뷰 데이터를 전송
         const response = await axios.post('http://localhost:3000/user/makereview', review);
         console.log(response.data);
+        this.$emit('review-submitted');
         // 성공적으로 전송되면 모달을 닫음
-        this.$emit('review-submitted'); //전송되면 등록버튼(리뷰재작성불가하도록) 막음
-        this.$emit('close');
+        this.closeModal();
       } catch (error) {
         console.error(error);
       }

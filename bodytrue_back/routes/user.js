@@ -172,7 +172,7 @@ router.post('/mypage/:user_no', function(request, response, next){
 //내가 예약한 정보 확인
 router.post('/mycalcheck', function(request, response, next){
     const cal_user_no = request.body.user_no; //요청 본문에서 user_no값 가져와야됨 그래서 vue에서 user_no : user_no 값 포함시키고있는거
-    
+    console.log("cal_user_no",cal_user_no);
     db.query(`select pro_no, pro_name, tr_no, tr_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate from calendar c 
             join program p on c.cal_pro_no = p.pro_no 
             join trainer t on c.cal_tr_no = t.tr_no 
@@ -190,19 +190,18 @@ router.post('/mycalcheck', function(request, response, next){
 router.post('/myrecheck', function(request, response, next){
     const cal_user_no = request.body.user_no;
 
-    db.query(`select pro_no, pro_name, tr_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate, re_rate 
-            from calendar c 
-            join program p on c.cal_pro_no = p.pro_no 
-            join trainer t on c.cal_tr_no = t.tr_no 
-            left join review r on c.cal_user_no = r.re_user_no and p.pro_no = r.re_pro_no 
-            where cal_user_no = ? order by c.cal_startdate DESC`,[cal_user_no], function(error, result, field){
-                if(error){
-                    console.error(error);
-                    return response.status(500).json({ error: '마이페이지 리뷰정보 에러' });
-                }
-                response.json(result);
-                console.log(result);
-            });
+    db.query(`select 
+        distinct r.re_no, p.pro_no, p.pro_name, t.tr_name, date_format(r.re_date, '%y년 %m월 %d일 %h시') as re_date, r.re_rate
+        from program p join trainer t on p.pro_tr_no = t.tr_no 
+        join review r on  p.PRO_TR_NO = r.re_tr_no 
+        where r.re_user_no = ? and r.re_rate is not null`,[cal_user_no], function(error, result, field){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '마이페이지 리뷰정보 에러' });
+        }
+            response.json(result);
+            console.log(result);
+        });
 });
 
 //내가 찜한 정보 확인
@@ -255,6 +254,59 @@ router.post('/makereview', function(request, response, next){
         })
 });
 
+//예약 삭제하기
+router.post('/deletecal', function(request, response, next){
+    const cal_pro_no = request.body.pro_no;
+    const cal_user_no = request.body.user_no;
+    const cal_startdate = request.body.cal_startdate;
+    console.log("cal_pro_no",cal_pro_no);
+    console.log("cal_user_no",cal_user_no);
+    console.log("====================================");
+    console.log("cal_startdate",cal_startdate);
+
+    const date = new Date(cal_startdate);
+    const utcDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    const formatDate = utcDate.toISOString().slice(0, 19).replace('T', ' ');
+
+    db.query(`delete from calendar where cal_pro_no = ? and cal_user_no = ? and cal_startdate = ?`,
+        [cal_pro_no, cal_user_no, formatDate], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: ' 예약 삭제 중 오류 '});
+        }
+        response.json(result);
+        console.log(result);
+    })
+});
+
+//리뷰 삭제하기
+router.post('/deletere', function(request, response, next){
+    const re_no = request.body.re_no;
+    
+    db.query(`delete from review where re_no = ?`,[re_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '리뷰 삭제 중 오류' });
+        }
+        response.json(result);
+        console.log(result);
+    })
+});
+
+//리뷰 수정하기
+router.post('/updatere',function(request, response, next){
+    const re_no = request.body.re_no;
+    const re_comment = request.body.re_comment;
+
+    db.query(`update review set re_comment = ? where re_no = ?`,[re_comment, re_no], function(error,result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '리뷰 수정 중 오류' });
+        }
+        response.json(result);
+        console.log(reuslt);
+    })
+})
 
 /* 마이페이지 끝 */
 
