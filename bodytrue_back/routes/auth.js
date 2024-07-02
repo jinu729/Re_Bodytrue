@@ -167,7 +167,7 @@ router.post("/findPw",async(req,res)=>{
     });
 });
 
-//아이디찾기
+//회원 아이디찾기
 
 router.post("/findId",async(req,res)=>{
     console.log(req.body);

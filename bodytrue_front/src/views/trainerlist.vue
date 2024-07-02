@@ -110,6 +110,7 @@ export default {
       const newBanStatus = isBaned ? 1 : 0;
       console.log('trainer.tr_no',trainer.tr_no,);
       console.log('newBanStatus',newBanStatus,)
+
       axios({
           url: 'http://localhost:3000/admin/trban',
           method: 'POST',
