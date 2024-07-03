@@ -2,17 +2,16 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 
 //승호작성
+
 import test from '../views/test'
-import Trainer_programcreate from '../views/trainer_programcreate'
+import TrainerCreatePro from '../views/TrainerCreatePro'
+
 //승호작성완
 
 
 //진우작성
 import Join from '../views/Join.vue'
 import Login from '../views/Login.vue'
-
-import FindId from '../views/FindId.vue'
-// import test from '../views/test.vue'
 
 //진우작성완
 
@@ -77,13 +76,7 @@ const routes = [
     name: 'AdminFaq',
     component: AdminFaq
   }
-  // {
-  //   path: '/test',
-  //   name: 'test',
-  //   component: test
-  // }
   //승호작성
-
   ,
   {
     path: '/test',
@@ -92,12 +85,10 @@ const routes = [
   }
   ,
   {
-    path: '/trainer_programcreate',
-    name: 'Trainer_programcreate',
-    component: Trainer_programcreate
+    path: '/TrainerCreatePro/:tr_no',
+    name: 'TrainerCreatePro',
+    component: TrainerCreatePro
   }
-
-
 //승호작성완
 
 
@@ -117,13 +108,7 @@ const routes = [
     path: '/prolist/:menu_list',
     name: 'ProgramList',
     component: ProgramList
-  },
-  {
-    path: '/findid',
-    name: 'FindId',
-    component: FindId
   }
-
 
 //진우작성완
 

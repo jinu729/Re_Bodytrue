@@ -135,16 +135,18 @@ router.post("/email_check", async (req, res) => {
 
 //임시비밀번호 저장
 
-router.post("/패스명(bodytrue_findPw.html)",async(req,res)=>{
+router.post("/findPw",async(req,res)=>{
 
     const data = {
         tmp_pwd : Math.random().toString(36).slice(2),
-        user_name : req.body.username,
-        user_tel : req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3
+        user_name : req.body.user_name,
+        user_tel : req.body.user_tel,
+        user_email: req.body.user_email
       };
+      console.log(data);
 
-    db.query('update user set user_pwd = ? where user_name = ? and user_tel = ?',
-        [data.tmp_pwd,data.user_name,data.user_tel],
+    db.query('update user set user_pwd = ? where user_name = ? and user_tel = ? and user_email=?',
+        [data.tmp_pwd,data.user_name,data.user_tel,data.user_email],
         function(err,results,fields){
         if (err) {
                 res.send({
@@ -153,30 +155,33 @@ router.post("/패스명(bodytrue_findPw.html)",async(req,res)=>{
                 failed: "error occurred",
                 error: err,
                 });
+                // console.log(err);
             } else {
                 res.send({
                 //쿼리 실행 성공시
                 code: 200,
                 message: "임시비밀번호 부여 성공",
                 });
+                // console.log(res.send.code);
             }
     });
 });
 
-//아이디찾기
+//회원 아이디찾기
 
 router.post("/findId",async(req,res)=>{
     console.log(req.body);
     const data = {
         user_name : req.body.user_name,
-        // user_tel : req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3
-        user_tel : req.body.user_tel
+        user_tel : req.body.user_tel,
+        user_email : req.body.user_email
       };
-      console.log(data);
+      console.log("data",data);
 
     db.query('select user_email from user where user_name = ? and user_tel = ?',
         [data.user_name,data.user_tel],
         function(err,results,fields){
+          console.log(results.length);
         if (err) {
             res.send({
             // 에러 발생 시
@@ -187,19 +192,62 @@ router.post("/findId",async(req,res)=>{
         } else {
           if (results.length > 0) {
             const user_email = results[0].user_email;
-            res.status(200).json({
+            res.send({
                 code: 200,
                 message: "아이디(이메일) 찾기 성공",
                 user_email: user_email
             });
+            console.log("user__email",user_email);
+            console.log("result.legnth",results.length);
         } else {
-            res.status(404).json({
+            res.send({
                 code: 404,
                 message: "일치하는 사용자가 없습니다."
             });
+            console.log(res.send.code);
           }
         }
     });
+});
+
+
+//트레이너 아이디찾기
+
+router.post("/findId",async(req,res)=>{
+  console.log(req.body);
+  const data = {
+      tr_name : req.body.user_name,
+      // user_tel : req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3
+      tr_tel : req.body.user_tel
+    };
+    console.log(data);
+
+  db.query('select tr_email from trainer where tr_name = ? and tr_tel = ?',
+      [data.tr_name,data.tr_tel],
+      function(err,results,fields){
+      if (err) {
+          res.send({
+          // 에러 발생 시
+          code: 400,
+          failed: "error occurred",
+          error: err,
+          });
+      } else {
+        if (results.length > 0) {
+          const user_email = results[0].user_email;
+          res.status(200).json({
+              code: 200,
+              message: "아이디(이메일) 찾기 성공",
+              user_email: user_email
+          });
+      } else {
+          res.status(404).json({
+              code: 404,
+              message: "일치하는 사용자가 없습니다."
+          });
+        }
+      }
+  });
 });
 
 //회원 로그인
@@ -636,6 +684,7 @@ router.post("/login_tr",async(req,res)=>{
   // }
   const tr_email = req.body.email;
   const tr_pwd = req.body.pwd;
+  const tr_no = req.body.tr_no;
 
   db.query('select tr_no, tr_email, tr_name, tr_pwd, tr_admit from trainer where tr_email = ?',
     [tr_email],
@@ -657,6 +706,7 @@ router.post("/login_tr",async(req,res)=>{
         console.log("tr",tr);
         console.log(tr.tr_email);
         console.log(tr.tr_admit);
+        console.log(tr.tr_no);
         if (tr.tr_pwd === tr_pwd) {
           res.send({
             // 로그인 성공 시
@@ -670,7 +720,7 @@ router.post("/login_tr",async(req,res)=>{
               tr_admit: tr.tr_admit
             },
             email: results[0].tr_email,
-            user_no: results[0].tr_no,
+            tr_no: results[0].tr_no,
             tr_admit: tr.tr_admit,
           });
         } else {
