@@ -30,7 +30,7 @@
                 <div class="form-group forgot-password">
                     <a @click="goEmailFind">아이디 찾기</a>
                     <span>|</span>
-                    <a @click.prevent="goPwdFind">비밀번호 찾기</a>
+                    <a @click="goPwdFind">비밀번호 찾기</a>
                 </div>
                 <div class="form-group save-id-checkbox">
                     <span>
@@ -61,6 +61,7 @@
             </div>
         </div>
         <FindIdModal :isOpen="isFindIdModalOpen" @close="closeFindIdModal" />
+        <FindPwModal :isOpen="isFindPwModalOpen" @close="closeFindPwModal" />
     </body>
 
 </template>
@@ -68,10 +69,12 @@
 import axios from 'axios';
 import { mapMutations } from 'vuex';
 import FindIdModal from '../views/FindId.vue';
+import FindPwModal from '../views/FindPw.vue';
 
 export default {
         components:{
             FindIdModal,
+            FindPwModal,
         },
         data() {
             return {
@@ -80,6 +83,7 @@ export default {
                 pwd: '',
                 // 모달
                 isFindIdModalOpen: false,
+                isFindPwModalOpen: false,
                 // rememberMe: false,
             };
         },
@@ -222,6 +226,8 @@ export default {
         },
         goPwdFind() {
             // 비밀번호 찾기 로직
+            this.isFindPwModalOpen = true;
+            console.log(this.isFindPwModalOpen);
             console.log('비밀번호 찾기');
         },
         goToJoin() {
@@ -244,6 +250,9 @@ export default {
         },
         closeFindIdModal(){
             this.isFindIdModalOpen = false;
+        },
+        closeFindPwModal(){
+            this.isFindPwModalOpen = false;
         },
     }
 }

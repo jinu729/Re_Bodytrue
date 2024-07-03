@@ -59,7 +59,7 @@
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/tr_create"><img src="../image/icon.png" alt="tr_create">프로그램 등록</router-link>
+                        <router-link class="icon" :to="`/TrainerCreatePro/${trainer.tr_no}`"><img src="../image/icon.png" alt="tr_create">프로그램 등록</router-link>
                     </li>
                 </ul>
 
@@ -78,7 +78,7 @@
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/adminfaq"><img src="../image/icon.png" alt="adminfaq">FAQ관리</router-link>
+                        <router-link class="icon" to="/admin/adminfaq"><img src="../image/icon.png" alt="adminfaq">FAQ관리</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">

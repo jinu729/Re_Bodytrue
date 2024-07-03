@@ -20,7 +20,7 @@ export default {
         },
 
         goToAboutPage2() {
-            this.$router.push('/trprocreate');
+            this.$router.push('/TrainerCreatePro/:tr_no');
         }
     }
 };

@@ -136,7 +136,7 @@ router.post("/email_check", async (req, res) => {
 //임시비밀번호 저장
 
 router.post("/findPw",async(req,res)=>{
-
+  console.log("req.body",req.body);
     const data = {
         tmp_pwd : Math.random().toString(36).slice(2),
         user_name : req.body.user_name,
@@ -155,14 +155,33 @@ router.post("/findPw",async(req,res)=>{
                 failed: "error occurred",
                 error: err,
                 });
-                // console.log(err);
+                console.log(err);
             } else {
+              // if(results.length > 0) {
+              //   // const tmp_pwd = results[0].tmp_pwd;
+              //   // const user_email = results[0].user_email;
+              //   res.send({
+              //     code: 200,
+              //     message: "비밀번호 찾기 성공",
+              //     // tmp_pwd: tmp_pwd 
+              //   });
+              //   console.log("tmp_pwd",tmp_pwd);
+              //   console.log(results.length);
+              // }else{
+              //   res.send({
+              //     code: 404,
+              //     message: "일치하지 않습니다. 다시한번 확인해주세요"
+              //   })
+              //   // console.log(res);
+              //   console.log(results.length);
+              // }
                 res.send({
-                //쿼리 실행 성공시
-                code: 200,
-                message: "임시비밀번호 부여 성공",
-                });
-                // console.log(res.send.code);
+                // 쿼리 실행 성공시
+               code: 200,
+               message: "임시비밀번호 부여 성공",
+              //  tmp_pwd: tmp_pwd,
+               });
+                console.log(res.send);
             }
     });
 });

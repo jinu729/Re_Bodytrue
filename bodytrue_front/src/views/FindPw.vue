@@ -1,14 +1,14 @@
 <template>
-    <div v-if="isOpen"  class="popup">
+    <div v-if="isOpen" class="popup">
         <div class="popup-content">
                 <form action="">
                     <div class="form-group">
                         <button type="button" class="right-button2" >비밀번호 찾기</button>
-                        <button type="button" class="left-button2" >아이디 찾기</button>
+                        <button type="button" class="left-button2" @click="FindIdModal"  >아이디 찾기</button>
                     </div>
                 </form>
-            <h2>아이디 찾기</h2>
-            <form @submit.prevent="submitFindid">
+            <h2>비밀번호 찾기</h2>
+            <form action="">
                 <div class="form_right">
                     <label for="user">
                         <input type="radio" id="user" name="auth" v-model="user_auth" value="1"> 회원 &nbsp;&nbsp;
@@ -16,28 +16,30 @@
                     <label for="trainer">
                         <input type="radio" id="trainer" name="auth" v-model="user_auth" value="2"> 트레이너
                     </label>
-                </div>         
+                </div>
                 <div class="form-group">
                     <label for="username">이름</label>
                     <input type="text" id="username" v-model="user_name" name="user_name" placeholder="이름" required>
                 </div>
                 <div class="form-group">
-                    <label for="user_tel">전화번호</label>
                     <select name="number1" v-model="number1" id="number1">
-                                <option style="text-align: center;" value="010">010</option>
-                                <option style="text-align: center;" value="011">011</option>
-                                <option style="text-align: center;" value="012">012</option>
-                            </select>
-                            <span> - </span>
-                            <input type="text" name="number2" v-model="number2" maxlength="4" id="number2">
-                            <span> - </span>
-                            <input type="text" name="number3" v-model="number3" maxlength="4" id="number3">
-                    <button type="button" @click="checkEmail">아이디 찾기</button>
+                        <option style="text-align: center;" value="010">010</option>
+                        <option style="text-align: center;" value="011">011</option>
+                        <option style="text-align: center;" value="012">012</option>
+                    </select>
+                    <span> - </span>
+                    <input type="text" name="number2" v-model="number2" maxlength="4" id="number2">
+                    <span> - </span>
+                    <input type="text" name="number3" v-model="number3" maxlength="4" id="number3">
+                    
+                </div>
+                <div class="form-group">
+                    <label for="email">이메일</label>
+                    <input type="email" id="email" v-model="user_email" name="email" required>
+                    <button type="button" @click="checkPassword">비밀번호 찾기</button>
                 </div>
                 <div>
-                    <p v-if="user_email " style="text-align: center; height: 80px; line-height: 80px;">{{ user_email }}</p>
-                    <p v-else-if="tr_email" style="text-align: center; height: 80px; line-height: 80px;">{{ tr_email }}</p>
-                    <p v-else-if="error" style="text-align: center; height: 80px; line-height: 80px;">{{ error }}</p>
+                    <p v-if="tmp_pwd " style="text-align: center; height: 80px; line-height: 80px;">{{ tmp_pwd }}</p>
                 </div>
                 <div>
                     <button class="close"  @click="goToLogin">로그인</button>
@@ -51,6 +53,9 @@
 </template>
 <script>
 import axios from 'axios';
+// import FindIdModal from '../components/FindId.vue';
+// import FindPwModal from '../views/F';
+
 export default {
     props: {
         isOpen: {
@@ -65,33 +70,36 @@ export default {
             number2: '',
             number3: '',
             user_email: '',
-            user_auth: '1',
-            error: ''
+            tmp_pwd: '',
+            // showFindPwModal: false,
         };
     },
+    // components: {
+    //     FindIdModal,
+    //     // FindPwModal,
+    // },
     methods: {
-        async submitFindid(){
-            
-        },
-        async checkEmail(){
+        async checkPassword(){
             // 이름 및 핸드폰번호로 이메일 찾기
-            const endpoint = (this.user_auth === '1') ? 'findId_user' : 'findId_tr';
+            // const endpoint = (this.user_auth === '1') ? 'findId_user' : 'findId_tr';
             const data = {
                 user_name : this.user_name,
-                user_tel : `${this.number1}-${this.number2}-${this.number3}`
+                user_tel : `${this.number1}-${this.number2}-${this.number3}`,
+                user_email : this.user_email,
             };
-            console.log("endpoint",endpoint);
+            // console.log("endpoint",endpoint);
             console.log(data);
 
             try{
-                const response = await axios.post(`http://localhost:3000/auth/${endpoint}`, data, {
+                const response = await axios.post(`http://localhost:3000/auth/findPw`, data, {
                     headers: {
                     'Content-Type': 'application/json'
                 }
                 });
                 console.log(response.data);
-                this.user_email = response.data.user_email;
-                this.tr_email = response.data.tr_email;
+                this.tmp_pwd = response.data.tmp_pwd;
+                // this.tr_email = response.data.tr_email;
+                console.log(this.tmp_pwd);
 
                 this.error = ''; // 성공 시 에러 메시지 초기화
             } catch(error){
@@ -100,7 +108,7 @@ export default {
                 } else {
                     this.error = "일치하는 사용자가 없습니다.";
                 }
-                this.user_email = ''; // 에러 발생 시 이메일 초기화
+                //this.user_email = ''; // 에러 발생 시 이메일 초기화
                 console.error(error);
             }
         },
@@ -244,7 +252,7 @@ export default {
 .form-group input[type="text"],
 .form-group input[type="email"] {
     width: 450px; /* 입력 필드 너비 설정 */
-    height: 50px;
+    height: 20px;
     margin-top: 10px; /* 위 여백 설정 */
     padding: 10px; /* 안쪽 여백 설정 */
     border: 1px solid #ccc; /* 테두리 설정 */
@@ -325,7 +333,7 @@ export default {
 .form-group .left-button2 {
     float: left; /* 왼쪽 정렬 */
     width: 50%;
-    background-color: #00C7AE; /* 배경색 설정 */
+    background-color: #00c7ac8a; /* 배경색 설정 */
     text-decoration: none; /* 링크 기본 스타일 제거 */
     margin-top: 0%; /* 위 여백 설정 */
     margin-right: -2px; /* 오른쪽 버튼과 겹치지 않도록 -2px 마진 추가 */
@@ -336,7 +344,7 @@ export default {
 .form-group .right-button2 {
     float: right; /* 우측 정렬 */
     width: 50%;
-    background-color: #00c7ac8a; /* 배경색 설정 */
+    background-color: #00C7AE; /* 배경색 설정 */
     margin-top: 0%; /* 위 여백 설정 */
     border-radius: 0 5px 5px 0;
 }
