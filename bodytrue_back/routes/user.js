@@ -191,10 +191,10 @@ router.post('/myrecheck', function(request, response, next){
     const cal_user_no = request.body.user_no;
 
     db.query(`select 
-        distinct r.re_no, p.pro_no, p.pro_name, t.tr_name, date_format(r.re_date, '%y년 %m월 %d일 %h시') as re_date, r.re_rate
+        distinct r.re_no, p.pro_no, p.pro_name, t.tr_name,t.tr_no, date_format(r.re_date, '%y년 %m월 %d일 %h시') as re_date, r.re_rate
         from program p join trainer t on p.pro_tr_no = t.tr_no 
-        join review r on  p.PRO_TR_NO = r.re_tr_no 
-        where r.re_user_no = ? and r.re_rate is not null`,[cal_user_no], function(error, result, field){
+        join review r on   p.pro_no = r.re_pro_no 
+        where r.re_user_no = ? and r.re_rate is not null;`,[cal_user_no], function(error, result, field){
         if(error){
             console.error(error);
             return response.status(500).json({ error: '마이페이지 리뷰정보 에러' });
