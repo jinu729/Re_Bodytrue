@@ -24,12 +24,12 @@ router.post('/createprogram', function (req, res) {
       pro_enddate : req.body.end_date,
       pro_comment1 : req.body.img_textarea1,
       pro_comment2 : req.body.img_textarea2,
-      pro_tag : req.body.tag,
+      pro_tag : req.body.tags,
 
-      pro_img : req.body.image-upload,
-      pro_img1 : req.body.file-input1,
-      pro_img2 : req.body.file-input2,
-      pro_imgprice : req.body.file-input3,
+      pro_img : req.body.programImage[0],
+      pro_img1 : req.body.programImage[1],
+      pro_img2 : req.body.programImage[2],
+      pro_imgprice : req.body.programImage[3],
     };
     console.log(goods);
 

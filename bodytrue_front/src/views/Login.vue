@@ -34,7 +34,7 @@
                 </div>
                 <div class="form-group save-id-checkbox">
                     <span>
-                        <input type="checkbox" name="save_id" > 아이디 저장
+                        <input type="checkbox" name="rememberMe" v-model="rememberMe" > 아이디 저장
                     </span>
                 </div>
                 <div class="form-group">
@@ -68,32 +68,41 @@ import axios from 'axios';
 import { mapMutations } from 'vuex';
 
 export default {
-    data() {
-        return {
-            user_auth: '0',
-            email: '',
-            pwd: '',
-        };
-    },
-    computed: {
-        user() {
-            return this.$store.state.user; // user 정보가 바뀔 때마다 자동으로 user() 갱신
+        data() {
+            return {
+                user_auth: '0',
+                email: '',
+                pwd: '',
+                // rememberMe: false,
+            };
         },
-        isLoggedIn() {
-            return !!this.$store.state.user.user_email || !!this.$store.state.trainer.tr_email;
-        }
-    }, 
-    created() {
-        if (!this.isLoggedIn) {
-            this.$router.push('/login'); // 로그인 상태가 아니면 로그인 페이지로 리다이렉트
-        }
-    },
+        computed: {
+            user() {
+                return this.$store.state.user; // user 정보가 바뀔 때마다 자동으로 user() 갱신
+            },
+            isLoggedIn() {
+                return !!this.$store.state.user.user_email || !!this.$store.state.trainer.tr_email;
+            }
+        }, 
+        created() {
+            if (!this.isLoggedIn) {
+                this.$router.push('/login'); // 로그인 상태가 아니면 로그인 페이지로 리다이렉트
+            }
+            
+        },
         methods: {
             ...mapMutations({
             setUser: 'user', // user 뮤테이션을 setUser 메서드로 매핑
             setTrainer: 'trainer', // trainer 뮤테이션을 setTrainer 메서드로 매핑
             setAdmin: 'admin', // user 뮤테이션을 setUser 메서드로 매핑
         }),
+        // loadUserId() {
+        //     const savedUserId = localStorage.getItem('savedUserId');
+        //     if (savedUserId) {
+        //         this.email = savedUserId;
+        //         this.rememberMe = true;
+        //     }
+        // },
         async login() {
             const endpoint = (this.user_auth === '0' || this.user_auth === '1') ? 'login_user' : 'login_tr';
             try {
@@ -107,8 +116,6 @@ export default {
                         user_auth: this.user_auth,
                     },
                 });
-
-               
                 console.log(res.data.data);
                 console.log(res.data);
                 console.log("res.data.email", res.data.email);

@@ -10,14 +10,22 @@
                 </h1>
 
                 <div class="navbar">
-                    <ul class="menu_list" v-if="user.user_auth === 1 || user.user_auth === ''" >
+                    <ul class="menu_list" v-if="isUser" >
                         <li class="list" @click="goToList(1)">다이어트</li>
                         <li class="list" @click="goToList(2)">체형교정</li>
                         <li class="list" @click="goToList(3)">대회</li>
                         <li class="list" @click="goToList(4)">체력증진</li>
                         <li class="list" @click="goToList(5)">홈트</li>
                     </ul>
-                    <ul v-else-if="user.user_auth === 0 || trainer.tr_admit === 1" ></ul>
+                    <ul v-else-if="isTrainer" ></ul>
+                    <ul v-else-if="isAdmin" ></ul>
+                    <ul class="menu_list" v-else-if="isNon" >
+                        <li class="list" @click="goToList(1)">다이어트</li>
+                        <li class="list" @click="goToList(2)">체형교정</li>
+                        <li class="list" @click="goToList(3)">대회</li>
+                        <li class="list" @click="goToList(4)">체력증진</li>
+                        <li class="list" @click="goToList(5)">홈트</li>
+                    </ul>
                 </div>
             </div>
             <div class="nav_right">
@@ -116,11 +124,24 @@ export default {
         },
         isLoggedIn_admin() {
             return this.user.user_auth === 0;
+        },
+        isUser() {
+            return this.user.user_auth === 1 ;
+        },
+        isTrainer() {
+            return this.trainer.tr_admit === 1;
+        },
+        isAdmin() {
+            return this.user.user_auth === 0 ;
+        },
+        isNon(){
+            return this.user.user_auth === '';
         }
     },
     mounted() {
         console.log("this.user.user_auth",this.user.user_auth);
         console.log("this.trainer.tr_admit",this.trainer.tr_admit);
+        console.log("isTrainer",this.isTrainer)
     },  
     // data() {
     //     return {
@@ -138,8 +159,8 @@ export default {
         },
         ...mapMutations(['setUser', 'setTrainer']),
         gotologout() {
-            this.setUser({ user_email: '', user_no: '' });
-            this.setTrainer({ tr_email: '', tr_no: '' });
+            this.setUser({ user_email: '', user_no: '', user_auth: '' });
+            this.setTrainer({ tr_email: '', tr_no: '', tr_admit: '' });
             localStorage.clear(); // 로컬 스토리지 비우기
             console.log(this.$store.state.user); // 상태 변화 확인
             console.log(this.$store.state.trainer); // 상태 변화 확인
