@@ -1,19 +1,19 @@
-<template>
+<!--<template>
     <div class="admin_faq_main">
         <div class="admin_faq">FAQ 관리</div>
         <div class="admin_container">
             <div class="admin_faq_ans">
                 <div class="admin_faq_question">
                     <div class="admin_question" id = "Q">
-                        <tr v-for="(faqq, i) in qList" :key="i">
-                            <td>{{ faqq.faq_q }}</td>
-                        </tr>
-                </div>
-                </div>
-                <div class="admin_answer" id = "A">
-                    <tr v-for="(faqa, i) in aList" :key="i">
-                            <td>{{ faqa.faq_a }}</td>
-                        </tr>
+                        <div v-for="(faq, i) in faqList" :key="i">
+                            <div>Q{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_q }}</div>
+                            <button class="admin_toggle_update">✔</button>
+                            <button @click="delFAQ">❌</button>
+                            <button v-if="" class="admin_toggle_update">▼</button>
+                            <div>▶A{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_a }}</div>
+                            <button class="admin_toggle_update">✔</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <ul class="admin_page">
@@ -29,57 +29,76 @@
   
 <script>
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 export default {
     data() {
         return {
-            qList: [],
-            aList: [],
+            faqList: [],
             currentPage: 1,
             perPage: 10, // 페이지 당 아이템 수
         };
     },
     computed: {
-        paginatedQList() {
+        paginatedFaqList() {
             const start = (this.currentPage - 1) * this.perPage;
             const end = start + this.perPage;
-            return this.qList.slice(start, end);
-        },
-        paginatedAList() {
-            const start = (this.currentPage - 1) * this.perPage;
-            const end = start + this.perPage;
-            return this.aList.slice(start, end);
+            return this.faqList.slice(start, end);
         },
         totalPages() {
-            return Math.ceil(this.qList.length / this.perPage);
+            return Math.ceil(this.faqList.length / this.perPage);
         }
     },
     methods: {
-        getqList() {
-            axios.get('http://localhost:3000/admin/qlist')
+        getfaqList() {
+            axios.get('http://localhost:3000/admin/faqlist')
                 .then(response => {
-                    this.qList = response.data;
+                    this.faqList = response.data;
+
+                    // for(i=0; i < 10; i++){
+                    //     faqList[i].hidden = false;
+                    // }
+
                 })
                 .catch(error => {
-                    console.error('Error fetching q list:', error);
+                    console.error('Error fetching faqlist:', error);
                 });
         },
-        getaList() {
-            axios.get('http://localhost:3000/admin/alist')
-                .then(response => {
-                    this.aList = response.data;
-                })
-                .catch(error => {
-                    console.error('Error fetching a list:', error);
-                });
+        async delfaq(faq_no){
+            console.log("faq_no",faq_no);
+            try{
+                const response = await axios.post(`http://localhost:3000/admin/delfaq`, {faq_no: faq_no});
+                console.log("리뷰 삭제 성공", response.data);
+                alert('faq 목록에서 삭제 되었습니다.');
+            } catch(error){
+                console.error("faq 삭제 도중 에러 발생",error);
+            }
+        },
+        // delFAQ() {
+        //     axios({
+        //         url: 'http://localhost:3000/admin/delFAQ',
+        //         method: 'POST',
+        //         data: {
+        //             faq_no: this.faq_no
+        //         }
+        //     })
+        //     .then(res => {
+        //         if (res.data.message === 'faq 삭제') {
+        //             Swal.fire('faq가 삭제되었습니다.');
+        //             this.getfaqList(); //삭제 후 목록 다시 불러오기
+        //         }
+        //     })
+        //     .catch((error) => {
+        //         console.log("삭제 메소드 오류:", error);
+        //         Swal.fire('에러', 'faq 삭제 중 오류가 발생했습니다.', 'error');
+        //     });
         },
         gotoPage(page) {
             this.currentPage = page;
         }
     },
     mounted() {
-        this.getqList();
-        this.getaList();
+        this.getfaqList();
     }
 };
 </script>
@@ -176,4 +195,4 @@ export default {
 .admin_faqlist-bodypaging{
     padding-top: 15px;
 }
-</style>
+</style> -->

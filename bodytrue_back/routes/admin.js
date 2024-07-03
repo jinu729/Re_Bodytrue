@@ -336,44 +336,61 @@ router.post("/insertA",async(req,res)=>{
     });
 })
 
-
-//질문 불러오기
-
-router.get("/qlist",async(req,res)=>{
-    
-    db.query("select faq_q from faq",(err,results)=>{
-        if (err) {
-            res.send({
-              // 에러 발생 시
-              code: 400,
-              failed: "error occurred",
-              error: err,
-            });
-          } else {
-            console.log(results);
-            res.send(results);
-          }
+// 질문&답변 불러오기
+  router.get("/faqlist",async(req,res) => {
+    db.query("select faq_q,faq_a from faq",(err,results) => {
+      if (err) {
+        res.send({
+          //에러 발생 시
+          code: 400,
+          failed: "error occurred",
+          error: err,
+        });
+      } else {
+        console.log(results);
+        res.send(results);
+      }
     });
-});
+  });
 
 
-//답글 불러오기
+// //질문 불러오기
 
-router.get("/alist",async(req,res)=>{
+// router.get("/qlist",async(req,res)=>{
     
-    db.query("select faq_a from faq",(err,results)=>{
-        if (err) {
-            res.send({
-              // 에러 발생 시
-              code: 400,
-              failed: "error occurred",
-              error: err,
-            });
-          } else {
-            res.send(results);
-          }
-    });
-});
+//     db.query("select faq_q from faq",(err,results)=>{
+//         if (err) {
+//             res.send({
+//               // 에러 발생 시
+//               code: 400,
+//               failed: "error occurred",
+//               error: err,
+//             });
+//           } else {
+//             console.log(results);
+//             res.send(results);
+//           }
+//     });
+// });
+
+
+// //답글 불러오기
+
+// router.get("/alist",async(req,res)=>{
+    
+//     db.query("select faq_a from faq",(err,results)=>{
+//         if (err) {
+//             res.send({
+//               // 에러 발생 시
+//               code: 400,
+//               failed: "error occurred",
+//               error: err,
+//             });
+//           } else {
+//             res.send(results);
+//           }
+//     });
+// });
 
 //질문 수정하기
 
@@ -427,25 +444,35 @@ router.post("/updateA",async(req,res)=>{
 
 //FAQ 삭제하기
 
-router.post("/delFAQ",async(req,res)=>{
+router.post('/delfaq', function(request, response, next) {
+  const faq_no = request.body.faq_no;
 
-    const faq_no = req.body
+  db.query(`delete from faq where faq_no = ?`, [faq_no], function(error, result) {
+    if(error) {
+      console.error(error);
+      return response.status(500).json({ error: '리뷰 삭제 중 오류'});
+    }
+    response.json(result);
+    console.log(result);
+  })
+});
 
-    db.query("delete from faq where faq_no = ?",
-        faq_no,
-        (err,results)=>{
-        if (err) {
-            res.send({
-            // 에러 발생 시
-            code: 400,
-            failed: "error occurred",
-            error: err,
-            });
-        } else {
-            res.send(results);
-        }
-    });
-})
+// router.post("/delFAQ", async (req, res) => {
+//   const { faq_no } = req.body;
+//   console.log("req.body",req.body);
+//   db.query("DELETE FROM faq WHERE faq_no = ?", [faq_no], (err, results) => {
+//       if (err) {
+//         console.log("faq_no",faq_no);
+//           res.send({
+//               code: 400,
+//               failed: "error occurred",
+//               error: err,
+//           });
+//       } else {
+//           res.send({ message: "faq 삭제", results });
+//       }
+//   });
+// });
 
 //승호작성완
 
