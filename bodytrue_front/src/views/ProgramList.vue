@@ -98,19 +98,20 @@
       async getProgramList() {
         // 현재 라우터의 쿼리 파라미터를 가져와 정렬 옵션을 설정
         const sortOption = this.$route.query.sort || 'default'; // 기본값 설정
-        
-        let url = 'http://localhost:3000/user/programlist'; // 기본 데이터 가져오기 URL
+        const pro_tag = this.$route.params.pro_tag;
+
+        let url = `http://localhost:3000/user/programlist/${pro_tag}`; // 기본 데이터 가져오기 URL
   
         // 정렬 옵션에 따라 URL 변경
         switch (sortOption) {
           case '마감순':
-            url = 'http://localhost:3000/user/programlist/sortbyenddate';
+            url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyenddate`;
             break;
           case '조회순':
-            url = 'http://localhost:3000/user/programlist/sortbyviews';
+            url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyviews`;
             break;
           case '평점순':
-            url = 'http://localhost:3000/user/programlist/sortbyrating';
+            url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyrating`;
             break;
           default:
             break;
@@ -119,6 +120,7 @@
         try {
           const response = await axios.get(url);
           this.programList = response.data; // 데이터를 받아와 프로그램 목록에 설정
+          console.log("pro",this.programList);
         } catch (error) {
           console.error('데이터를 가져오는 중 오류 발생:', error);
         }

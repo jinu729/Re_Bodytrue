@@ -19,6 +19,7 @@ import Login from '../views/Login.vue'
 //은미작성
 import ProgramDetail from '../views/ProgramDetail.vue'
 import UserMyPage from '../views/UserMypage.vue'
+import TrainerMyPage from '../views/TrainerMypage.vue'
 //은미작성완
 
 
@@ -105,7 +106,7 @@ const routes = [
     component: Login
   },
   {
-    path: '/prolist/:menu_list',
+    path: '/prolist/:pro_tag',
     name: 'ProgramList',
     component: ProgramList
   }
@@ -124,7 +125,13 @@ const routes = [
     path: '/mypage/:user_no',
     name: 'UserMyPage',
     component: UserMyPage
+  },
+  {
+    path: '/trmypage/:tr_no',
+    name: 'TrainerMyPage',
+    component: TrainerMyPage
   }
+
 
 //은미작성완
 
