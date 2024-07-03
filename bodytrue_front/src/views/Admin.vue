@@ -20,11 +20,11 @@
 export default {
     methods: {
         adminuser() {
-            this.$router.push('/adminuser');
+            this.$router.push('/admin/userlist');
         },
 
         admintrainer() {
-            this.$router.push('/admintrainer');
+            this.$router.push('/admin/trainerlist');
         },
 
         adminfaq() {

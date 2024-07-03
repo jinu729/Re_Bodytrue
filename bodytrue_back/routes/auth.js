@@ -169,7 +169,7 @@ router.post("/findPw",async(req,res)=>{
 
 //회원 아이디찾기
 
-router.post("/findId",async(req,res)=>{
+router.post("/findId_user",async(req,res)=>{
     console.log(req.body);
     const data = {
         user_name : req.body.user_name,
@@ -213,14 +213,13 @@ router.post("/findId",async(req,res)=>{
 
 //트레이너 아이디찾기
 
-router.post("/findId",async(req,res)=>{
+router.post("/findId_tr",async(req,res)=>{
   console.log(req.body);
   const data = {
       tr_name : req.body.user_name,
-      // user_tel : req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3
       tr_tel : req.body.user_tel
     };
-    console.log(data);
+    console.log("tr.data",data);
 
   db.query('select tr_email from trainer where tr_name = ? and tr_tel = ?',
       [data.tr_name,data.tr_tel],
@@ -234,12 +233,13 @@ router.post("/findId",async(req,res)=>{
           });
       } else {
         if (results.length > 0) {
-          const user_email = results[0].user_email;
+          const tr_email = results[0].tr_email;
           res.status(200).json({
               code: 200,
               message: "아이디(이메일) 찾기 성공",
-              user_email: user_email
+              tr_email: tr_email
           });
+          console.log(results);
       } else {
           res.status(404).json({
               code: 404,

@@ -29,13 +29,15 @@
                                 <option style="text-align: center;" value="012">012</option>
                             </select>
                             <span> - </span>
-                            <input type="text" name="number2" v-model="number2" id="number2">
+                            <input type="text" name="number2" v-model="number2" maxlength="4" id="number2">
                             <span> - </span>
-                            <input type="text" name="number3" v-model="number3" id="number3">
+                            <input type="text" name="number3" v-model="number3" maxlength="4" id="number3">
                     <button type="button" @click="checkEmail">아이디 찾기</button>
                 </div>
                 <div>
-                    <p style="text-align: center; height: 80px; line-height: 80px;">{{ user_email }}</p>
+                    <p v-if="user_email " style="text-align: center; height: 80px; line-height: 80px;">{{ user_email }}</p>
+                    <p v-else-if="tr_email" style="text-align: center; height: 80px; line-height: 80px;">{{ tr_email }}</p>
+                    <p v-else-if="error" style="text-align: center; height: 80px; line-height: 80px;">{{ error }}</p>
                 </div>
                 <div>
                     <button class="close"  @click="goToLogin">로그인</button>
@@ -63,39 +65,49 @@ export default {
             number2: '',
             number3: '',
             user_email: '',
-            user_auth: '1'
+            user_auth: '1',
+            error: ''
         };
     },
-    // mounted: {
-    //     // console.log(user_email);
-    // },  
     methods: {
         async submitFindid(){
             
         },
         async checkEmail(){
             // 이름 및 핸드폰번호로 이메일 찾기
+            const endpoint = (this.user_auth === '1') ? 'findId_user' : 'findId_tr';
             const data = {
                 user_name : this.user_name,
                 user_tel : `${this.number1}-${this.number2}-${this.number3}`
             };
+            console.log("endpoint",endpoint);
             console.log(data);
 
             try{
-                const response = await axios.post(`http://localhost:3000/auth/findId`, data, {
+                const response = await axios.post(`http://localhost:3000/auth/${endpoint}`, data, {
                     headers: {
                     'Content-Type': 'application/json'
                 }
                 });
                 console.log(response.data);
                 this.user_email = response.data.user_email;
+                this.tr_email = response.data.tr_email;
+
+                this.error = ''; // 성공 시 에러 메시지 초기화
             } catch(error){
+                if (error.response && error.response.data && error.response.data.message) {
+                    this.error = error.response.data.message;
+                } else {
+                    this.error = "일치하는 사용자가 없습니다.";
+                }
+                //this.user_email = ''; // 에러 발생 시 이메일 초기화
                 console.error(error);
             }
         },
         goToLogin(){
             // 로그인
             this.$store.dispatch('updateUserEmail', this.user_email);
+            this.resetForm();
             this.$emit('close');
             this.$router.push({ path: '/login' });
         },
@@ -112,6 +124,8 @@ export default {
             this.number2 = '';
             this.number3 = '';
             this.user_email = '';
+            this.error = '';
+            this.tr_email = '';
         }
     }
 }

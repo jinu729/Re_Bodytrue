@@ -70,11 +70,11 @@
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/adminuser"><img src="../image/icon.png" alt="adminuser">회원관리</router-link>
+                        <router-link class="icon" to="/admin/userlist"><img src="../image/icon.png" alt="adminuser">회원관리</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/admintrainer"><img src="../image/icon.png" alt="admintrainer">트레이너관리</router-link>
+                        <router-link class="icon" to="/admin/trainerlist"><img src="../image/icon.png" alt="admintrainer">트레이너관리</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
