@@ -140,6 +140,7 @@ router.post('/trban', (req, res, next) => {
   // console.log('Received request to delete trainer:', tr_name, tr_email); // 로그 추가
 
 
+
   const sql = 'UPDATE TRAINER SET tr_ban=? WHERE tr_no=?';
 
   db.query(sql, [tr_ban, tr_no], function(err, results, fields) {
