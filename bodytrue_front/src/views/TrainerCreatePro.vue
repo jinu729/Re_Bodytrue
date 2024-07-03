@@ -4,7 +4,7 @@
             <p>프로그램 등록</p>
         </div>
         <div class="prc_content">
-            <form  @submit.prevent="onSubmit">
+                <form>
             <div class="content_left">
                 <div class="upload_img">
                     <div class="img-box">
@@ -20,32 +20,32 @@
                     <div class="prcn_title">
                         <span>프로그램 명</span>
                     </div>
-                    <input type="text" id="prcn_text" v-model="prcn_text" placeholder="프로그램 명">
+                    <input type="text" id="prcn_text" v-model="program.prcn_text" placeholder="프로그램 명">
                 </div>
                 <div class="prc_name">
                     <div class="prcn_title">
                         <span>전화번호</span>
                     </div>
-                    <input type="text" id="phn_text" v-model="phn_text" placeholder="010-1111-1111">
+                    <input type="text" id="phn_text" v-model="program.phn_text" placeholder="010-1111-1111">
                 </div>
                 <div class="prc_name">
                     <div class="prcn_title">
                         <span>주소</span>
                     </div>
-                    <input type="submit" id="address_text" v-model="adddress_text" value="주소">
+                    <input type="submit" id="address_text" v-model="program.adddress_text" value="주소">
                 </div>
                 <div class="prc_name">
                     <div class="prc_date">
                         <div class="prcn_title">
                             <span>시작일</span>
                         </div>
-                        <input type="date" id="start_date" v-model="start_date" value="달력">
+                        <input type="date" id="start_date" v-model="program.start_date" value="달력">
                     </div>
                     <div class="prc_date">
                         <div class="prcn_title">
                             <span>마감일</span>
                         </div>
-                        <input type="date" id="end_date"  v-model="end_date" value="달력">
+                        <input type="date" id="end_date"  v-model="program.end_date" value="달력">
                     </div>
                 </div>
                 <div class="prc_detail prc_tag">
@@ -53,19 +53,19 @@
                         <span>상세 설명</span>
                         <div class="tags">
                             <label for="diet">
-                                <input type="radio" id="diet" name="tag" v-model="tags" value=0><span>다이어트</span>
+                                <input type="radio" id="diet" name="tag" v-model="program.tags" value=0><span>다이어트</span>
                             </label>
                             <label for="bodychange">
-                                <input type="radio" id="bodychange" name="tag" v-model="tags" value=1><span>체형교정</span>
+                                <input type="radio" id="bodychange" name="tag" v-model="program.tags" value=1><span>체형교정</span>
                             </label>
                             <label for="tournament">
-                                <input type="radio" id="tournament" name="tag" v-model="tags" value=2><span>대회</span>
+                                <input type="radio" id="tournament" name="tag" v-model="program.tags" value=2><span>대회</span>
                             </label>
                             <label for="strength">
-                                <input type="radio" id="strength" name="tag" v-model="tags" value=3><span>체력증진</span>
+                                <input type="radio" id="strength" name="tag" v-model="program.tags" value=3><span>체력증진</span>
                             </label>
                             <label for="hometraining">
-                                <input type="radio" id=" hometraining" name="tag" v-model="tags" value=4><span>홈트</span>
+                                <input type="radio" id=" hometraining" name="tag" v-model="program.tags" value=4><span>홈트</span>
                             </label>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                     </div>
                     <div class="preview-container" id="preview-container"></div>
                     <div class="img_textarea">
-                        <textarea name="img_textarea" id="img_textarea1" v-model="img_textarea1" placeholder="상세 이미지 설명"></textarea>
+                        <textarea name="img_textarea" id="img_textarea1" v-model="program.img_textarea1" placeholder="상세 이미지 설명"></textarea>
                     </div>
                 </div>
                 <div class="prc_detail">
@@ -89,7 +89,7 @@
                     </div>
                     <div class="preview-container" id="preview-container2"></div>
                     <div class="img_textarea">
-                        <textarea name="img_textarea" id="img_textarea2"  v-model="img_textarea2" placeholder="상세 이미지 설명"></textarea>
+                        <textarea name="img_textarea" id="img_textarea2"  v-model="program.img_textarea2" placeholder="상세 이미지 설명"></textarea>
                     </div>
                 </div>
                 <div class="prc_price">
@@ -105,7 +105,7 @@
                     <div class="preview-container" id="preview-container3"></div>
                 </div>
             </div>
-            </form>
+                </form>
         </div>
         <div class="prc_btn">
             <button type="submit" name="create" id="prc_create" @click="ProInsert">등록</button>
@@ -122,12 +122,14 @@ import axios from 'axios';
 export default {
     data(){
         return {
-            fileName: '상품 이미지를 업로드 하세요',
-            fileName2: '상품 상세 이미지를 업로드 하세요',
+            fileName:"",
+            fileName2:"",
+            fileName3:"",
+            fileName4:"",
             program:{
                 prcn_text:"",
-                phn_text:"",
-                adddress_text:"",
+                // phn_text:"",
+                // adddress_text:"",
                 start_date:"",
                 end_date:"",
                 img_textarea1:"",
@@ -137,8 +139,10 @@ export default {
                 pro_img:"",
                 pro_img1:"",
                 pro_img2:"",
-                pro_imgprice:""
-            }
+                pro_imgprice:"",
+                tr_no: '',
+            },
+            tr_no : localStorage.tr_no,
         }
 
     },
@@ -148,12 +152,13 @@ export default {
       },
      },
 
-    method:{
+    methods:{
         async uploadFile(file, type) {
 
             let name = "";
             if (file) {
                 name = file[0].name;
+                // console.log("name",name);
             }
             else {
                 return;     // 파일 미선택 시 반환
@@ -174,20 +179,25 @@ export default {
                     method: 'POST',
                     headers: { 'Content-Type': 'multipart/form-data' },
                     data: formData
+                    
                 })
                     .then((res) => {
                         if (res.data.message == 'success') {
                             if (type == 0) {
-                                this.data.pro_img = name;
+                                this.program.pro_img = name;
+                                console.log("0",this.program.pro_img);
                             }
                             else if (type == 1) {
-                                this.data.pro_img1 = name;
+                                this.program.pro_img1 = name;
+                                console.log("1",this.program.pro_img1);
                             }
                             else if (type == 2) {
-                                this.data.pro_img2 = name;
+                                this.program.pro_img2 = name;
+                                console.log("2",this.program.pro_img2);
                             }
                             else if (type == 3) {
-                                this.data.pro_imgprice = name;
+                                this.program.pro_imgprice = name;
+                                console.log("proce",this.program.pro_imgprice);
                             }
                         }
                         else {
@@ -210,6 +220,7 @@ export default {
             let name = "";
             if (file) {
                 name = file[0].name;
+                console.log("name",name);
             }
             else {
                 return;     // 파일 미선택 시 반환
@@ -218,7 +229,7 @@ export default {
             const formData = new FormData();
 
             formData.append('img', file[0]);
-            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+            this.fileName2 = file ? file[0].name : '이미지를 업로드 하세요';
 
             for (let key of formData.keys()) {
                 console.log(key, ":", formData.get(key));
@@ -234,16 +245,20 @@ export default {
                     .then((res) => {
                         if (res.data.message == 'success') {
                             if (type == 0) {
-                                this.data.pro_img = name;
+                                this.program.pro_img = name;
+                                console.log("0",this.program.pro_img);
                             }
                             else if (type == 1) {
-                                this.data.pro_img1 = name;
+                                this.program.pro_img1 = name;
+                                console.log("1",this.program.pro_img1);
                             }
                             else if (type == 2) {
-                                this.data.pro_img2 = name;
+                                this.program.pro_img2 = name;
+                                console.log("2",this.program.pro_img2);
                             }
                             else if (type == 3) {
-                                this.data.pro_imgprice = name;
+                                this.program.pro_imgprice = name;
+                                console.log("proce",this.program.pro_imgprice);
                             }
                         }
                         else {
@@ -273,7 +288,7 @@ export default {
             const formData = new FormData();
 
             formData.append('img', file[0]);
-            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+            this.fileName3 = file ? file[0].name : '이미지를 업로드 하세요';
 
             for (let key of formData.keys()) {
                 console.log(key, ":", formData.get(key));
@@ -287,18 +302,22 @@ export default {
                     data: formData
                 })
                     .then((res) => {
-                        if (res.data.message == 'success') {
+                       if (res.data.message == 'success') {
                             if (type == 0) {
-                                this.data.pro_img = name;
+                                this.program.pro_img = name;
+                                console.log("0",this.program.pro_img);
                             }
                             else if (type == 1) {
-                                this.data.pro_img1 = name;
+                                this.program.pro_img1 = name;
+                                console.log("1",this.program.pro_img1);
                             }
                             else if (type == 2) {
-                                this.data.pro_img2 = name;
+                                this.program.pro_img2 = name;
+                                console.log("2",this.program.pro_img2);
                             }
                             else if (type == 3) {
-                                this.data.pro_imgprice = name;
+                                this.program.pro_imgprice = name;
+                                console.log("proce",this.program.pro_imgprice);
                             }
                         }
                         else {
@@ -328,7 +347,7 @@ export default {
             const formData = new FormData();
 
             formData.append('img', file[0]);
-            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+            this.fileName4 = file ? file[0].name : '이미지를 업로드 하세요';
 
             for (let key of formData.keys()) {
                 console.log(key, ":", formData.get(key));
@@ -344,16 +363,20 @@ export default {
                     .then((res) => {
                         if (res.data.message == 'success') {
                             if (type == 0) {
-                                this.data.pro_img = name;
+                                this.program.pro_img = name;
+                                console.log("0",this.program.pro_img);
                             }
                             else if (type == 1) {
-                                this.data.pro_img1 = name;
+                                this.program.pro_img1 = name;
+                                console.log("1",this.program.pro_img1);
                             }
                             else if (type == 2) {
-                                this.data.pro_img2 = name;
+                                this.program.pro_img2 = name;
+                                console.log("2",this.program.pro_img2);
                             }
                             else if (type == 3) {
-                                this.data.pro_imgprice = name;
+                                this.program.pro_imgprice = name;
+                                console.log("price",this.program.pro_imgprice);
                             }
                         }
                         else {
@@ -372,26 +395,27 @@ export default {
 
         },
         ProInsert() {
+            console.log("program",this.program);
             const tr_no = this.$route.params.tr_no;
                 axios({
-                    url: `http://localhost:3000/trainer/createprogram/:${tr_no}`,
+                    url: `http://localhost:3000/trainer/createprogram/${tr_no}`,
                     method: "POST",
-                    data: {
-                        prcn_text:"",
-                        phn_text:"",
-                        adddress_text:"",
-                        start_date:"",
-                        end_date:"",
-                        img_textarea1:"",
-                        img_textarea2:"",
-                        tags:"",
-
-                        pro_img:"",
-                        pro_img1:"",
-                        pro_img2:"",
-                        pro_imgprice:""
+                    data: {     
+                        prcn_text: this.program.prcn_text,
+                        // phn_text:"트레이너번호",
+                        // adddress_text:this.program.p,
+                        start_date:this.program.start_date,
+                        end_date:this.program.end_date,
+                        img_textarea1:this.program.img_textarea1,
+                        img_textarea2:this.program.img_textarea2,
+                        tags:this.program.tags,
+                        pro_img:this.program.pro_img,
+                        pro_img1:this.program.pro_img1,
+                        pro_img2:this.program.pro_img2,
+                        pro_imgprice:this.program.pro_imgprice
                     },
                 })
+                    
                     .then((res) => {
                         if (res.data.message == 'add_complete') {
                             this.$swal({
@@ -401,9 +425,11 @@ export default {
                                 showConfirmButton: false,
                                 timer: 1000
                             })
+                            
                                 .then(() => {
-                                    window.location.href = "http://localhost:8080/admin/goodsList";
+                                    window.location.href = "http://localhost:8081/admin/goodsList";
                                 })
+                        console.log("data",this.prcn_text);        
                         } else if (res.data.message == 'already_exist_goods') {
                             this.$swal("이미 등록된 상품입니다.");
                         }
@@ -412,6 +438,7 @@ export default {
                         }
                         else {
                             this.$swal("상품 등록 실패");
+                            console.log("data",this.prcn_text);
                         }
                     })
                     .catch(() => {
