@@ -256,6 +256,7 @@
         text-align: center;
         width: 150px;
         margin: 0 auto;
+        cursor: pointer;
     }
     .number_box li{
         width: 20px;
@@ -268,6 +269,7 @@
     }
     .number_box img{
         width:15px;
+        cursor: default;
     }
 
 
