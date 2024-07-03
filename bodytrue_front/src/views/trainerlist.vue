@@ -105,12 +105,18 @@ export default {
           console.error('Error searching users:', error);
         });
     },
+<<<<<<< HEAD
+=======
 
+>>>>>>> d007a9e31787f8bfa5f2550f39c39f9730fbccfd
     Trban(trainer, isBaned) {
       const newBanStatus = isBaned ? 1 : 0;
       console.log('trainer.tr_no',trainer.tr_no,);
       console.log('newBanStatus',newBanStatus,)
+<<<<<<< HEAD
+=======
 
+>>>>>>> d007a9e31787f8bfa5f2550f39c39f9730fbccfd
       axios({
           url: 'http://localhost:3000/admin/trban',
           method: 'POST',
