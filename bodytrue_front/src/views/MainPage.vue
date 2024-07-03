@@ -12,19 +12,19 @@
       <button class="next" @click="changeSlide(1)">❯</button>
     </div>
     <div class="page-buttons">
-      <router-link to="/prolist/1" class="page-button">
+      <router-link to="/prolist/0" class="page-button">
         <img src="../image/buttonImage/다이어트.png" alt="Page 1"><span>&nbsp;&nbsp;&nbsp;다이어트</span>
       </router-link>
-      <router-link to="/prolist/2" class="page-button">
+      <router-link to="/prolist/1" class="page-button">
         <img src="../image/buttonImage/체형교정.png" alt="Page 2"><span>&nbsp;&nbsp;체형교정</span>
       </router-link>
-      <router-link to="/prolist/3" class="page-button">
+      <router-link to="/prolist/2" class="page-button">
         <img src="../image/buttonImage/대회.png" alt="Page 3"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대회</span>
       </router-link>
-      <router-link to="/prolist/4" class="page-button">
+      <router-link to="/prolist/3" class="page-button">
         <img src="../image/buttonImage/체력증진.png" alt="Page 4"><span>&nbsp;&nbsp;체력증진</span>
       </router-link>
-      <router-link to="/prolist/5" class="page-button">
+      <router-link to="/prolist/4" class="page-button">
         <img src="../image/buttonImage/홈트.png" alt="Page 5"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;홈트</span>
       </router-link>
     </div>

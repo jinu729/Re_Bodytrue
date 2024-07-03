@@ -99,7 +99,7 @@
                             <td>{{ re.re_date }}</td>
                             <td>{{ re.re_rate}}</td>
                             <td>
-                                <button @click="updatere(re.re_no, re.re_comment)" class="reupdate_btn">수정</button>
+                                <button @click="openReviewModal(re)" class="reupdate_btn">수정</button>
                                 <button @click="deletere(re.re_no)" class="reupdate_btn">삭제</button>
                             </td>
                         </tr>
@@ -197,7 +197,8 @@ export default {
                 re_comment: '',
                 re_user_no: null,
                 re_tr_no: null,
-                re_rate: 0
+                re_rate: 0,
+                re_no: null
             }
         };
     },
@@ -205,8 +206,7 @@ export default {
         console.log("마운트됨");
         this.myrecheck();
         this.mycalcheck();
-        // this.deletecal();
-        // this.deletere();
+
     },
 
     created(){
@@ -441,15 +441,18 @@ export default {
             this.$router.push(`/prodetail/${pro_no}`);
         },
         //리뷰작성하기 위해 모달창 오픈 
-        openReviewModal(cal){
-            console.log("cal.tr_no",cal.tr_no);
+        openReviewModal(calOrre){
+            console.log("calOrre.tr_no",calOrre.tr_no);
+            console.log("calOrre.re_no",calOrre.re_no);
+
             this.reviewData = {
-               re_pro_no: cal.pro_no,
-               pro_name: cal.pro_name,
+               re_pro_no: calOrre.pro_no,
+               pro_name: calOrre.pro_name,
                re_user_no: this.$route.params.user_no,
-               re_tr_no : cal.tr_no,
-               re_comment: '',
-               re_rate:0,
+               re_tr_no : calOrre.tr_no,
+               re_comment: calOrre.re_comment ||'',
+               re_rate: calOrre.re_rate || 0,
+               re_no: calOrre.re_no || null,
             };
             console.log("reviewData", this.reviewData);
             this.isReviewModalOpen = true;
@@ -541,20 +544,9 @@ export default {
         },
         
         //리뷰 수정하기
-        async updatere(re_no, re_comment){
-            console.log("re_no", re_no);
-            console.log("re_comment", re_comment);
-            try{
-                const response = await axios.post(`http://localhost:3000/user/updatere`,
-                    {
-                        re_no: re_no,
-                        re_comment: re_comment
-                    }
-                );
-                console.log("리뷰 수정 성공", response.data);
-            } catch(error){
-                console.error('리뷰 수정 도중 에러 발생', error);
-            }
+        async updatere(re_no){
+            const review = this.reData.find(r => r.re_no === re_no);
+            this.openReviewModal(review);
         },
 
     }

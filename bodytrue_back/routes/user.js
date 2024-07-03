@@ -193,8 +193,8 @@ router.post('/myrecheck', function(request, response, next){
     db.query(`select 
         distinct r.re_no, p.pro_no, p.pro_name, t.tr_name,t.tr_no, date_format(r.re_date, '%y년 %m월 %d일 %h시') as re_date, r.re_rate
         from program p join trainer t on p.pro_tr_no = t.tr_no 
-        join review r on   p.pro_no = r.re_pro_no 
-        where r.re_user_no = ? and r.re_rate is not null;`,[cal_user_no], function(error, result, field){
+        join review r on p.pro_no = r.re_pro_no 
+        where r.re_user_no = ? and r.re_rate is not null`,[cal_user_no], function(error, result, field){
         if(error){
             console.error(error);
             return response.status(500).json({ error: '마이페이지 리뷰정보 에러' });
@@ -294,19 +294,58 @@ router.post('/deletere', function(request, response, next){
 });
 
 //리뷰 수정하기
-router.post('/updatere',function(request, response, next){
+router.post('/updatere', function(request, response, next){
     const re_no = request.body.re_no;
     const re_comment = request.body.re_comment;
-
-    db.query(`update review set re_comment = ? where re_no = ?`,[re_comment, re_no], function(error,result){
+    const re_rate = request.body.re_rate;
+    
+    db.query(`update review set re_rate=?,re_comment = ? where re_no = ?`,[re_rate,re_comment, re_no], function(error, result){
         if(error){
             console.error(error);
             return response.status(500).json({ error: '리뷰 수정 중 오류' });
         }
         response.json(result);
-        console.log(reuslt);
+        console.log(result);
     })
-})
+});
+
+// //리뷰 수정하기
+// router.post('/updatere',function(request, response, next){
+//     const re_no = request.body.re_no;
+//     const re_comment = request.body.re_comment;
+
+//     async function getReview(re_no){
+//         try{
+//             //리뷰 정보 가져오기
+//             const myreview = await new Promise((resolve, reject) => {
+//                 db.query(`select * from review where re_no = ?`, [re_no], (error, results) => {
+//                     if(error){
+//                         return reject(error);
+//                     }
+//                     resolve(results);
+//                 });
+//             });
+//             //리뷰
+//             const reviewupdate = await new Promise((resolve,reject) => {
+//                 db.query(`update review set re_comment = ? where re_no = ?`,[re_comment, re_no], function(error, reuslt){
+//                     if(error){
+//                         return reject(error);
+//                     }
+//                     resolve(results);
+//                 });
+//             });
+
+//             response.json({
+//                 myreview,
+//                 reviewupdate
+//             });
+//         } catch(error){
+//             console.error(error);
+//             response.status(500).json({ error: '서버에러' });
+//         }
+//     }
+//     getReview(re_no);
+// });
 
 /* 마이페이지 끝 */
 
@@ -316,16 +355,18 @@ router.post('/updatere',function(request, response, next){
 //재영작성
 // GET /programs 라우트 정의
 // 기본 프로그램 목록 가져오기
-router.get('/programlist', (req, res) => {
+router.get('/programlist/:pro_tag', (req, res) => {
+    const pro_tag = req.params.pro_tag
+    console.log("pro_tag", pro_tag);
     db.query(`
-      SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+      SELECT P.PRO_NO, P.PRO_NAME, P.PRO_TAG, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
       FROM PROGRAM P
       LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
       LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
       LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
-
+      WHERE PRO_TAG = ?
       GROUP BY P.PRO_NO;
-    `, (error, results, fields) => {
+    `,[pro_tag], (error, results, fields) => {
       if (error) {
         console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
         return res.status(500).json({ error: '데이터베이스 오류' });
@@ -335,16 +376,18 @@ router.get('/programlist', (req, res) => {
   });
   
   // 정렬된 프로그램 목록 가져오기
-  router.get('/programlist/sortbyenddate', (req, res) => {
+  router.get('/programlist/:pro_tag/sortbyenddate', (req, res) => {
+    const pro_tag = req.params.pro_tag;
     db.query(`
       SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
       FROM PROGRAM P
       LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
       LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
       LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+      where pro_tag = ?
       GROUP BY P.PRO_NO
       ORDER BY P.PRO_ENDDATE, P.PRO_NAME;
-    `, (error, results, fields) => {
+    `,[pro_tag], (error, results, fields) => {
       if (error) {
         console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
         return res.status(500).json({ error: '데이터베이스 오류' });
@@ -353,16 +396,18 @@ router.get('/programlist', (req, res) => {
     });
   });
   
-  router.get('/programlist/sortbyviews', (req, res) => {
+  router.get('/programlist/:pro_tag/sortbyviews', (req, res) => {
+    const pro_tag = req.params.pro_tag;
     db.query(`
-      SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
+      SELECT P.PRO_NO, P.PRO_NAME, P.PRO_CNT, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
       FROM PROGRAM P
       LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
       LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
       LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+      where pro_tag=?
       GROUP BY P.PRO_NO
       ORDER BY PRO_CNT DESC, P.PRO_NAME;
-    `, (error, results, fields) => {
+    `, [pro_tag],(error, results, fields) => {
       if (error) {
         console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
         return res.status(500).json({ error: '데이터베이스 오류' });
@@ -371,16 +416,18 @@ router.get('/programlist', (req, res) => {
     });
   });
   
-  router.get('/programlist/sortbyrating', (req, res) => {
+  router.get('/programlist/:pro_tag/sortbyrating', (req, res) => {
+    const pro_tag = req.params.pro_tag;
     db.query(`
       SELECT P.PRO_NO, P.PRO_NAME, T.TR_NAME AS PRO_TRAINER, ROUND(AVG(R.RE_RATE), 1) AS PRO_RATE_AVG, substring_index(GROUP_CONCAT(I.IMG_PATH), ',', 1) AS IMG_PATH
       FROM PROGRAM P
       LEFT JOIN TRAINER T ON P.PRO_TR_NO = T.TR_NO
       LEFT JOIN REVIEW R ON P.PRO_NO = R.RE_PRO_NO
       LEFT JOIN IMG I ON P.PRO_NO = I.IMG_PRO_NO
+      where pro_tag=?
       GROUP BY P.PRO_NO
       ORDER BY PRO_RATE_AVG DESC, P.PRO_NAME;
-    `, (error, results, fields) => {
+    `,[pro_tag], (error, results, fields) => {
       if (error) {
         console.error('데이터베이스에서 프로그램 목록을 가져오는 중 오류 발생:', error);
         return res.status(500).json({ error: '데이터베이스 오류' });

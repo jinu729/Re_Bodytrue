@@ -22,7 +22,16 @@
               <h3>평점&nbsp;</h3>
               <!-- 평점 선택 -->
               <div class="star-img">
-                <img src="../image/free-icon-star-8539511.png" v-for="n in 5" :key="n" @click="setReviewRate(n)">
+                <div v-for="(star, index) in 5" :key="index"
+                  :class="{ 'star-filled': index < starsSet, 'star-hovered': index < starsHover }"
+                  @mouseenter="handleStarHover(index)" @mouseleave="resetStarHover" @click="handleStarClick(index)">
+                  <svg class="star" viewBox="0 12.705 512 486.59">
+                    <polygon
+                      points="256.814,12.705 317.205,198.566 512.631,198.566 354.529,313.435 414.918,499.295 256.814,384.427 98.713,499.295 159.102,313.435 1,198.566 196.426,198.566"
+                      :fill="index < starsSet ? '#ffc74f' : '#dddddd'"></polygon>
+                  </svg>
+                </div>
+                <!-- <img src="../image/free-icon-star-8539511.png" v-for="n in 5" :key="n" @click="setReviewRate(n)"> -->
               </div>
             </div>
           </div>
@@ -71,12 +80,24 @@ export default {
       // 로컬 데이터로 리뷰 코멘트와 평점을 관리
       reviewComment: this.reviewData.re_comment || '',
       reviewRate: this.reviewData.re_rate || 0,
+      starsSet: this.reviewData.re_rate || 0,
+      starsHover: 0,
     };
   },
   methods: {
     // 평점을 설정하는 메소드
     setReviewRate(rate) {
       this.reviewRate = rate;
+    },
+    handleStarHover(index){
+      this.starsHover = index +1;
+    },
+    resetStarHover(){
+      this.starsHover =0;
+    },
+    handleStarClick(index){
+      this.starsSet = index + 1;
+      this.setReviewRate(this.starsSet);
     },
     // 리뷰를 제출하는 메소드
     async submitReview() {
@@ -86,8 +107,16 @@ export default {
         re_rate: this.reviewRate,
       };
       try {
-        // 서버에 리뷰 데이터를 전송
-        const response = await axios.post('http://localhost:3000/user/makereview', review);
+        let response;
+        if(review.re_no) {
+          //리뷰 수정
+          response = await axios.post(`http://localhost:3000/user/updatere`, review);
+        } else {
+          //새로운 리뷰 작성
+          response = await axios.post(`http://localhost:3000/user/makereview`, review);
+        }
+        // // 서버에 리뷰 데이터를 전송
+        // const response = await axios.post('http://localhost:3000/user/makereview', review);
         console.log(response.data);
         this.$emit('review-submitted');
         // 성공적으로 전송되면 모달을 닫음
@@ -104,6 +133,7 @@ export default {
     resetReview(){
       this.reviewComment = '';
       this.reviewRate = 0;
+      this.starsSet = 0;
     },
 
   },
@@ -140,5 +170,21 @@ textarea{
   height: 30px; /* 원하는 높이로 설정 */
   cursor: pointer; /* 클릭 가능한 상태로 커서 변경 */
   margin-right: 5px; /* 이미지 간 간격 */
+}
+.star-img{
+  display: flex;
+  flex-direction: row;
+}
+.star{
+  width:30px;
+  height:30px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.star-filled polygon{
+  fill: #f44336;
+}
+.star-hovered polygon{
+  fill:#f44336;
 }
 </style>

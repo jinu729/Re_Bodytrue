@@ -153,11 +153,14 @@ router.post('/createprogram/:tr_no', function (req, res) {
 
 //내프로그램 리스트
 
-router.post("/패스명", async(req,res)=>{
+router.post("/trprolist", async(req,res)=>{
 
-    const tr_no = req.params.tr_no
+    const tr_no = req.body.tr_no
 
-    db.query("SELECT PRO_NAME,PRO_TAG,PRO_STARTDATE,PRO_ENDDATE FROM PROGRAM WHERE PRO_TR_NO = ?;",tr_no,(err,results)=>{
+    db.query(`select pro_name, pro_tag, pro_startdate, pro_enddate
+        from program
+        where pro_tr_no = ?
+        `,[tr_no],(err,results)=>{
         if (err) {
             res.send({
             // 에러 발생 시
@@ -166,10 +169,11 @@ router.post("/패스명", async(req,res)=>{
             error: err,
             });
         } else {
-            res.send
+            res.send(results);
+            console.log(results);
         }
-    })
-})
+    });
+});
 
 //내 리뷰 리스트
 
@@ -198,13 +202,16 @@ router.post("/패스명", async(req,res)=>{
 //트레이너 정보 가져오기
 
 //정보
-router.get("/1", async(req,res)=>{
+router.post("/trmypage/:tr_no", async(req,res)=>{
 
-    // const tr_no = req.params.tr_no
-    const tr_no = 1
-console.log(req.params);
-
-    db.query(`SELECT TR_NAME,TR_EMAIL,TR_TEL,img_path FROM TRAINER t join img i on t.tr_no = i.img_tr_no WHERE TR_NO = ?`,tr_no,(err,results)=>{
+    const tr_no = req.params.tr_no;
+    console.log("tr_no",tr_no);
+    
+    db.query(`
+        select tr_name, tr_email, tr_tel, img_path
+        from trainer t
+        join img i on t.tr_no = i.img_tr_no
+        where tr_no = ?`,[tr_no],(err,results)=>{
         if (err) {
             res.send({
             // 에러 발생 시

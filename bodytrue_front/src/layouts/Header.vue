@@ -11,20 +11,20 @@
 
                 <div class="navbar">
                     <ul class="menu_list" v-if="isUser" >
-                        <li class="list" @click="goToList(1)">다이어트</li>
-                        <li class="list" @click="goToList(2)">체형교정</li>
-                        <li class="list" @click="goToList(3)">대회</li>
-                        <li class="list" @click="goToList(4)">체력증진</li>
-                        <li class="list" @click="goToList(5)">홈트</li>
+                        <li class="list" @click="goToList(0)">다이어트</li>
+                        <li class="list" @click="goToList(1)">체형교정</li>
+                        <li class="list" @click="goToList(2)">대회</li>
+                        <li class="list" @click="goToList(3)">체력증진</li>
+                        <li class="list" @click="goToList(4)">홈트</li>
                     </ul>
                     <ul v-else-if="isTrainer" ></ul>
                     <ul v-else-if="isAdmin" ></ul>
                     <ul class="menu_list" v-else-if="isNon" >
-                        <li class="list" @click="goToList(1)">다이어트</li>
-                        <li class="list" @click="goToList(2)">체형교정</li>
-                        <li class="list" @click="goToList(3)">대회</li>
-                        <li class="list" @click="goToList(4)">체력증진</li>
-                        <li class="list" @click="goToList(5)">홈트</li>
+                        <li class="list" @click="goToList(0)">다이어트</li>
+                        <li class="list" @click="goToList(1)">체형교정</li>
+                        <li class="list" @click="goToList(2)">대회</li>
+                        <li class="list" @click="goToList(3)">체력증진</li>
+                        <li class="list" @click="goToList(4)">홈트</li>
                     </ul>
                 </div>
             </div>
@@ -149,9 +149,9 @@ export default {
     //     };
     // },
     methods: {
-        async goToList(menu_list) {
+        async goToList(pro_tag) {
             try {
-                window.location.href = `http://localhost:8081/prolist/${menu_list}`;
+                window.location.href = `http://localhost:8081/prolist/${pro_tag}`;
 
             } catch (error) {
                 console.error('전송 실패:', error);
