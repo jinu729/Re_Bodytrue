@@ -157,7 +157,7 @@ router.post("/trprolist", async(req,res)=>{
 
     const tr_no = req.body.tr_no
 
-    db.query(`select pro_name, pro_tag, pro_startdate, pro_enddate
+    db.query(`select pro_name, pro_tag, date_format(pro_startdate,'%y년%m월%d일') as pro_startdate, date_format(pro_enddate,'%y년%m월%d일')as pro_enddate
         from program
         where pro_tr_no = ?
         `,[tr_no],(err,results)=>{
@@ -175,27 +175,79 @@ router.post("/trprolist", async(req,res)=>{
     });
 });
 
+//내 예약 리스트
+router.post('/trcallist', function(request, response, next){
+    const tr_no = request.body.tr_no;
+
+    db.query(`select pro_name, user_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate
+            from calendar c 
+            join program p on c.cal_pro_no = p.pro_no 
+            join user u on c.cal_user_no = u.user_no 
+            join trainer t on c.cal_tr_no = t.tr_no 
+            where tr_no = ?`, [tr_no], function(error, result){
+                if(error){
+                    console.error(error);
+                    return response.status(500).json({ error: '트레이너 예약리스트 에러'});
+                }
+                response.json(result);
+                console.log(result);
+        });
+});
+
 //내 리뷰 리스트
+router.post("/trrelist", async (req, res) => {
+    const tr_no = req.body.tr_no;
+  
+    const query = `
+      select u.user_name, p.pro_name, date_format(re_date,'%y년%m월%d일') as re_date, r.re_comment, r.re_rate, r.re_no, i.img_path 
+      from review r 
+      join user u on r.re_user_no = u.user_no 
+      join program p on r.re_pro_no = p.pro_no 
+      join trainer t on r.re_tr_no = t.tr_no 
+      left join img i on r.re_no = i.img_re_no 
+      where t.tr_no = ?;`;
+    db.query(query, [tr_no], (err, results) => {
+      if (err) {
+        res.send({
+          // 에러 발생 시
+          code: 400,
+          failed: "error occurred",
+          error: err,
+        });
+      } else {
+        res.send(results);
+        console.log(results);
+      }
+    });
+  });
+  
 
-router.post("/패스명", async(req,res)=>{
+// router.post("/trrelist", async(req,res)=>{
 
-    const tr_no = req.params.tr_no
+//     const tr_no = req.body.tr_no;
 
-    db.query("SELECT USER_NAME,PRO_NAME,RE_DATE,RE_COMMENT,RE_RATE FROM REVIEW R JOIN USER U ON R.RE_USER_NO = U.USER_NO JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO JOIN TRAINER T ON R.RE_TR_NO = T.TR_NO WHERE TR_NO = ?",tr_no,(err,results)=>{
-        if (err) {
-            res.send({
-            // 에러 발생 시
-            code: 400,
-            failed: "error occurred",
-            error: err,
-            });
-        } else {
-            res.send
-        }
-    })
-})
+//     db.query(`select user_name, pro_name, re_date, re_comment, re_rate 
+//             from review r 
+//             join user u on r.re_user_no = u.user_no 
+//             join program p on r.re_pro_no = p.pro_no 
+//             join trainer t on r.re_tr_no = t.tr_no 
+//             where tr_no = ?;
+//             `,[tr_no],(err,results)=>{
+//         if (err) {
+//             res.send({
+//             // 에러 발생 시
+//             code: 400,
+//             failed: "error occurred",
+//             error: err,
+//             });
+//         } else {
+//             res.send(results);
+//             console.log(results);
+//         }
+//     })
+// });
 
-    db.query("이미지 가져오는거 만들어야 해양")
+    // db.query("이미지 가져오는거 만들어야 해양")
 
 //리뷰 사진 업로드/패스저장
 

@@ -55,7 +55,7 @@
                             <td @click="goToProdetail(cal.pro_no)">{{ cal.pro_name }}</td>
                             <td>{{ cal.tr_name }}</td>
                             <td>{{ cal.cal_startdate }}</td>
-                            <td><button @click="deletecal(cal.pro_no, cal.cal_startdate)" class="re_btn">예약 취소하기</button></td>
+                            <td><button @click="deletecal(cal.pro_no, cal.cal_startdate)" class="cal_btn">예약 취소하기</button></td>
                             <td><button @click="openReviewModal(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
                         </tr>
                     </tbody>
@@ -621,7 +621,10 @@ export default {
         height: 30px;
         font-size: 18px;
         border-radius: 5px;
+        border-color:#525252;
+        border: solid 1px;
         cursor: pointer;
+        background-color: #5252521f;
     }
 
     /* section2 = tag list */
@@ -679,10 +682,20 @@ export default {
     .table_list .re_btn{
         font-size: 16px;
         width: 120px;
+        height: 25px;
+        color:rgb(255, 255, 255);
+        border:solid 1px;
+        border-radius: 5px;
+        background: #ff751f;
     }
     .table_list .cal_btn{
         font-size: 16px;
-        width: 80px;
+        width: 120px;
+        height: 25px;
+        color:rgb(255, 255, 255);
+        border:solid 1px;
+        border-radius: 5px;
+        background:  #ff2b2b;
     }
 
     /* section3, section4 공통 */
@@ -709,6 +722,7 @@ export default {
     }
     .number_box img{
         width:15px;
+        padding-top:5px;
     }
 
     /* section4 = review */
