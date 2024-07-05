@@ -100,7 +100,7 @@
                             <td>{{ re.re_rate}}</td>
                             <td>
                                 <button @click="openReviewModal(re)" class="reupdate_btn">수정</button>
-                                <button @click="deletere(re.re_no)" class="reupdate_btn">삭제</button>
+                                <button @click="deletere(re.re_no)" class="redelete_btn">삭제</button>
                             </td>
                         </tr>
                     </tbody>
@@ -760,13 +760,27 @@ export default {
     .table_list .reupdate_btn{
         font-size: 16px;
         width: 60px;
+        margin: 10px auto;
+        border:none;
+        color: white;
+        background-color: #777777;
+        border-radius: 20px;
+        cursor: pointer;
     }
-
+    .table_list .redelete_btn{
+        font-size: 16px;
+        width: 60px;
+        height: 25px;
+        color:rgb(255, 255, 255);
+        border:solid 1px;
+        border-radius: 20px;
+        background:  #ff2b2b;
+    }
     /* section5 = plike */
     .mypage_main .section5{
         width: 100%;
         height: 760px;
-        border-bottom: 1px solid black;
+        /* border-bottom: 1px solid black; */
     }
     .section5 .plike_list{
         width: 90%;
@@ -842,6 +856,7 @@ export default {
     }
     .showmore_btn{
         display: block;
+        height: 50px;
         margin: 20px auto;
         padding: 10px 20px;
         font-size: 18px;
