@@ -35,7 +35,7 @@
       <div class="price-info" id="review1">
         <h2>리뷰</h2>
         <div v-for="reviewItem in review" :key="reviewItem.re_no">
-          <p>{{ reviewItem.user_name }} : {{ reviewItem.re_comment }} <img src="..\image\star.png" id="star"> {{ reviewItem.re_rate }} 작성 날짜: {{ reviewItem.re_date }}</p>
+          <p>{{ naming(reviewItem.user_name) }} : {{ reviewItem.re_comment }} <img src="..\image\star.png" id="star"> {{ reviewItem.re_rate }} 작성 날짜: {{ reviewItem.re_date }}</p>
         </div>
         
         <!-- <p>1회 비용: 100,000 원</p>
@@ -343,7 +343,15 @@
       //times 메소드
       selectTime(time){
         this.selectedTime = time;
-      }
+      },
+      // 리뷰에 이름 ** 채워넣기
+      naming(username){
+            if(!username){
+                return '';
+            }
+            const making = username.slice(0,1) + '**';
+            return making;
+        }
     }
   };
   

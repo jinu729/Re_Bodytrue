@@ -20,6 +20,7 @@ import Login from '../views/Login.vue'
 import ProgramDetail from '../views/ProgramDetail.vue'
 import UserMyPage from '../views/UserMypage.vue'
 import TrainerMyPage from '../views/TrainerMypage.vue'
+import UserFaq from '../views/UserFaq.vue'
 //은미작성완
 
 
@@ -130,6 +131,11 @@ const routes = [
     path: '/trmypage/:tr_no',
     name: 'TrainerMyPage',
     component: TrainerMyPage
+  },
+  {
+    path: '/faqlist',
+    name: 'UserFaq',
+    component: UserFaq
   }
 
 

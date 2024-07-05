@@ -32,72 +32,72 @@
                  <!-- 일반 사용자 로그인 상태 -->
                 <ul v-if="isLoggedIn" class="icon_list">
                     <li class="item">
-                        <router-link class="icon" to="/" @click="gotologout"><img src="../image/icon.png" alt="logout">로그아웃</router-link>
+                        <router-link class="icon" to="/" @click="gotologout"><img src="../image/logouticon.png" alt="logout">로그아웃</router-link>
                     </li>
                     <li class="line">|</li>
 
                     <li v-if="!user.user_email" class="item">
-                        <router-link class="icon" to="/join"><img src="../image/icon.png" alt="join">회원가입</router-link>
+                        <router-link class="icon" to="/join"><img src="../image/joinicon.png" alt="join">회원가입</router-link>
                     </li>
                     <li v-else class="item">
-                        <router-link class="icon" :to="`/mypage/${user.user_no}`"><img src="../image/icon.png" alt="mypage">마이페이지</router-link>
+                        <router-link class="icon" :to="`/mypage/${user.user_no}`"><img src="../image/mypageicon.png" alt="mypage">마이페이지</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/faq"><img src="../image/icon.png" alt="faq">FAQ</router-link>
+                        <router-link class="icon" to="/faqlist"><img src="../image/faq2icon.png" alt="faq">FAQ</router-link>
                     </li>
                 </ul>
 
                 <!-- 트레이너 로그인 상태 -->
                 <ul v-if="isLoggedIn_tr" class="icon_list">
                     <li class="item">
-                        <router-link class="icon" to="/" @click="gotologout"><img src="../image/icon.png" alt="logout">로그아웃</router-link>
+                        <router-link class="icon" to="/" @click="gotologout"><img src="../image/logouticon.png" alt="logout">로그아웃</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" :to="`/trmypage/${trainer.tr_no}`"><img src="../image/icon.png" alt="mypage">마이페이지</router-link>
+                        <router-link class="icon" :to="`/trmypage/${trainer.tr_no}`"><img src="../image/mypageicon.png" alt="mypage">마이페이지</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" :to="`/TrainerCreatePro/${trainer.tr_no}`"><img src="../image/icon.png" alt="tr_create">프로그램 등록</router-link>
+                        <router-link class="icon" :to="`/TrainerCreatePro/${trainer.tr_no}`"><img src="../image/create.png" alt="tr_create">프로그램 등록</router-link>
                     </li>
                 </ul>
 
                 <!-- 관리자 로그인 상태 -->
                 <ul v-if="isLoggedIn_admin" class="icon_list">
                     <li class="item">
-                        <router-link class="icon" to="/" @click="gotologout"><img src="../image/icon.png" alt="logout">로그아웃</router-link>
+                        <router-link class="icon" to="/" @click="gotologout"><img src="../image/logouticon.png" alt="logout">로그아웃</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/admin/userlist"><img src="../image/icon.png" alt="adminuser">회원관리</router-link>
+                        <router-link class="icon" to="/admin/userlist"><img src="../image/usericon.png" alt="adminuser">회원관리</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/admin/trainerlist"><img src="../image/icon.png" alt="admintrainer">트레이너관리</router-link>
+                        <router-link class="icon" to="/admin/trainerlist"><img src="../image/trainericon.png" alt="admintrainer">트레이너관리</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/admin/adminfaq"><img src="../image/icon.png" alt="adminfaq">FAQ관리</router-link>
+                        <router-link class="icon" to="/admin/adminfaq"><img src="../image/faq2icon.png" alt="adminfaq">FAQ관리</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/adminreview"><img src="../image/icon.png" alt="adminreview">리뷰관리</router-link>
+                        <router-link class="icon" to="/adminreview"><img src="../image/review.png" alt="adminreview">리뷰관리</router-link>
                     </li>
                 </ul>
 
                 <!-- 로그인되지 않은 상태 -->
                 <ul v-if="!isLoggedIn && !isLoggedIn_tr && !isLoggedIn_admin" class="icon_list">
                     <li class="item" @click="gotoLogin">
-                        <router-link class="icon" to="/login"><img src="../image/icon.png" alt="login">로그인</router-link>
+                        <router-link class="icon" to="/login"><img src="../image/loginicon.png" alt="login">로그인</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/join"><img src="../image/icon.png" alt="join">회원가입</router-link>
+                        <router-link class="icon" to="/join"><img src="../image/joinicon.png" alt="join">회원가입</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/faq"><img src="../image/icon.png" alt="faq">FAQ</router-link>
+                        <router-link class="icon" to="/faqlist"><img src="../image/faq2icon.png" alt="faq">FAQ</router-link>
                     </li>
                 </ul>        
             </div>
@@ -255,8 +255,8 @@ header .nav_right{
     line-height: 41px;
 }
 .item .icon img{
-    width: 18px;
-    height: 18px;
+    width: 25px;
+    height: 25px;
     /* padding-top: 1px; */
 }
 </style>

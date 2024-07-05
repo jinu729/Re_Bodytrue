@@ -157,7 +157,7 @@ router.post("/trprolist", async(req,res)=>{
 
     const tr_no = req.body.tr_no
 
-    db.query(`select pro_name, pro_tag, date_format(pro_startdate,'%y년%m월%d일') as pro_startdate, date_format(pro_enddate,'%y년%m월%d일')as pro_enddate
+    db.query(`select pro_no, pro_name, pro_tag, date_format(pro_startdate,'%y년%m월%d일') as pro_startdate, date_format(pro_enddate,'%y년%m월%d일')as pro_enddate
         from program
         where pro_tr_no = ?
         `,[tr_no],(err,results)=>{
@@ -179,7 +179,7 @@ router.post("/trprolist", async(req,res)=>{
 router.post('/trcallist', function(request, response, next){
     const tr_no = request.body.tr_no;
 
-    db.query(`select pro_name, user_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate
+    db.query(`select pro_no, pro_name, user_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate
             from calendar c 
             join program p on c.cal_pro_no = p.pro_no 
             join user u on c.cal_user_no = u.user_no 
