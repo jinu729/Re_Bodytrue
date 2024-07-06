@@ -15,9 +15,6 @@
         </div>
     </div>
 </div>
-</template> -->
-<template>
-<div>
     <div class="faq_main">
         <h2><b><img style="width:50px; margin-right: 15px; margin-bottom: 15px;" src="../image/faq2icon.png">자주 묻는 질문</b></h2>
     </div>
@@ -38,7 +35,27 @@
         </div>
     </div>
 </div>
+</template> -->
+<template>
+    <div class="faq_main">
+        <h2><b><img style="width:50px; padding-right:10px; padding-bottom:20px;" src="../image/faq2icon.png">자주 묻는 질문</b></h2>
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item" v-for="(faq, index) in faqlist" :key="index">
+                <h2 class="accordion-header" :id="'heading' + index">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" :data-bs-target="'#collapse' + index" :aria-expanded="index === 0 ? 'true' : 'false'" :aria-controls="'collapse' + index">
+                        {{ faq.faq_q }}
+                    </button>
+                </h2>
+                <div :id="'collapse' + index" class="accordion-collapse collapse" :class="{ show: index === 0 }" :aria-labelledby="'heading' + index" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <strong>{{ faq.faq_a }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
+
 <script>
 import axios from 'axios';
 
@@ -72,60 +89,46 @@ export default {
 <style scoped>
 
 .faq_main {
-    margin: 40px;
+    width: 1280px;
+    margin: 0 auto;
+    padding-top:50px;
     position: relative;
     text-align: center;
     font-size: 40px;
 }
 
- .button{
-    background: none;
+/*아코디언*/
+.accordion-header {
+    padding-top:20px;
+    margin:0 auto;
+     width: 1280px;
+}
+.accordion-item {
+    border:none;
+}
+.accordion-button.collapsed{
+    margin:0 auto;
+    width: 1280px;
+    background-color: 	#00CED1;
+    color: rgb(255, 255, 255);
     border: none;
-    font-size: 16px;
-    cursor: pointer;
-}
-.faq-box {
-    /* margin-top: 20px; */
-    border: 1px;
-    border-radius: 8px;
-    /* width: 10px 10px 10px 10px; */
-    width: 800px;
-    margin: 0 auto;
-}
-
-.faq-item {
-    border: 1px solid white;
     border-radius: 5px;
-    margin-bottom: 10px;
-    overflow: hidden;
+    box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
+    font-size:28px;
 }
-
-.question {
-    background-color: white;
-    padding: 15px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 10px 10px 10px 10px;
-    border: 1px solid rgb(190, 190, 190);
+.accordion-button:not(.collapsed){
+    background-color:#ffffff;
+    color:#000000;
+    border-radius: 5px;
+    border: 1px solid #bbdcdf;
+    box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
+    font-size:28px;
 }
-
-.question:hover {
-    background-color: white;
+.accordion-body{
+    font-size:20px;
+    width: 1280px;
+    margin-top: 5px;
+    border: 1px solid #bbdcdf;
+    border-radius: 5px;
 }
-.toggle-answer {
-    background: none;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-}
- .answer {
-    margin-top: 20px;
-    border: 1px solid rgb(190, 190, 190);
-    /* border-radius: 8px; */
-    width: 10px 10px 10px 10px;
-    padding: 15px;
-    /* margin: 0 auto; */
- }
 </style>
