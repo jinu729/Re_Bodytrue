@@ -304,11 +304,14 @@ export default {
     padding-bottom: 10px;
     display: flex;
     align-items: end;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #00a0ab;
+    justify-content: center;
+    color:#1d1d1d;
 }
 .join_main .join_list{
     width: 100%;
     padding-top: 10px;
+    padding-left: 5px;
 }
 .join_list .form_group{
     display: flex;
@@ -319,26 +322,30 @@ export default {
 }
 .form_group .form_left{
     width: 15%;
-    border: 1px solid black;
+    border: 1px solid #bbdcdf;
     font-size: 18px;
-    background-color: rgba(218, 218, 218, 0.5);
+    background-color: #4fced2;
+    color: white;
     height: 40px;
+    
 }
 .form_group .form_right{
-    border: 1px solid black;
     width: 84.5%;
     height: 40px;
+    border: 1px solid #bbdcdf;
 }
 #email1{
     width: 130px;
     line-height: 20px;
     margin: 0 auto;
     font-size: 16px;
+    height: 27px;
+    border: 1px solid #bbdcdf;
 }
 #email2{
     width: 150px;
-    height: 24px;
     font-size: 16px;
+    border: 1px solid #bbdcdf;
 }
 .form_right .confirm{
     font-size: 14px;
@@ -349,22 +356,57 @@ export default {
     font-size: 16px;
     margin-left: 10px;
     line-height: 20px;
+    background-color:#fd9c8f;
+    color:white;
+    border-radius: 5px;
+    border: 1px solid;
+    box-shadow: 1px 1px 5px rgba(255, 117, 202, 0.5);
+}
+.form_right .btn_confirm:hover{
+    width: 100px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 20px;
+    background-color:white;
+    color:#fd9c8f;
+    border-radius: 5px;
+    border: 1px solid;
+    box-shadow: 1px 1px 5px rgba(255, 117, 202, 0.5);
 }
 #password1{
     width: 400px;
     line-height: 20px;
+    border: 1px solid #bbdcdf;
 }
 #password2{
     width: 400px;
     line-height: 20px;
+    border: 1px solid #bbdcdf;
 }
 .form_right .btn_confirm1{
     width: 150px;
     font-size: 16px;
     margin-left: 10px;
     line-height: 20px;
+    background-color:#fd9c8f;
+    color:white;
+    border-radius: 5px;
+    border: 1px solid;
+    box-shadow: 1px 1px 5px rgba(255, 117, 202, 0.5);
+}
+.form_right .btn_confirm1:hover{
+    width: 150px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 20px;
+    background-color:white;
+    color:#fd9c8f;
+    border-radius: 5px;
+    border: 1px solid;
+    box-shadow: 1px 1px 5px rgba(255, 117, 202, 0.5);
 }
 #username{
+    border: 1px solid #bbdcdf;
     height: 20px;
     font-size: 16px;
 }
@@ -384,32 +426,51 @@ export default {
     height: 120px;
 }
 .address_group .address_row{
-    border: 1px solid black;
-    height: 39px;
+    border: 1px solid #bbdcdf;
+    height: 40px;
 }
 #postcode{
     line-height: 20px;
     font-size: 16px;
+    border: 1px solid #bbdcdf;
 }
 .address_row .address_search{
     width: 100px;
     font-size: 16px;
     margin-left: 10px;
-    line-height: 20px;
+    line-height: 22px;
+    background-color:#f2c444;
+    color:rgb(69, 63, 61);
+    border-radius: 5px;
+    border: none;
+    box-shadow: 1px 1px 5px rgba(255, 218, 5, 0.5);
 }
-#address, #address-detail{
+.address_row .address_search:hover{
+    width: 100px;
+    font-size: 16px;
+    margin-left: 10px;
+    line-height: 22px;
+    background-color:rgb(255, 241, 207);
+    color:#f2c444;
+    border-radius: 5px;
+    border: none;
+    box-shadow: 1px 1px 5px rgba(255, 218, 5, 0.5);
+}
+#address, #address_detail{
     width: 300px;
     line-height: 20px;
     font-size: 16px;
+    border: 1px solid #bbdcdf;
 }
 #number1{
-    height: 22px;
+    border: 1px solid #bbdcdf;
     font-size: 16px;
 }
 #number2, #number3{
-    height: 20px;
-    width: 50px;
+    height: 27px;
+    width: 54px;
     font-size: 16px;
+    border: 1px solid #bbdcdf;
 }
 .join_wrap .join_btn{
     width: 100%;
@@ -417,12 +478,50 @@ export default {
     padding-top: 40px;
     text-align: center;
 }
-#clear, #exit{
+#clear{
     width: 100px;
     font-size: 18px;
     margin: 0 20px;
     border-radius: 5px;
     cursor: pointer;
     border: 0;
+    background-color:#3fced3;
+    color:white;
+    border-radius: 5px;
+    border: 1px solid;
+    box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
+}
+#clear:hover{
+    width: 100px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color:#ffffff;
+    color:#3fced3;
+    border-radius: 5px;
+    border: 1px solid;
+    box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
+}
+#exit{
+    width: 100px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color: #d0d0d0;
+    color: white;
+}
+#exit:hover{
+    width: 100px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color: #ff5151;
+    color: rgb(0, 0, 0);
 }
 </style>

@@ -325,7 +325,7 @@ body {
 }
 
 /* 텍스트 입력 필드 스타일 */
-.form-group input[type="id"],
+.form-group input[type="text"],
 .form-group input[type="password"] {
     width: 100%; /* 너비 100% 설정 */
     padding: 10px; /* 안쪽 여백 설정 */
@@ -450,15 +450,6 @@ body {
 
 }
 
-.input-with-icon input[type="text"] {
-    width: calc(100% - 30px); /* 입력 필드 너비 설정 (이미지 너비 + 간격 포함) */
-    padding: 10px; /* 안쪽 여백 설정 */
-    border: 1px solid #ccc; /* 테두리 설정 */
-    border-radius: 4px; /* 테두리 반경 설정 */
-    font-size: 16px; /* 폰트 크기 설정 */
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    border-radius: 5px;
 
-}
 
 </style>

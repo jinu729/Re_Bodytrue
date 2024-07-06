@@ -97,14 +97,12 @@
                         </div>
                         <!--내 예약리스트 페이징-->
                         <div class="pagination">
-                            <div class="list_number">
                                 <ul class="number_box">
                                     <li @click="cprevPageGroup" :class="{disabled: cCurrentPageGroup === 1}"><img src="../image/prev.png"/></li>
                                     <li v-for="page in cCurrentGroupPage" :key="page" @click="cchangePage(page)" :class="{active: page === cCurrentPage}">
                                         {{page}}</li>
                                     <li @click="cnextPageGroup" :class="{disabled: cCurrentPageGroup === cpageGroups.length}"><img src="../image/next.png"/></li>
                                 </ul>
-                            </div>
                         </div>
                     </div>
                     <div v-else class="noprogram">
@@ -400,13 +398,13 @@ export default {
 /* section1 = user */
 .mypage_main .section1{
     width: 100%;
-    height: 300px;
+    /* height: 300px; */
     /* background-color: aqua; */
     border-bottom: 1px solid black;
 }
 .section1 .profile{
     width: 100%;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     display: flex;
     flex-wrap: wrap;
     /* justify-content: space-between; */
@@ -548,8 +546,8 @@ export default {
         /* color: white; */
     }
     .number_box img{
-        width:15px;
-        padding-top:5px;
+        width:20px;
+        /* padding-top:5px; */
     }
 
 /* section4 = review */
