@@ -4,15 +4,19 @@
         <div class="admin_container">
             <div class="admin_faq_ans">
                 <div class="admin_faq_question">
-                    <div class="admin_question" id = "Q">
-                        <div v-for="(faq, i) in faqList" :key="i">
+                    <div class="admin_question" id="Q">
+                        <div v-for="(faq, i) in paginatedFaqList" :key="i" class="faq_item">
+                        <div class="question_box">
                             <div>Q{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_q }}</div>
                             <button class="admin_toggle_update">✔</button>
-                            <button @click="delFAQ(faq.faq_no)">❌</button>
-                            <!-- <button v-if="" class="admin_toggle_update">▼</button> -->
-                            <div>▶A{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_a }}</div>
-                            <button class="admin_toggle_update">✔</button>
+                            <button class="admin_toggle_delete" @click="delFAQ(faq.faq_no)">❌</button>
+                            <button class="show_toggle" v-if="!faq.visible" @click="toggleAnswer(faq)">▼</button>
+                            <button v-else @click="toggleAnswer(faq)">▲</button>
                         </div>
+                        <div v-if="faq.visible" class="answer_box">
+                            ▶A{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_a }}
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -25,92 +29,70 @@
             </ul>
         </div>
     </div>
-  </template>
+</template>
+
   
-<script>
-import axios from 'axios';
-// import Swal from 'sweetalert2';
-
-export default {
-    data() {
-        return {
-            faqList: [],
-            currentPage: 1,
-            perPage: 10, // 페이지 당 아이템 수
-        };
-    },
-    computed: {
-        paginatedFaqList() {
-            const start = (this.currentPage - 1) * this.perPage;
-            const end = start + this.perPage;
-            console.log('faqList length:', this.faqList.length);
-            console.log('start:', start, 'end:', end);
-            return this.faqList.slice(start, end);
-        },
-        totalPages() {
-        const pages = Math.ceil(this.faqList.length / this.perPage);
-        console.log('totalPages:', pages);
-        return pages;
-    }
-    },
-    methods: {
-        getfaqList() {
-            axios.get('http://localhost:3000/admin/faqlist')
-                .then(response => {
-                    this.faqList = response.data;
-
-                    // for(i=0; i < 10; i++){
-                    //     faqList[i].hidden = false;
-                    // }
-
-                })
-                .catch(error => {
-                    console.error('Error fetching faqlist:', error);
-                });
-        },
-        async delfaq(faq_no){
-            console.log("faq_no",faq_no);
-            try{
-                const response = await axios.post(`http://localhost:3000/admin/delfaq`, {faq_no: faq_no});
-                console.log("리뷰 삭제 성공", response.data);
-                alert('faq 목록에서 삭제 되었습니다.');
-            } catch(error){
-                console.error("faq 삭제 도중 에러 발생",error);
-            }
-        },
-        // delFAQ() {
-        //     axios({
-        //         url: 'http://localhost:3000/admin/delFAQ',
-        //         method: 'POST',
-        //         data: {
-        //             faq_no: this.faq_no
-        //         }
-        //     })
-        //     .then(res => {
-        //         if (res.data.message === 'faq 삭제') {
-        //             Swal.fire('faq가 삭제되었습니다.');
-        //             this.getfaqList(); //삭제 후 목록 다시 불러오기
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         console.log("삭제 메소드 오류:", error);
-        //         Swal.fire('에러', 'faq 삭제 중 오류가 발생했습니다.', 'error');
-        //     });
-        },
-        gotoPage(page) {
-        if (page > 0 && page <= this.totalPages) {
-            this.currentPage = page;
-            console.log('Navigated to page:', page);
-        }
-    },
-    mounted() {
-        this.getfaqList();
-    }
-};
-</script>
+  <script>
+  import axios from 'axios';
+  
+  export default {
+      data() {
+          return {
+              faqList: [],
+              currentPage: 1,
+              perPage: 10, // 페이지 당 아이템 수
+          };
+      },
+      computed: {
+          paginatedFaqList() {
+              const start = (this.currentPage - 1) * this.perPage;
+              const end = start + this.perPage;
+              return this.faqList.slice(start, end);
+          },
+          totalPages() {
+              return Math.ceil(this.faqList.length / this.perPage);
+          }
+      },
+      methods: {
+          getfaqList() {
+              axios.get('http://localhost:3000/admin/faqlist')
+                  .then(response => {
+                      this.faqList = response.data.map(faq => ({
+                          ...faq,
+                          visible: false // Initialize visibility state for each FAQ
+                      }));
+                  })
+                  .catch(error => {
+                      console.error('Error fetching faqlist:', error);
+                  });
+          },
+          async delFAQ(faq_no) {
+              try {
+                  await axios.post('http://localhost:3000/admin/delfaq', { faq_no });
+                  alert('FAQ 목록에서 삭제 되었습니다.');
+                  this.getfaqList(); // 삭제 후 목록 다시 불러오기
+              } catch (error) {
+                  console.error("FAQ 삭제 도중 에러 발생", error);
+              }
+          },
+          toggleAnswer(faq) {
+              faq.visible = !faq.visible; // Toggle the visibility state
+          },
+          gotoPage(page) {
+              if (page > 0 && page <= this.totalPages) {
+                  this.currentPage = page;
+              }
+          }
+      },
+      mounted() {
+          this.getfaqList();
+      }
+  };
+  </script>
+  
 
 <style scoped>
-    .admin_faq_main {
+.admin_faq_main {
     width: 100%;
 }
 
@@ -164,6 +146,13 @@ export default {
     background: none;
     border: none;
  }
+ .show_toggle {
+    padding: 3px 1px;
+    cursor: pointer;
+    font-size: 16px;
+    background: none;
+    border: none;
+ }
  .admin_answer {
     padding: 15px;
     /* cursor: pointer; */
@@ -198,7 +187,14 @@ export default {
 .admin_page a:hover {
     background-color: #ddd;
 }
-.admin_faqlist-bodypaging{
-    padding-top: 15px;
+.question_box{
+    padding: 10px;
+    border-radius: 5px;
+    
+}
+
+.answer_box {
+    padding: 10px;
+    border-radius: 5px;
 }
 </style>

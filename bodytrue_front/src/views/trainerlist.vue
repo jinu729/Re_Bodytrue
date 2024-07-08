@@ -93,7 +93,7 @@ export default {
           console.log('Trainer List:',this.trainerList);
         })
         .catch(error => {
-          console.error('Error fetching user list:', error);
+          console.error('Error fetching userlist:', error);
         });
     },
     searchTrainers() {
