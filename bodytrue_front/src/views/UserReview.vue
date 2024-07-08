@@ -15,7 +15,7 @@
             <div>
               <!-- 이미지 업로드 -->
               <img  alt="Image 1"><br><br>
-              <input type="file" name="review_image" accept="image/*">
+              <input type="file" name="review_image" accept="image/*" ref="img" @change="uploadFile($event.target.files, 0)">
             </div>
             <div class="review-title">
               <h1>{{reviewData.pro_name}}</h1>
@@ -78,6 +78,7 @@ export default {
   data() {
     return {
       // 로컬 데이터로 리뷰 코멘트와 평점을 관리
+      re_img :"",
       reviewComment: this.reviewData.re_comment || '',
       reviewRate: this.reviewData.re_rate || 0,
       starsSet: this.reviewData.re_rate || 0,
@@ -105,6 +106,7 @@ export default {
         ...this.reviewData,
         re_comment: this.reviewComment,
         re_rate: this.reviewRate,
+        re_img:this.re_img
       };
       try {
         let response;
@@ -117,7 +119,7 @@ export default {
         }
         // // 서버에 리뷰 데이터를 전송
         // const response = await axios.post('http://localhost:3000/user/makereview', review);
-        console.log(response.data);
+        console.log("review",response.data);
         this.$emit('review-submitted');
         // 성공적으로 전송되면 모달을 닫음
         this.closeModal();
@@ -135,8 +137,60 @@ export default {
       this.reviewRate = 0;
       this.starsSet = 0;
     },
+async uploadFile(file, type) {
 
+            let name = "";
+            if (file) {
+                name = file[0].name;
+                console.log("name",name);
+            }
+            else {
+                return;     // 파일 미선택 시 반환
+            }
+
+            const formData = new FormData();
+
+            formData.append('img', file[0].name);
+
+            
+            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
+            for (let key of formData.keys()) {
+                console.log(key, ":", formData.get(key));
+            }
+
+            try {
+                axios({
+                    url: `http://localhost:3000/user/upload_img`,
+                    method: 'POST',
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    data: formData
+                    
+                })
+                    .then((res) => {  
+                        if (res.data.message == 'success') {
+                                if (type == 0) {
+                                this.re_img = name;
+                                console.log("0",this.re_img);
+                            }   
+                        }
+                        else {
+                            this.$swal("DB 에러");
+                        }
+                    })
+                    .catch(e => {
+                        console.log(e);
+                    })
+                return true;
+
+            } catch (err) {
+                console.log(err);
+                return false;
+            }
+
+        }
   },
+  
 };
 </script>
 
