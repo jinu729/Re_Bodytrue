@@ -1,7 +1,17 @@
 <template>
   <div class="container">
     <div class="left_panel">
-      <div class="slider">
+    <div class=slider>
+      <div class="slides" :style="{ transform: `translateX(-${currentIndex * slideWidth}px)` }">
+        <div class="slide" v-for="(image, index) in images" :key="index">
+            <!-- 메인 이미지 요소 -->
+          <img :src="require(`../image/mainpage/${image}`)" :alt="'Slide ' + (index + 1)">
+        </div>
+      </div>
+      <button class="prev" @click="changeSlide(-1)">❮</button>
+      <button class="next" @click="changeSlide(1)">❯</button>
+    </div>
+      <!-- <div class="slider">
         <div class="slides">
           <div class="slide"><img src="../image/programlist/요가.png" alt="Image 1"></div>
           <div class="slide"><img src="../image/programlist/프로그램6.jpg" alt="Image 2"></div>
@@ -9,7 +19,7 @@
         </div>
         <button class="prev">❮</button>
         <button class="next">❯</button>
-      </div>
+      </div> -->
       <div class="tabs">
         <ul>
           <li><a href="#detail1">상세 설명</a></li>
@@ -35,7 +45,7 @@
       <div class="price-info" id="review1">
         <h2>리뷰</h2>
         <div v-for="reviewItem in review" :key="reviewItem.re_no">
-          <p>{{ naming(reviewItem.user_name) }} : {{ reviewItem.re_comment }} <img src="..\image\star.png" id="star"> {{ reviewItem.re_rate }} 작성 날짜: {{ reviewItem.re_date }}</p>
+          <p>{{ naming(reviewItem.user_name) }} 님 : {{ reviewItem.re_comment }} <img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ reviewItem.re_rate }} | 작성 날짜: {{ reviewItem.re_date }}</p>
         </div>
         
         <!-- <p>1회 비용: 100,000 원</p>
@@ -52,8 +62,8 @@
       <h4 v-if="tagname">#{{ tagname }}</h4>
       <h2><p>{{ programdetail.pro_name }}</p></h2>
       <h3><p>{{ programdetail.tr_name }}</p></h3>
-      <h3><p v-if="formattedEndDate">프로그램 종료 날짜&nbsp;:&nbsp;{{ formattedEndDate }}</p></h3>
-      <p><img src="..\image\star.png" id="star">{{ programdetail.rate_avg }}</p>
+      <h4><p v-if="formattedEndDate">프로그램 종료 날짜&nbsp;:&nbsp;{{ formattedEndDate }}</p></h4>
+      <p><img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ programdetail.rate_avg }}</p>
       <div class="calendar">
         <div class="controls">
           <button @click="previousWeek" class="prev2">이전</button>
@@ -98,8 +108,19 @@
         selectedTime: null, //선택된 시간 정보
         programdetail:{}, //프로그램 디테일 배열로 저장
         review:[], //프로그램 리뷰 배열로 저장 
-        pro_no: this.$route.params.pro_no
+        pro_no: this.$route.params.pro_no,
+        //이미지 슬라이더용
+        currentIndex: 0,
+        slideWidth: 800,
+        slideInterval: 5000,
+        images: ['main1.jpg', 'main3.jpg', '메인5.jpg', '메인6.jpg' ,'메인7.jpg'], // 이미지 파일명 배열
       };
+    },
+
+    mounted() {
+      setInterval(() => {
+        this.changeSlide(1);
+      }, this.slideInterval);
     },
 
     computed: {
@@ -344,14 +365,18 @@
       selectTime(time){
         this.selectedTime = time;
       },
-      // 리뷰에 이름 ** 채워넣기
       naming(username){
             if(!username){
                 return '';
             }
             const making = username.slice(0,1) + '**';
             return making;
-        }
+        },
+
+      changeSlide(direction) {
+        const slideCount = this.images.length;
+        this.currentIndex = (this.currentIndex + direction + slideCount) % slideCount;
+      }
     }
   };
   
@@ -490,6 +515,18 @@
       font-size:40px;
       box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
       border-radius: 5px;
+      background-color: transparent;
+  }
+    .favorite-btn:hover{
+      width: 100%;
+      color:rgb(255, 255, 255);
+      margin-top: 20px;
+      border: none;
+      cursor: pointer;
+      font-size:40px;
+      box-shadow: 2px 2px 5px rgba(255, 97, 97, 0.5);
+      border-radius: 5px;
+      background-color: #ff7979
   }
   .reserve-btn {
       background-color: #00c8c8;
@@ -584,6 +621,15 @@
     font-size: 16px; /* 글꼴 크기 */
     border-radius: 5px; /* 둥근 모서리 */
   }
+   .calendar .reserve-btn:hover {
+    background-color: #00d0ffca;
+    color: #fff; /* 텍스트 색상 */
+    padding: 10px 20px; /* 패딩 */
+    border: none; /* 테두리 제거 */
+    cursor: pointer; /* 마우스 오버 시 포인터로 변경 */
+    font-size: 16px; /* 글꼴 크기 */
+    border-radius: 5px; /* 둥근 모서리 */
+  }
   .calendar .prev2{
       background-color: transparent; /* 배경색 */
       color: #333; /* 텍스트 색상 */
@@ -594,9 +640,29 @@
       border-radius: 30px; /* 둥근 모서리 */
   
   }
+  .calendar .prev2:hover{
+      background-color: #333; /* 배경색 */
+      color: #ffffff; /* 텍스트 색상 */
+      padding: 8px 16px; /* 패딩 */
+      border: 1px solid #ccc; /* 테두리 */
+      cursor: pointer; /* 마우스 오버 시 포인터로 변경 */
+      font-size: 14px; /* 글꼴 크기 */
+      border-radius: 30px; /* 둥근 모서리 */
+  
+  }
   .calendar .next2{
       background-color: transparent; /* 배경색 */
       color: #333; /* 텍스트 색상 */
+      padding: 8px 16px; /* 패딩 */
+      border: 1px solid #ccc; /* 테두리 */
+      cursor: pointer; /* 마우스 오버 시 포인터로 변경 */
+      font-size: 14px; /* 글꼴 크기 */
+      border-radius: 30px; /* 둥근 모서리 */
+  
+  }
+  .calendar .next2:hover{
+      background-color:#00c8c8; /* 배경색 */
+      color: #ffffff; /* 텍스트 색상 */
       padding: 8px 16px; /* 패딩 */
       border: 1px solid #ccc; /* 테두리 */
       cursor: pointer; /* 마우스 오버 시 포인터로 변경 */

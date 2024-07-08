@@ -617,14 +617,28 @@ export default {
         padding-top: 5px;
     }
     .pro_right .update{
-        width: 120px;
-        height: 30px;
+        width: 150px;
         font-size: 18px;
         border-radius: 5px;
-        border-color:#525252;
-        border: solid 1px;
         cursor: pointer;
-        background-color: #5252521f;
+        border: 0;
+        background-color:#3fced3;
+        color:white;
+        border-radius: 5px;
+        border: 1px solid;
+        box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
+    }
+    .pro_right .update:Hover{
+        width: 150px;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        border: 0;
+        background-color:#ffffff;
+        color:#3fced3;
+        border-radius: 5px;
+        border: 1px solid;
+        box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
     }
 
     /* section2 = tag list */
@@ -688,6 +702,15 @@ export default {
         border-radius: 5px;
         background: #ff751f;
     }
+    .table_list .re_btn:hover{
+        font-size: 16px;
+        width: 120px;
+        height: 25px;
+        color: #ff751f;
+        border:solid 1px;
+        border-radius: 5px;
+        background: rgb(255, 255, 255);
+    }
     .table_list .cal_btn{
         font-size: 16px;
         width: 120px;
@@ -696,6 +719,15 @@ export default {
         border:solid 1px;
         border-radius: 5px;
         background:  #ff2b2b;
+    }
+    .table_list .cal_btn:hover{
+        font-size: 16px;
+        width: 120px;
+        height: 25px;
+        color:#ff2b2b;
+        border:solid 1px;
+        border-radius: 5px;
+        background:  rgb(255, 255, 255);
     }
 
     /* section3, section4 공통 */
@@ -767,6 +799,16 @@ export default {
         border-radius: 20px;
         cursor: pointer;
     }
+    .table_list .reupdate_btn:hover{
+        font-size: 16px;
+        width: 60px;
+        margin: 10px auto;
+        border:none;
+        color: #777777;
+        background-color: rgb(193, 192, 192);
+        border-radius: 20px;
+        cursor: pointer;
+    }
     .table_list .redelete_btn{
         font-size: 16px;
         width: 60px;
@@ -775,6 +817,15 @@ export default {
         border:solid 1px;
         border-radius: 20px;
         background:  #ff2b2b;
+    }
+    .table_list .redelete_btn:hover{
+        font-size: 16px;
+        width: 60px;
+        height: 25px;
+        color:#ff2b2b;
+        border:solid 1px;
+        border-radius: 20px;
+        background:  rgb(255, 255, 255);
     }
     /* section5 = plike */
     .mypage_main .section5{
@@ -845,7 +896,16 @@ export default {
         color: white;
         background-color: #777777;
         cursor: pointer;
-        
+    }
+    .plike_right .del_btn .plike_delete:hover{
+        font-size: 16px;
+        width: 60px;
+        border-radius: 20px;
+        margin: 10px auto;
+        border:none;
+        color: #777777;
+        background-color: rgb(193, 192, 192);
+        cursor: pointer;
     }
     .nolikelist{
         display: flex;
