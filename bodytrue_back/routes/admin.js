@@ -338,7 +338,7 @@ router.post("/insertA",async(req,res)=>{
 
 // 질문&답변 불러오기
   router.get("/faqlist",async(req,res) => {
-    db.query("select faq_nofaq_q,faq_a from faq",(err,results) => {
+    db.query("select faq_no,faq_q,faq_a from faq",(err,results) => {
       if (err) {
         res.send({
           //에러 발생 시
@@ -347,11 +347,10 @@ router.post("/insertA",async(req,res)=>{
           error: err,
         });
       } else {
-        console.log(results);
         res.send(results);
       }
     });
-  });
+  })
 
 
 // //질문 불러오기
@@ -447,14 +446,14 @@ router.post("/updateA",async(req,res)=>{
 router.post('/delfaq', function(request, response, next) {
   const faq_no = request.body.faq_no;
 
-  db.query(`delete from faq where faq_no = ?`, [faq_no], function(error, result) {
+  db.query("delete from faq where faq_no = ?", [faq_no], function(error, result) {
     if(error) {
       console.error(error);
       return response.status(500).json({ error: '리뷰 삭제 중 오류'});
     }
     response.json(result);
     console.log(result);
-  })
+  });
 });
 
 // router.post("/delFAQ", async (req, res) => {
