@@ -25,7 +25,7 @@ export default {
         },
 
         goToAboutPage2() {
-            this.$router.push('/TrainerCreatePro/:tr_no');
+            this.$router.push(`/TrainerCreatePro/${this.trainer.tr_no}`);
         }
     }
 };

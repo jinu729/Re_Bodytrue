@@ -104,6 +104,11 @@ router.get('/prodetail/:pro_no', function(request, response, next){
     // });
     
 });
+//프로그램 메인 이미지 불러오기
+router.get('/promain',function(request, response, next){
+
+    db.query(`select img_path from img where img_pro_no = ? and img_type = 1`,)
+})
 
 //예약하기
 router.post('/calendarin', function(request, response, next) {
@@ -243,19 +248,113 @@ router.post('/delmyplike', function(request, response, next){
 });
 
 //리뷰 작성하기
-router.post('/makereview', function(request, response, next){
-    const {re_comment, re_user_no, re_pro_no, re_tr_no, re_rate} = request.body;
-
-    db.query(`insert into review (re_comment, re_user_no, re_pro_no, re_tr_no, re_rate) values (?, ?, ?, ?, ?)`,
-        [re_comment, re_user_no, re_pro_no, re_tr_no, re_rate], function(error, result){
-            if(error){
-                console.error(error);
-                return response.status(500).json({ error: '리뷰 작성 오류' });
-            }
-            response.json(result);
-            console.log(result);
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, cb) {
+            cb(null, 'uploads/');
+        },
+        filename(req, file, cb) {
+            cb(null, file.originalname);
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
+  });
+  
+  
+  router.post('/upload_img', upload.single('img'), (request, response) => {
+    setTimeout(() => {
+        return response.status(200).json({
+            message: 'success'
         })
-});
+    }, 2000);
+  })
+  
+  
+  router.post('/makereview', function(request, response, next){
+        console.log( request.body);
+      const {re_comment, re_user_no, re_pro_no, re_tr_no, re_rate, re_img} = request.body;
+  
+        try{
+          db.query(`insert into review (re_comment, re_user_no, re_pro_no, re_tr_no, re_rate) values (?, ?, ?, ?, ?)`,
+              [re_comment, re_user_no, re_pro_no, re_tr_no, re_rate],
+               function(error, result){
+                  if(error){
+                      console.error(error);
+                      return response.status(500).json({ error: '리뷰 작성 오류' });
+                  }
+                  try {
+                    const pastDir0 = `${__dirname}` + `../../uploads/` + re_img
+  
+                    console.log('pastDir-------------------');
+                    console.log(pastDir0);
+                    console.log('-------------------');
+  
+                    const newDir = `${__dirname}` + `../../uploads/user/`;
+                    if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
+  
+                    const extension =re_img.substring(re_img.lastIndexOf('.'))
+  
+                    console.log('Extenstion-------------------');
+                    console.log(extension);
+                    console.log('-------------------');
+
+
+                    console.log('Extenstion-------------------');
+                    console.log(newDir);
+                    console.log('-------------------');
+  
+                    // 등록 상품의 번호 불러오기
+                    db.query("select re_no from review where re_comment = ?", 
+                        [re_comment], 
+                        function (error, results, fields) {
+  
+                        const filename = results[0].re_no
+  
+                        console.log('filename-------------------');
+                        console.log(filename);
+                        console.log('-------------------');
+  
+                        // 이미지 폴더 및 이름(상품번호-타입) 변경
+                        // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
+                        fs.rename(pastDir0, newDir + filename + '-0' + extension, (err) => {
+                            if (err) {
+                                throw err;
+                            }
+                        });
+  
+                        // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
+                        db.query(`insert into img (img_type,img_path,img_re_no) values (?,?,?)`,
+                             [0,filename + '-0' + extension,filename], 
+                             function (error, results, fields) {
+                            if (error) {
+                                throw error;
+                            }
+                })
+            })
+        }catch(err){
+            console.log(err);
+        }
+  
+            })
+            } catch {
+              return response.status(200).json({
+                  message: 'DB_error'
+              })
+          }
+  });
+// router.post('/makereview', function(request, response, next){
+//     const {re_comment, re_user_no, re_pro_no, re_tr_no, re_rate} = request.body;
+
+//     db.query(`insert into review (re_comment, re_user_no, re_pro_no, re_tr_no, re_rate) values (?, ?, ?, ?, ?)`,
+//         [re_comment, re_user_no, re_pro_no, re_tr_no, re_rate], function(error, result){
+//             if(error){
+//                 console.error(error);
+//                 return response.status(500).json({ error: '리뷰 작성 오류' });
+//             }
+//             response.json(result);
+//             console.log(result);
+//         })
+// });
 
 //예약 삭제하기
 router.post('/deletecal', function(request, response, next){
