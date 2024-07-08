@@ -454,62 +454,53 @@ router.get('/programlist/:pro_tag', (req, res) => {
     });
   });
 
-// 사용자 정보 가져오기
-router.get('/info/:user_no', (req, res) => {
-    const userNo = req.params.user_no;
-    db.query('SELECT * FROM USER WHERE USER_NO = ?', [userNo], (err, results) => {
-      if (err) {
-        console.error('Error fetching user info:', err);
-        res.status(500).send('Error fetching user info');
-        return;
-      }
-      if (results.length > 0) {
-        const user = results[0];
-        // 전화번호를 '-'로 분리하여 객체에 추가
-        const telParts = user.USER_TEL.split('-');
-        user.tel1 = telParts[0];
-        user.tel2 = telParts[1];
-        user.tel3 = telParts[2];
-        res.json(user);
-      } else {
-        res.status(404).send('User not found');
-      }
-    });
-  });
-  
-  // 사용자 정보 수정
-  router.post('/update', (req, res) => {
-    const updatedUser = req.body;
-    const userNo = updatedUser.user_no;
-  
-    // 전화번호를 합쳐서 USER_TEL 필드에 저장
-    updatedUser.USER_TEL = `${updatedUser.tel1}-${updatedUser.tel2}-${updatedUser.tel3}`;
-  
-    db.query('UPDATE USER SET USER_EMAIL = ?, USER_PWD = ?, USER_TEL = ? WHERE USER_NO = ?',
-      [updatedUser.USER_EMAIL, updatedUser.USER_PWD, updatedUser.USER_TEL, userNo],
-      (err, results) => {
-        if (err) {
-          console.error('Error updating user info:', err);
-          res.status(500).send('Error updating user info');
-          return;
+//유저 정보 확인
+  router.post('/userupdate/:user_no', function(request, response, next){
+    const user_no = request.params.user_no;
+    
+    db.query(`select user_name, user_email, user_tel from user where user_no = ?`,
+        [user_no],
+         function(error, result, field){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '유저정보 에러'});
         }
-        res.status(200).send('User info updated successfully');
-      });
-  });
-  
-  // 사용자 탈퇴
-  router.post('/delete', (req, res) => {
-    const userNo = req.body.user_no;
-    db.query('DELETE FROM USER WHERE USER_NO = ?', [userNo], (err, results) => {
-      if (err) {
-        console.error('Error deleting user:', err);
-        res.status(500).send('Error deleting user');
-        return;
-      }
-      res.status(200).send('User deleted successfully');
+        response.json(result);
+        console.log(result);
     });
-  });
-  
+});
+
+//회원정보 삭제하기
+router.post('/deleteuser', function(request, response, next){
+    const user_no = request.body.user_no;
+    
+    db.query(`delete from user where user_no = ?`,[user_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '회원 정보 삭제 중 오류' });
+        }
+        response.json(result);
+        console.log(result);
+    })
+});
+
+//회원정보 수정하기
+router.post('/updateuser', function(request, response, next){
+    const user_no = request.body.user_no;
+    const user_pwd = request.body.re_pwd;
+    const user_tel = request.body.re_tel;
+    
+    db.query(`update user set user_tel=?,user_pwd = ? where user_no = ?`,[user_tel,user_pwd, user_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '회원 정보 수정 중 오류' });
+        }
+        response.json(result);
+        console.log(result);
+    })
+});
+
+
 //재영작성완
 
 

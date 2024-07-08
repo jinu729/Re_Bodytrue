@@ -12,7 +12,7 @@
                 <span>&nbsp;&nbsp;&nbsp;이메일</span>
               </div>
               <div class="form_right">&nbsp;&nbsp;
-                <input type="email" id="email1" v-model="user.email" disabled>
+                <input type="email" id="email1" v-model="userData.user_email" disabled>
               </div>
             </div>
             <div class="form_group">
@@ -20,8 +20,8 @@
                 <span>&nbsp;&nbsp;&nbsp;비밀번호</span>
               </div>
               <div class="form_right">&nbsp;&nbsp;
-                <input type="password" id="password1" v-model="user.password1">
-                <span class="confirm">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합,8~20자)</span>
+                <input type="password" id="password1" v-model="userData.user_password">
+                <span class="confirm">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합, 8~20자)</span>
               </div>
             </div>
             <div class="form_group">
@@ -29,7 +29,7 @@
                 <span>&nbsp;&nbsp;&nbsp;비밀번호 확인</span>
               </div>
               <div class="form_right">&nbsp;&nbsp;
-                <input type="password" id="password2" v-model="user.password2">
+                <input type="password" id="password2" v-model="userPasswordConfirm">
                 <button type="button" class="btn_confirm1" @click="checkPasswordMatch">비밀번호확인</button>
               </div>
             </div>
@@ -38,15 +38,15 @@
                 <span>&nbsp;&nbsp;&nbsp;휴대전화번호</span>
               </div>
               <div class="form_right">&nbsp;&nbsp;
-                <select v-model="user.tel1">
+                <select v-model="userData.user_tel1">
                   <option value="010">010</option>
                   <option value="011">011</option>
                   <option value="012">012</option>
                 </select>
                 <span> - </span>
-                <input type="text" v-model="user.tel2">
+                <input type="text" v-model="userData.user_tel2">
                 <span> - </span>
-                <input type="text" v-model="user.tel3">
+                <input type="text" v-model="userData.user_tel3">
               </div>
             </div>
             <div class="join_btn">
@@ -54,7 +54,7 @@
               <button type="button" @click="cancelUpdate" id="exit">수정취소</button>
             </div>
             <div class="join_btn2">
-              <button type="button" @click="deleteAccount" id="del">회원탈퇴</button>
+              <button type="button" @click="deleteuser" id="del">회원탈퇴</button>
             </div>
           </form>
         </div>
@@ -68,90 +68,59 @@
 import axios from 'axios';
 
 export default {
-  name: 'UserUpdate',
-  data() {
-    return {
-      user: {
-        user_email: '',
-        password1: '',
-        password2: '',
-        tel1: '010',
-        tel2: '',
-        tel3: '',
-      }
-    }
-  },
-  methods: {
-    getUserInfo() {
-      const userNo = this.$route.params.user_no; // URL에서 user_no를 가져옴
-      axios.get(`/user/info/${userNo}`)
-        .then(response => {
-          this.user = response.data;
-          const telParts = this.user.user_tel.split('-');
-          this.user.tel1 = telParts[0];
-          this.user.tel2 = telParts[1];
-          this.user.tel3 = telParts[2];
-        })
-        .catch(error => {
-          console.error('Error fetching user info:', error);
-        });
-    },
-    updateUserInfo() {
-      if (this.user.password1 !== this.user.password2) {
-        alert('패스워드가 일치하지 않습니다!');
-        return;
-      }
+  data(){
+        return{
+            userData: {
+                user_name: '',
+                user_email: '',
+                user_tel: '',
+                user_no: '',
+                user_pwd: ''
+            }
+          };
+        },
+        created(){
+          this.myinfo();
+        },
+        computed:{
+          user() {
+            return this.$store.state.user;
+          }
+        },
+        methods:{
+          async myinfo(){
+            const user_no = this.$route.params.user_no;
+            axios.post(`http://localhost:3000/user/userupdate/${user_no}`)
+            .then(response => {
+                this.userData = response.data[0];
+            })
+            .catch(error => {
+                console.error("마이페이지 에러 발생", error);
+            })
+        },
+        //회원 정보 삭제하기
+        async deleteuser(user_no){
+            console.log("user_no",user_no);
+            try{
+                const response = await axios.post(`http://localhost:3000/user/deleteuser`, {user_no: user_no});
+                console.log("회원 정보 삭제 성공", response.data);
+                alert('회원 정보가 삭제 되었습니다.');
+            } catch(error){
+                console.error("회원 정보 삭제 도중 에러 발생",error);
+            }
+        },
+        
+      
 
-      const userNo = this.$route.params.user_no; // URL에서 user_no를 가져옴
-      const updatedUser = {
-        user_no: userNo,
-        user_email: this.user.email,
-        user_pwd: this.user.password1,
-        user_tel: `${this.user.tel1}-${this.user.tel2}-${this.user.tel3}`
-      };
+      }
+    
+}
 
-      axios.post(`/user/update`, updatedUser)
-        .then(() => {
-          alert('회원님의 정보가 수정되었습니다!');
-        })
-        .catch(error => {
-          console.error('Error updating user info:', error);
-        });
-    },
-    checkPasswordMatch() {
-      if (this.user.password1 === this.user.password2) {
-        alert('비밀번호가 일치합니다.');
-      } else {
-        alert('비밀번호가 일치하지 않습니다!');
-      }
-    },
-    cancelUpdate() {
-      this.getUserInfo();
-    },
-    deleteAccount() {
-      if (confirm('정말로 회원을 탈퇴 하시겠습니까?')) {
-        const userNo = this.$route.params.user_no; // URL에서 user_no를 가져옴
-        axios.post(`/user/delete`, { user_no: userNo })
-          .then(() => {
-            alert('회원 탈퇴를 성공하셨습니다.');
-            // 홈 페이지로 리디렉션 등 추가 동작을 여기에 추가할 수 있습니다.
-          })
-          .catch(error => {
-            console.error('Error deleting account:', error);
-          });
-      }
-    }
-  },
-  mounted() {
-    this.getUserInfo();
-  }
-};
-</script>
-  
-  
-  
-  <style scoped>
-  /* join */
+    </script>
+    
+    
+    <style scoped>
+    /* join */
   
   /* join_main */
   .join_main {
