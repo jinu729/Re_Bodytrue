@@ -760,8 +760,9 @@ export default {
     /* section4 = review */
     .mypage_main .section4{
         width: 100%;
-        height: 400px;
+        /* height: 400px; */
         border-bottom: 1px solid black;
+        padding-bottom: 10px;
     }
     .section4 .review_list{
         width: 90%;
