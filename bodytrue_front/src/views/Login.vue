@@ -266,9 +266,11 @@ export default {
             console.log("kakao_account",kakao_account);
             try {
                 console.log("Sending request to server with email:", kakao_account.email);
+                // console.log("Sending request to server with user_no:", response.data.user_no);
                 const response = await axios.post('http://localhost:3000/auth/kakaologin', {
                     user_email: kakao_account.email,
-                    user_name: kakao_account.profile.nickname
+                    user_name: kakao_account.profile.nickname,
+                    // user_no : response.data.user_no
                 });
                 console.log("res.data",response.data);
                 this.$store.commit('setUser', {
@@ -278,7 +280,7 @@ export default {
                     });
                     console.log("User data stored in Vuex:", this.$store.state.user);
                 console.log("res.data",response.data);
-                // window.location.href = "/";
+                window.location.href = "/";
             } catch (error) {
                 console.error(error);
                 alert('로그인에 실패했습니다.');

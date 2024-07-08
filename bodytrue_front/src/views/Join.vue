@@ -115,7 +115,7 @@
             </div>
             <div class="join_btn">
                 <button type="submit" name="clear" id="clear">회원가입</button>
-                <button type="button" name="exit" id="exit">취소</button>
+                <button type="button" name="exit" id="exit" @click="exit">취소</button>
             </div>
         </form>
         </div>        
@@ -282,6 +282,9 @@ export default {
             } catch (error) {
                 console.error('폼 제출 중 오류 발생', error);
             }
+        },
+        exit(){
+            this.$router.push({path: "/"})
         }
     }
 }
@@ -427,7 +430,7 @@ export default {
 }
 .address_group .address_row{
 
-    border: 1px solid black;
+    border: 1px solid #bbdcdf;
     height: 40px;
 }
 #postcode{
