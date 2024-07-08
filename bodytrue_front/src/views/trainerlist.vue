@@ -79,17 +79,21 @@ export default {
       return this.trainerList.slice(start, end);
     },
     totalPages() {
-      return Math.ceil(this.trainerList.length / this.perPage);
-    }
+    const pages = Math.max(Math.ceil(this.trainerList.length / this.perPage), 1);
+    console.log('Total Pages:', pages);
+    return pages;
+  }
+
   },
   methods: {
     getTrainerList() {
       axios.get('http://localhost:3000/admin/trainerlist')
         .then(response => {
           this.trainerList = response.data;
+          console.log('Trainer List:',this.trainerList);
         })
         .catch(error => {
-          console.error('Error fetching user list:', error);
+          console.error('Error fetching userlist:', error);
         });
     },
     searchTrainers() {
@@ -181,7 +185,9 @@ export default {
             });
         },
         gotoPage(page) {
+          if (page >= 1 && page <= this.totalPages) {
           this.currentPage = page;
+          }
         }
       },
       mounted() {
