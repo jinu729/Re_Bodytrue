@@ -208,13 +208,16 @@ router.post('/myrecheck', function(request, response, next){
 router.post('/myplike', function(request, response, next){
     const plike_user_no = request.body.user_no;
 
-    db.query(`select pro_no, pro_name,tr_name,round(avg(re_rate),1) as rate_avg , date_format(pro_startdate,'%y-%m-%d') as pro_startdate, 
-        date_format(pro_enddate,'%y-%m-%d') as pro_enddate
-        from program p 
-        join trainer t on p.pro_tr_no = t.tr_no join review r on p.pro_no = r.re_pro_no
-        where pro_no in(
-                    select plike_pro_no from plike where plike_user_no=?)
-        group by re_pro_no`, [plike_user_no], function(error, result, field){
+    db.query(`SELECT p.pro_no, pro_name, tr_name, ROUND(AVG(re_rate), 1) AS rate_avg, DATE_FORMAT(pro_startdate, '%y-%m-%d') AS pro_startdate, DATE_FORMAT(pro_enddate, '%y-%m-%d') AS pro_enddate
+            FROM program p 
+            JOIN trainer t ON p.pro_tr_no = t.tr_no 
+            LEFT JOIN review r ON p.pro_no = r.re_pro_no
+            WHERE p.pro_no IN (
+                SELECT plike_pro_no 
+                FROM plike 
+                WHERE plike_user_no = ?
+            )
+            GROUP BY p.pro_no;`, [plike_user_no], function(error, result, field){
             if(error){
                 console.error(error);
                 return response.status(500).json({ error: '마이페이지 찜 정보 에러' });
@@ -349,6 +352,21 @@ router.post('/updatere', function(request, response, next){
 
 /* 마이페이지 끝 */
 
+/* FAQ */
+router.post('/userfaq',function(req,res){
+    db.query(`select faq_no, faq_q,faq_a from faq;`,
+        (error,result) =>{
+            if(error){
+                console.log(error);
+                return res.status(500).json({error:'faq 리스트 에러'});
+            }
+            res.json(result);
+            console.log(result);
+        }
+    )
+
+});
+
 //은미작성완
 
 
@@ -436,9 +454,61 @@ router.get('/programlist/:pro_tag', (req, res) => {
     });
   });
 
-
-
-
+// 사용자 정보 가져오기
+router.get('/info/:user_no', (req, res) => {
+    const userNo = req.params.user_no;
+    db.query('SELECT * FROM USER WHERE USER_NO = ?', [userNo], (err, results) => {
+      if (err) {
+        console.error('Error fetching user info:', err);
+        res.status(500).send('Error fetching user info');
+        return;
+      }
+      if (results.length > 0) {
+        const user = results[0];
+        // 전화번호를 '-'로 분리하여 객체에 추가
+        const telParts = user.USER_TEL.split('-');
+        user.tel1 = telParts[0];
+        user.tel2 = telParts[1];
+        user.tel3 = telParts[2];
+        res.json(user);
+      } else {
+        res.status(404).send('User not found');
+      }
+    });
+  });
+  
+  // 사용자 정보 수정
+  router.post('/update', (req, res) => {
+    const updatedUser = req.body;
+    const userNo = updatedUser.user_no;
+  
+    // 전화번호를 합쳐서 USER_TEL 필드에 저장
+    updatedUser.USER_TEL = `${updatedUser.tel1}-${updatedUser.tel2}-${updatedUser.tel3}`;
+  
+    db.query('UPDATE USER SET USER_EMAIL = ?, USER_PWD = ?, USER_TEL = ? WHERE USER_NO = ?',
+      [updatedUser.USER_EMAIL, updatedUser.USER_PWD, updatedUser.USER_TEL, userNo],
+      (err, results) => {
+        if (err) {
+          console.error('Error updating user info:', err);
+          res.status(500).send('Error updating user info');
+          return;
+        }
+        res.status(200).send('User info updated successfully');
+      });
+  });
+  
+  // 사용자 탈퇴
+  router.post('/delete', (req, res) => {
+    const userNo = req.body.user_no;
+    db.query('DELETE FROM USER WHERE USER_NO = ?', [userNo], (err, results) => {
+      if (err) {
+        console.error('Error deleting user:', err);
+        res.status(500).send('Error deleting user');
+        return;
+      }
+      res.status(200).send('User deleted successfully');
+    });
+  });
   
 //재영작성완
 

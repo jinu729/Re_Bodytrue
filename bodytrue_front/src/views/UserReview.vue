@@ -187,4 +187,50 @@ textarea{
 .star-hovered polygon{
   fill:#f44336;
 }
+.submit-btn{
+  width: 100px;
+  font-size: 18px;
+  margin: 0 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 0;
+  background-color:#3fced3;
+  color:white;
+  border-radius: 5px;
+  border: 1px solid;
+  box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
+}
+.submit-btn:hover{
+  width: 100px;
+  font-size: 18px;
+  margin: 0 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: 0;
+  background-color:#ffffff;
+  color:#3fced3;
+  border-radius: 5px;
+  border: 1px solid;
+  box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
+}
+.cancel-btn{
+  width: 100px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color: #d0d0d0;
+    color: white;
+}
+.cancel-btn:hover{
+  width: 100px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color: #000000;
+    color: rgb(255, 255, 255);
+}
 </style>

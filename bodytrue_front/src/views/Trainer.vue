@@ -14,9 +14,14 @@
 
 <script>
 export default {
+    computed: {
+        trainer(){
+            return this.$store.state.trainer;
+            },
+        },
     methods: {
         goToAboutPage1() {
-            this.$router.push('/trmypage');
+            this.$router.push(`/trmypage/${this.trainer.tr_no}`);
         },
 
         goToAboutPage2() {

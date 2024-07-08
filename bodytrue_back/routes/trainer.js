@@ -41,7 +41,7 @@ router.post('/createprogram/:tr_no', function (req, res) {
       tr_no : req.params.tr_no,
       pro_name : req.body.prcn_text,
     //   pro_tel : req.body.phn_text,
-    //   pro_add : req.body.adddress_text,
+    //   pro_add : req.body.adddress_text,S
       pro_startdate : req.body.start_date,
       pro_enddate : req.body.end_date,
       pro_comment1 : req.body.img_textarea1,
@@ -55,10 +55,16 @@ router.post('/createprogram/:tr_no', function (req, res) {
     };
     console.log(data);
 
+    const test = `${__dirname}`;
+    console.log('Dirname-------------------');
+    console.log(test);
+    console.log('-------------------');
+
         try {
                 // 이미지를 제외한 프로그램 정보 먼저 입력
-                db.query("INSERT INTO PROGRAM (PRO_NAME,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)values (?,?,?,?,?,?,?,?)", 
-                    [data.pro_name, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag],
+                db.query(`INSERT INTO PROGRAM (pro_tr_no,PRO_NAME,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)
+                    values (?,?,?,?,?,?,?);`, 
+                    [data.tr_no,data.pro_name, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag],
                      function (error, results, fields) {
                     if (error) {
                         return res.status(200).json({
@@ -66,22 +72,34 @@ router.post('/createprogram/:tr_no', function (req, res) {
                         })
                     }
                     try {
-                        const pastDir0 = `${__dirname}` + `../../uploads/` + data.pro_img
-                        const pastDir1 = `${__dirname}` + `../../uploads/` + data.pro_img1
-                        const pastDir2 = `${__dirname}` + `../../uploads/` + data.pro_img2
-                        const pastDir3 = `${__dirname}` + `../../uploads/` + data.pro_imgprice
+                        const pastDir0 = `${__dirname}` + `../uploads/` + data.pro_img
+                        const pastDir1 = `${__dirname}` + `../uploads/` + data.pro_img1
+                        const pastDir2 = `${__dirname}` + `../uploads/` + data.pro_img2
+                        const pastDir3 = `${__dirname}` + `../uploads/` + data.pro_imgprice
+                        
+                        console.log('pastDir-------------------');
+                        console.log(pastDir0);
+                        console.log('-------------------');
 
-                        const newDir = `${__dirname}` + `../../uploads/trainer/`;
+                        const newDir = `${__dirname}` + `../../uploads/program/`;
                         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
 
                         const extension = data.pro_img.substring(data.pro_img.lastIndexOf('.'))
 
+                        console.log('Extenstion-------------------');
+                        console.log(extension);
+                        console.log('-------------------');
+
                         // 등록 상품의 번호 불러오기
-                        db.query("select pro_no from program where = ?", 
+                        db.query("select pro_no from program where pro_name = ?", 
                             [data.pro_name], 
                             function (error, results, fields) {
 
                             const filename = results[0].pro_no
+
+                            console.log('filename-------------------');
+                            console.log(filename);
+                            console.log('-------------------');
 
                             // 이미지 폴더 및 이름(상품번호-타입) 변경
                             // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
@@ -157,7 +175,7 @@ router.post("/trprolist", async(req,res)=>{
 
     const tr_no = req.body.tr_no
 
-    db.query(`select pro_name, pro_tag, pro_startdate, pro_enddate
+    db.query(`select pro_no, pro_name, pro_tag, date_format(pro_startdate,'%y년%m월%d일') as pro_startdate, date_format(pro_enddate,'%y년%m월%d일')as pro_enddate
         from program
         where pro_tr_no = ?
         `,[tr_no],(err,results)=>{
@@ -175,27 +193,79 @@ router.post("/trprolist", async(req,res)=>{
     });
 });
 
+//내 예약 리스트
+router.post('/trcallist', function(request, response, next){
+    const tr_no = request.body.tr_no;
+
+    db.query(`select pro_no, pro_name, user_name, date_format(cal_startdate,'%y년%m월%d일 %H시') as cal_startdate
+            from calendar c 
+            join program p on c.cal_pro_no = p.pro_no 
+            join user u on c.cal_user_no = u.user_no 
+            join trainer t on c.cal_tr_no = t.tr_no 
+            where tr_no = ?`, [tr_no], function(error, result){
+                if(error){
+                    console.error(error);
+                    return response.status(500).json({ error: '트레이너 예약리스트 에러'});
+                }
+                response.json(result);
+                console.log(result);
+        });
+});
+
 //내 리뷰 리스트
+router.post("/trrelist", async (req, res) => {
+    const tr_no = req.body.tr_no;
+  
+    const query = `
+      select u.user_name, p.pro_name, date_format(re_date,'%y년%m월%d일') as re_date, r.re_comment, r.re_rate, r.re_no, i.img_path 
+      from review r 
+      join user u on r.re_user_no = u.user_no 
+      join program p on r.re_pro_no = p.pro_no 
+      join trainer t on r.re_tr_no = t.tr_no 
+      left join img i on r.re_no = i.img_re_no 
+      where t.tr_no = ?;`;
+    db.query(query, [tr_no], (err, results) => {
+      if (err) {
+        res.send({
+          // 에러 발생 시
+          code: 400,
+          failed: "error occurred",
+          error: err,
+        });
+      } else {
+        res.send(results);
+        console.log(results);
+      }
+    });
+  });
+  
 
-router.post("/패스명", async(req,res)=>{
+// router.post("/trrelist", async(req,res)=>{
 
-    const tr_no = req.params.tr_no
+//     const tr_no = req.body.tr_no;
 
-    db.query("SELECT USER_NAME,PRO_NAME,RE_DATE,RE_COMMENT,RE_RATE FROM REVIEW R JOIN USER U ON R.RE_USER_NO = U.USER_NO JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO JOIN TRAINER T ON R.RE_TR_NO = T.TR_NO WHERE TR_NO = ?",tr_no,(err,results)=>{
-        if (err) {
-            res.send({
-            // 에러 발생 시
-            code: 400,
-            failed: "error occurred",
-            error: err,
-            });
-        } else {
-            res.send
-        }
-    })
-})
+//     db.query(`select user_name, pro_name, re_date, re_comment, re_rate 
+//             from review r 
+//             join user u on r.re_user_no = u.user_no 
+//             join program p on r.re_pro_no = p.pro_no 
+//             join trainer t on r.re_tr_no = t.tr_no 
+//             where tr_no = ?;
+//             `,[tr_no],(err,results)=>{
+//         if (err) {
+//             res.send({
+//             // 에러 발생 시
+//             code: 400,
+//             failed: "error occurred",
+//             error: err,
+//             });
+//         } else {
+//             res.send(results);
+//             console.log(results);
+//         }
+//     })
+// });
 
-    db.query("이미지 가져오는거 만들어야 해양")
+    // db.query("이미지 가져오는거 만들어야 해양")
 
 //리뷰 사진 업로드/패스저장
 

@@ -20,13 +20,14 @@ import Login from '../views/Login.vue'
 import ProgramDetail from '../views/ProgramDetail.vue'
 import UserMyPage from '../views/UserMypage.vue'
 import TrainerMyPage from '../views/TrainerMypage.vue'
+import UserFaq from '../views/UserFaq.vue'
 //은미작성완
 
 
 //재영작성
 import MainPage from '../views/MainPage.vue'
 import ProgramList from '../views/ProgramList.vue'
-
+import UserUpdate from '../views/UserUpdate.vue'
 //재영작성완
 
 
@@ -35,7 +36,7 @@ import Trainer from '../views/Trainer.vue'
 import Admin from '../views/Admin.vue'
 import AdminUser from '../views/userlist.vue'
 import AdminTrainer from '../views/trainerlist.vue'
-import AdminFaq  from '../views/AdminFaq.vue'
+// import AdminFaq  from '../views/AdminFaq.vue'
 //회창작성완
 
 const routes = [
@@ -72,13 +73,13 @@ const routes = [
     name: 'AdminTrainer',
     component: AdminTrainer
   },
-  {
-    path: '/admin/adminfaq',
-    name: 'AdminFaq',
-    component: AdminFaq
-  }
+  // {
+  //   path: '/admin/adminfaq',
+  //   name: 'AdminFaq',
+  //   component: AdminFaq
+  // }
   //승호작성
-  ,
+  
   {
     path: '/test',
     name: 'test',
@@ -130,6 +131,11 @@ const routes = [
     path: '/trmypage/:tr_no',
     name: 'TrainerMyPage',
     component: TrainerMyPage
+  },
+  {
+    path: '/faqlist',
+    name: 'UserFaq',
+    component: UserFaq
   }
 
 
@@ -137,7 +143,11 @@ const routes = [
 
 
 //재영작성
-
+,{
+  path: '/userupdate/:user_no',
+  naem: 'UserUpdate',
+  component: UserUpdate
+},
 
 //재영작성완
 

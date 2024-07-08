@@ -34,7 +34,8 @@
                 </div>
                 <div class="form-group save-id-checkbox">
                     <span>
-                        <input type="checkbox" name="rememberMe" v-model="rememberMe" > 아이디 저장
+                        <!-- <input type="checkbox" name="rememberMe" v-model="rememberMe" > 아이디 저장 -->
+                        <input type="checkbox" name="rememberMe"  > 아이디 저장
                     </span>
                 </div>
                 <div class="form-group">
@@ -236,9 +237,54 @@ export default {
             console.log('회원가입 페이지로 이동');
         },
         loginKakao() {
-            // 카카오 로그인 로직
-            console.log('카카오 로그인 시도');
+            window.Kakao.Auth.login({
+                scope: "profile_nickname, account_email",
+                success: this.getKakaoProfile,
+                fail: err => {
+                console.error(err);
+                alert('카카오 로그인에 실패했습니다.');
+                }
+            });
         },
+        getKakaoProfile(authObj) {
+            console.log(authObj);  // authObj에는 access token 정보가 포함됩니다.
+            window.Kakao.API.request({
+                url: '/v2/user/me',
+                success: res => {
+                const kakao_account = res.kakao_account;
+                console.log(kakao_account);
+                this.loginWithKakao(kakao_account);
+                alert("로그인 성공");
+                },
+                fail: err => {
+                console.error(err);
+                alert('카카오 프로필을 가져오는 데 실패했습니다.');
+                }
+             });
+        },
+        async loginWithKakao(kakao_account) {
+            console.log("kakao_account",kakao_account);
+            try {
+                console.log("Sending request to server with email:", kakao_account.email);
+                const response = await axios.post('http://localhost:3000/auth/kakaologin', {
+                    user_email: kakao_account.email,
+                    user_name: kakao_account.profile.nickname
+                });
+                console.log("res.data",response.data);
+                this.$store.commit('setUser', {
+                    user_email: response.data.email,
+                    user_no: response.data.user_no,
+                    user_auth: response.data.user_auth || 1 // 기본 값으로 일반 사용자 권한 설정
+                    });
+                    console.log("User data stored in Vuex:", this.$store.state.user);
+                console.log("res.data",response.data);
+                // window.location.href = "/";
+            } catch (error) {
+                console.error(error);
+                alert('로그인에 실패했습니다.');
+            }
+        },
+
         loginNaver() {
             // 네이버 로그인 로직
             console.log('네이버 로그인 시도');
@@ -325,7 +371,7 @@ body {
 }
 
 /* 텍스트 입력 필드 스타일 */
-.form-group input[type="id"],
+.form-group input[type="text"],
 .form-group input[type="password"] {
     width: 100%; /* 너비 100% 설정 */
     padding: 10px; /* 안쪽 여백 설정 */
@@ -451,14 +497,14 @@ body {
 }
 
 .input-with-icon input[type="text"] {
-    width: calc(100% - 30px); /* 입력 필드 너비 설정 (이미지 너비 + 간격 포함) */
+    width: 100%; /* 입력 필드 너비 설정 (이미지 너비 + 간격 포함) */
     padding: 10px; /* 안쪽 여백 설정 */
     border: 1px solid #ccc; /* 테두리 설정 */
     border-radius: 4px; /* 테두리 반경 설정 */
     font-size: 16px; /* 폰트 크기 설정 */
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     border-radius: 5px;
-
 }
+
 
 </style>

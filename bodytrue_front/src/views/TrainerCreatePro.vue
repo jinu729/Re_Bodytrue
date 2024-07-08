@@ -409,6 +409,7 @@ export default {
                         img_textarea1:this.program.img_textarea1,
                         img_textarea2:this.program.img_textarea2,
                         tags:this.program.tags,
+                        
                         pro_img:this.program.pro_img,
                         pro_img1:this.program.pro_img1,
                         pro_img2:this.program.pro_img2,

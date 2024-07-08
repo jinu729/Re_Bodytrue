@@ -55,7 +55,7 @@
                             <td @click="goToProdetail(cal.pro_no)">{{ cal.pro_name }}</td>
                             <td>{{ cal.tr_name }}</td>
                             <td>{{ cal.cal_startdate }}</td>
-                            <td><button @click="deletecal(cal.pro_no, cal.cal_startdate)" class="re_btn">예약 취소하기</button></td>
+                            <td><button @click="deletecal(cal.pro_no, cal.cal_startdate)" class="cal_btn">예약 취소하기</button></td>
                             <td><button @click="openReviewModal(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
                         </tr>
                     </tbody>
@@ -100,7 +100,7 @@
                             <td>{{ re.re_rate}}</td>
                             <td>
                                 <button @click="openReviewModal(re)" class="reupdate_btn">수정</button>
-                                <button @click="deletere(re.re_no)" class="reupdate_btn">삭제</button>
+                                <button @click="deletere(re.re_no)" class="redelete_btn">삭제</button>
                             </td>
                         </tr>
                     </tbody>
@@ -617,11 +617,28 @@ export default {
         padding-top: 5px;
     }
     .pro_right .update{
-        width: 120px;
-        height: 30px;
+        width: 150px;
         font-size: 18px;
         border-radius: 5px;
         cursor: pointer;
+        border: 0;
+        background-color:#3fced3;
+        color:white;
+        border-radius: 5px;
+        border: 1px solid;
+        box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
+    }
+    .pro_right .update:Hover{
+        width: 150px;
+        font-size: 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        border: 0;
+        background-color:#ffffff;
+        color:#3fced3;
+        border-radius: 5px;
+        border: 1px solid;
+        box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
     }
 
     /* section2 = tag list */
@@ -679,10 +696,38 @@ export default {
     .table_list .re_btn{
         font-size: 16px;
         width: 120px;
+        height: 25px;
+        color:rgb(255, 255, 255);
+        border:solid 1px;
+        border-radius: 5px;
+        background: #ff751f;
+    }
+    .table_list .re_btn:hover{
+        font-size: 16px;
+        width: 120px;
+        height: 25px;
+        color: #ff751f;
+        border:solid 1px;
+        border-radius: 5px;
+        background: rgb(255, 255, 255);
     }
     .table_list .cal_btn{
         font-size: 16px;
-        width: 80px;
+        width: 120px;
+        height: 25px;
+        color:rgb(255, 255, 255);
+        border:solid 1px;
+        border-radius: 5px;
+        background:  #ff2b2b;
+    }
+    .table_list .cal_btn:hover{
+        font-size: 16px;
+        width: 120px;
+        height: 25px;
+        color:#ff2b2b;
+        border:solid 1px;
+        border-radius: 5px;
+        background:  rgb(255, 255, 255);
     }
 
     /* section3, section4 공통 */
@@ -709,6 +754,7 @@ export default {
     }
     .number_box img{
         width:15px;
+        padding-top:5px;
     }
 
     /* section4 = review */
@@ -746,13 +792,46 @@ export default {
     .table_list .reupdate_btn{
         font-size: 16px;
         width: 60px;
+        margin: 10px auto;
+        border:none;
+        color: white;
+        background-color: #777777;
+        border-radius: 20px;
+        cursor: pointer;
     }
-
+    .table_list .reupdate_btn:hover{
+        font-size: 16px;
+        width: 60px;
+        margin: 10px auto;
+        border:none;
+        color: #777777;
+        background-color: rgb(193, 192, 192);
+        border-radius: 20px;
+        cursor: pointer;
+    }
+    .table_list .redelete_btn{
+        font-size: 16px;
+        width: 60px;
+        height: 25px;
+        color:rgb(255, 255, 255);
+        border:solid 1px;
+        border-radius: 20px;
+        background:  #ff2b2b;
+    }
+    .table_list .redelete_btn:hover{
+        font-size: 16px;
+        width: 60px;
+        height: 25px;
+        color:#ff2b2b;
+        border:solid 1px;
+        border-radius: 20px;
+        background:  rgb(255, 255, 255);
+    }
     /* section5 = plike */
     .mypage_main .section5{
         width: 100%;
         height: 760px;
-        border-bottom: 1px solid black;
+        /* border-bottom: 1px solid black; */
     }
     .section5 .plike_list{
         width: 90%;
@@ -817,7 +896,16 @@ export default {
         color: white;
         background-color: #777777;
         cursor: pointer;
-        
+    }
+    .plike_right .del_btn .plike_delete:hover{
+        font-size: 16px;
+        width: 60px;
+        border-radius: 20px;
+        margin: 10px auto;
+        border:none;
+        color: #777777;
+        background-color: rgb(193, 192, 192);
+        cursor: pointer;
     }
     .nolikelist{
         display: flex;
@@ -828,6 +916,7 @@ export default {
     }
     .showmore_btn{
         display: block;
+        height: 50px;
         margin: 20px auto;
         padding: 10px 20px;
         font-size: 18px;

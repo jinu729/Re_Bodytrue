@@ -1,144 +1,152 @@
 <template>
-    <div>
-      <div class="join_main">
-        <div class="join_wrap">
-          <div class="main_title">
-            <h2>회원정보 수정</h2>
-          </div>
-          <div class="join_list">
-            <form @submit.prevent="updateUserInfo">
-              <div class="form_group">
-                <div class="form_left">
-                  <span>&nbsp;&nbsp;&nbsp;이메일</span>
-                </div>
-                <div class="form_right">&nbsp;&nbsp;
-                  <input type="email" id="email1" v-model="user.email" disabled>
-                </div>
+  <div>
+    <div class="join_main">
+      <div class="join_wrap">
+        <div class="main_title">
+          <h2>회원정보 수정</h2>
+        </div>
+        <div class="join_list">
+          <form @submit.prevent="updateUserInfo">
+            <div class="form_group">
+              <div class="form_left">
+                <span>&nbsp;&nbsp;&nbsp;이메일</span>
               </div>
-              <div class="form_group">
-                <div class="form_left">
-                  <span>&nbsp;&nbsp;&nbsp;비밀번호</span>
-                </div>
-                <div class="form_right">&nbsp;&nbsp;
-                  <input type="password" id="password1" v-model="user.password1">
-                  <span class="confirm">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합,8~20자)</span>
-                </div>
+              <div class="form_right">&nbsp;&nbsp;
+                <input type="email" id="email1" v-model="user.email" disabled>
               </div>
-              <div class="form_group">
-                <div class="form_left">
-                  <span>&nbsp;&nbsp;&nbsp;비밀번호 확인</span>
-                </div>
-                <div class="form_right">&nbsp;&nbsp;
-                  <input type="password" id="password2" v-model="user.password2">
-                  <button type="button" class="btn_confirm1" @click="checkPasswordMatch">비밀번호확인</button>
-                </div>
+            </div>
+            <div class="form_group">
+              <div class="form_left">
+                <span>&nbsp;&nbsp;&nbsp;비밀번호</span>
               </div>
-              <div class="form_group">
-                <div class="form_left">
-                  <span>&nbsp;&nbsp;&nbsp;휴대전화번호</span>
-                </div>
-                <div class="form_right">&nbsp;&nbsp;
-                  <select v-model="user.tel1">
-                    <option value="010">010</option>
-                    <option value="011">011</option>
-                    <option value="012">012</option>
-                  </select>
-                  <span> - </span>
-                  <input type="text" v-model="user.tel2">
-                  <span> - </span>
-                  <input type="text" v-model="user.tel3">
-                </div>
+              <div class="form_right">&nbsp;&nbsp;
+                <input type="password" id="password1" v-model="user.password1">
+                <span class="confirm">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합,8~20자)</span>
               </div>
-              <div class="join_btn">
-                <button type="submit" id="clear">수정완료</button>
-                <button type="button" @click="cancelUpdate" id="exit">수정취소</button>
+            </div>
+            <div class="form_group">
+              <div class="form_left">
+                <span>&nbsp;&nbsp;&nbsp;비밀번호 확인</span>
               </div>
-              <div class="join_btn2">
-                <button type="button" @click="deleteAccount" id="del">회원탈퇴</button>
+              <div class="form_right">&nbsp;&nbsp;
+                <input type="password" id="password2" v-model="user.password2">
+                <button type="button" class="btn_confirm1" @click="checkPasswordMatch">비밀번호확인</button>
               </div>
-            </form>
-          </div>
+            </div>
+            <div class="form_group">
+              <div class="form_left">
+                <span>&nbsp;&nbsp;&nbsp;휴대전화번호</span>
+              </div>
+              <div class="form_right">&nbsp;&nbsp;
+                <select v-model="user.tel1">
+                  <option value="010">010</option>
+                  <option value="011">011</option>
+                  <option value="012">012</option>
+                </select>
+                <span> - </span>
+                <input type="text" v-model="user.tel2">
+                <span> - </span>
+                <input type="text" v-model="user.tel3">
+              </div>
+            </div>
+            <div class="join_btn">
+              <button type="submit" id="clear">수정완료</button>
+              <button type="button" @click="cancelUpdate" id="exit">수정취소</button>
+            </div>
+            <div class="join_btn2">
+              <button type="button" @click="deleteAccount" id="del">회원탈퇴</button>
+            </div>
+          </form>
         </div>
       </div>
-      <div class="join_wrap"></div>
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    name: 'UserUpdate',
-    data() {
-      return {
-        userData: {
-          user_email: '',
-          user_password1: '',
-          user_password2: '',
-          tel1: '010',
-          tel2: '',
-          tel3: '',
-        }
+    <div class="join_wrap"></div>
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'UserUpdate',
+  data() {
+    return {
+      user: {
+        user_email: '',
+        password1: '',
+        password2: '',
+        tel1: '010',
+        tel2: '',
+        tel3: '',
       }
-    },
-    methods: {
-      getUserInfo() {
-        axios.get('/api/user/info')
-          .then(response => {
-            this.user = response.data;
-          })
-          .catch(error => {
-            console.error('Error 오류 패치 안댐:', error);
-          });
-      },
-      updateUserInfo() {
-        if (this.user.password1 !== this.user.password2) {
-          alert('패스워드가 불일치 합니다!');
-          return;
-        }
-  
-        axios.post('/api/user/update', {
-          email: this.user.email,
-          password1: this.user.password1,
-          tel1: this.user.tel1,
-          tel2: this.user.tel2,
-          tel3: this.user.tel3
+    }
+  },
+  methods: {
+    getUserInfo() {
+      const userNo = this.$route.params.user_no; // URL에서 user_no를 가져옴
+      axios.get(`/user/info/${userNo}`)
+        .then(response => {
+          this.user = response.data;
+          const telParts = this.user.user_tel.split('-');
+          this.user.tel1 = telParts[0];
+          this.user.tel2 = telParts[1];
+          this.user.tel3 = telParts[2];
         })
-        .then(() => { // eslint-disable-line no-unused-vars
+        .catch(error => {
+          console.error('Error fetching user info:', error);
+        });
+    },
+    updateUserInfo() {
+      if (this.user.password1 !== this.user.password2) {
+        alert('패스워드가 일치하지 않습니다!');
+        return;
+      }
+
+      const userNo = this.$route.params.user_no; // URL에서 user_no를 가져옴
+      const updatedUser = {
+        user_no: userNo,
+        user_email: this.user.email,
+        user_pwd: this.user.password1,
+        user_tel: `${this.user.tel1}-${this.user.tel2}-${this.user.tel3}`
+      };
+
+      axios.post(`/user/update`, updatedUser)
+        .then(() => {
           alert('회원님의 정보가 수정되었습니다!');
         })
         .catch(error => {
-          console.error('Error 업데이트 실패:', error);
+          console.error('Error updating user info:', error);
         });
-      },
-      checkPasswordMatch() {
-        if (this.user.password1 === this.user.password2) {
-          alert('비밀번호가 일치합니다.');
-        } else {
-          alert('비밀번호가 일치하지않습니다!');
-        }
-      },
-      cancelUpdate() {
-        this.getUserInfo();
-      },
-      deleteAccount() {
-        if (confirm('정말로 회원을 탈퇴 하시겠습니까?')) {
-          axios.post('/api/user/delete', { email: this.user.email })
-            .then(() => { // eslint-disable-line no-unused-vars
-              alert('회원 탈퇴를 성공하셨습니다.');
-              // Redirect to home or login page
-            })
-            .catch(error => {
-              console.error('Error 오류뜸 :', error);
-            });
-        }
+    },
+    checkPasswordMatch() {
+      if (this.user.password1 === this.user.password2) {
+        alert('비밀번호가 일치합니다.');
+      } else {
+        alert('비밀번호가 일치하지 않습니다!');
       }
     },
-    mounted() {
+    cancelUpdate() {
       this.getUserInfo();
+    },
+    deleteAccount() {
+      if (confirm('정말로 회원을 탈퇴 하시겠습니까?')) {
+        const userNo = this.$route.params.user_no; // URL에서 user_no를 가져옴
+        axios.post(`/user/delete`, { user_no: userNo })
+          .then(() => {
+            alert('회원 탈퇴를 성공하셨습니다.');
+            // 홈 페이지로 리디렉션 등 추가 동작을 여기에 추가할 수 있습니다.
+          })
+          .catch(error => {
+            console.error('Error deleting account:', error);
+          });
+      }
     }
-  };
-  </script>
+  },
+  mounted() {
+    this.getUserInfo();
+  }
+};
+</script>
   
   
   
