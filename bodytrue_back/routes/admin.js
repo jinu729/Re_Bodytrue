@@ -338,7 +338,7 @@ router.post("/insertA",async(req,res)=>{
 
 // 질문&답변 불러오기
   router.get("/faqlist",async(req,res) => {
-    db.query("select faq_q,faq_a from faq",(err,results) => {
+    db.query("select faq_nofaq_q,faq_a from faq",(err,results) => {
       if (err) {
         res.send({
           //에러 발생 시

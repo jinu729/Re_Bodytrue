@@ -1,4 +1,4 @@
-<!--<template>
+<template>
     <div class="admin_faq_main">
         <div class="admin_faq">FAQ 관리</div>
         <div class="admin_container">
@@ -8,8 +8,8 @@
                         <div v-for="(faq, i) in faqList" :key="i">
                             <div>Q{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_q }}</div>
                             <button class="admin_toggle_update">✔</button>
-                            <button @click="delFAQ">❌</button>
-                            <button v-if="" class="admin_toggle_update">▼</button>
+                            <button @click="delFAQ(faq.faq_no)">❌</button>
+                            <!-- <button v-if="" class="admin_toggle_update">▼</button> -->
                             <div>▶A{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_a }}</div>
                             <button class="admin_toggle_update">✔</button>
                         </div>
@@ -29,7 +29,7 @@
   
 <script>
 import axios from 'axios';
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 
 export default {
     data() {
@@ -43,11 +43,15 @@ export default {
         paginatedFaqList() {
             const start = (this.currentPage - 1) * this.perPage;
             const end = start + this.perPage;
+            console.log('faqList length:', this.faqList.length);
+            console.log('start:', start, 'end:', end);
             return this.faqList.slice(start, end);
         },
         totalPages() {
-            return Math.ceil(this.faqList.length / this.perPage);
-        }
+        const pages = Math.ceil(this.faqList.length / this.perPage);
+        console.log('totalPages:', pages);
+        return pages;
+    }
     },
     methods: {
         getfaqList() {
@@ -94,7 +98,9 @@ export default {
         //     });
         },
         gotoPage(page) {
+        if (page > 0 && page <= this.totalPages) {
             this.currentPage = page;
+            console.log('Navigated to page:', page);
         }
     },
     mounted() {
@@ -195,4 +201,4 @@ export default {
 .admin_faqlist-bodypaging{
     padding-top: 15px;
 }
-</style> -->
+</style>
