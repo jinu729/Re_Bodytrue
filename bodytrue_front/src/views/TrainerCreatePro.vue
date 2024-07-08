@@ -197,7 +197,7 @@ export default {
                             }
                             else if (type == 3) {
                                 this.program.pro_imgprice = name;
-                                console.log("proce",this.program.pro_imgprice);
+                                console.log("price",this.program.pro_imgprice);
                             }
                         }
                         else {
