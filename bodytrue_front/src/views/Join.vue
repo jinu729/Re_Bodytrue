@@ -286,7 +286,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 .join_main{
     width: 100%;
     height: 85%;
@@ -385,7 +385,7 @@ export default {
 }
 .address_group .address_row{
     border: 1px solid black;
-    height: 39px;
+    height: 40px;
 }
 #postcode{
     line-height: 20px;
@@ -397,7 +397,7 @@ export default {
     margin-left: 10px;
     line-height: 20px;
 }
-#address, #address-detail{
+#address, #address_detail{
     width: 300px;
     line-height: 20px;
     font-size: 16px;

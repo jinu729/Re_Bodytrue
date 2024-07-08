@@ -133,9 +133,9 @@ router.post("/email_check", async (req, res) => {
     );
 });
 
-//임시비밀번호 저장
+//유저 임시비밀번호 저장
 
-router.post("/findPw",async(req,res)=>{
+router.post("/findPw_user",async(req,res)=>{
   console.log("req.body",req.body);
     const data = {
         tmp_pwd : Math.random().toString(36).slice(2),
@@ -157,31 +157,65 @@ router.post("/findPw",async(req,res)=>{
                 });
                 console.log(err);
             } else {
-              // if(results.length > 0) {
-              //   // const tmp_pwd = results[0].tmp_pwd;
-              //   // const user_email = results[0].user_email;
-              //   res.send({
-              //     code: 200,
-              //     message: "비밀번호 찾기 성공",
-              //     // tmp_pwd: tmp_pwd 
-              //   });
-              //   console.log("tmp_pwd",tmp_pwd);
-              //   console.log(results.length);
-              // }else{
-              //   res.send({
-              //     code: 404,
-              //     message: "일치하지 않습니다. 다시한번 확인해주세요"
-              //   })
-              //   // console.log(res);
-              //   console.log(results.length);
-              // }
+              if (results.affectedRows > 0) {
                 res.send({
-                // 쿼리 실행 성공시
-               code: 200,
-               message: "임시비밀번호 부여 성공",
-              //  tmp_pwd: tmp_pwd,
-               });
-                console.log(res.send);
+                    // 쿼리 실행 성공시
+                    code: 200,
+                    message: "임시비밀번호 부여 성공",
+                    tmp_pwd: data.tmp_pwd,
+                });
+                console.log("임시 비밀번호:", data.tmp_pwd);
+              } else {
+                  res.send({
+                      // 일치하는 사용자가 없을 경우
+                      code: 404,
+                      message: "일치하는 사용자가 없습니다.",
+                  });
+              }
+            }
+    });
+});
+
+
+//트레이너 임시비밀번호 저장
+
+router.post("/findPw_tr",async(req,res)=>{
+  console.log("req.body",req.body);
+    const data = {
+        tmp_pwd : Math.random().toString(36).slice(2),
+        user_name : req.body.user_name,
+        user_tel : req.body.user_tel,
+        user_email: req.body.user_email
+      };
+      console.log(data);
+
+    db.query('update trainer set tr_pwd = ? where tr_name = ? and tr_tel = ? and tr_email=?',
+        [data.tmp_pwd,data.user_name,data.user_tel,data.user_email],
+        function(err,results,fields){
+        if (err) {
+                res.send({
+                // 에러 발생 시
+                code: 400,
+                failed: "error occurred",
+                error: err,
+                });
+                console.log(err);
+            } else {
+              if (results.affectedRows > 0) {
+                res.send({
+                    // 쿼리 실행 성공시
+                    code: 200,
+                    message: "임시비밀번호 부여 성공",
+                    tmp_pwd: data.tmp_pwd,
+                });
+                console.log("임시 비밀번호:", data.tmp_pwd);
+              } else {
+                  res.send({
+                      // 일치하는 사용자가 없을 경우
+                      code: 404,
+                      message: "일치하는 사용자가 없습니다.",
+                  });
+              }
             }
     });
 });
@@ -352,38 +386,40 @@ router.post("패스명",async(req,res)=>{
 
 
 //카카오가입
-router.post("/패스명",async(req,res)=>{
+// router.post("/kakaologin",async(req,res)=>{
+//   console.log("req.body",req.body);
+//     const user ={
+//         user_email : req.body.email, 
+//         user_name : req.body.name,
+//         user_social : 1,
+//         user_auth : 1
+//     };
 
-    const user ={
-        user_email : req.body.email, 
-        user_name : req.body.name,
-        user_social : 1
-    };
-
-    db.query("insert into user (user_email,user_name,user_social) values (?,?,?)",
-        [user.user_email,user.user_name,user.user_social],
-        (err)=>{
-            if (err) {
-                res.send({
-                  // 에러 발생 시
-                  code: 400,
-                  failed: "error occurred",
-                  error: err,
-                });
-              } else {
-                res.send({
-                  //쿼리 실행 성공시
-                  code: 200,
-                  message: "회원가입 성공",
-                });
-              }
-        })
-});
+//     db.query("insert into user (user_email,user_name,user_auth,user_social) values (?,?,?,?)",
+//         [user.user_email,user.user_name,user.user_auth,user.user_social],
+//         (err)=>{
+//             if (err) {
+//                 res.send({
+//                   // 에러 발생 시
+//                   code: 400,
+//                   failed: "error occurred",
+//                   error: err,
+//                 });
+//               } else {
+//                 res.send({
+//                   //쿼리 실행 성공시
+//                   code: 200,
+//                   message: "회원가입 성공",
+//                 });
+//               }
+//         })
+// });
 
 //카카오로그인후
-router.post("/패스명", async (req, res) => {
-
-    const email = req.body.email;
+router.post("/kakaologin", async (req, res) => {
+    console.log("req.body",req.body);
+    const email = req.body.user_email;
+    const user_name = req.body.user_name;
   
     db.query(
       "select * from user where USER_EMAIL = ?",
@@ -397,10 +433,45 @@ router.post("/패스명", async (req, res) => {
             error: err,
           });
         } else {
-          res.send({
-            email: results[0].USER_EMAIL,
-            name: results[0].USER_NAME,
-          });
+          if (results.length > 0) {
+            console.log("results",results[0]);            
+            console.log("res.data",user_name);
+            // 이미 회원인 경우, 해당 정보를 클라이언트에게 응답합니다.
+            res.status(200).json({
+              user_no: results[0].user_no,
+              email: results[0].user_email,
+              user_name: results[0].user_name
+            });
+          } else {
+            // 회원이 아닌 경우, 회원가입을 수행합니다.
+            const user = {
+              user_email: email,
+              user_name: user_name,
+              user_social: 1, // 소셜 로그인 유저 구분 (예: 카카오)
+              user_auth: 1 // 사용자 권한 설정 (예: 일반 사용자)
+            };
+            console.log("user",user);
+            db.query(
+              'INSERT INTO user (user_email, user_name, user_auth, user_social) VALUES (?, ?, ?, ?)',
+              [user.user_email, user.user_name, user.user_auth, user.user_social],
+              (err) => {
+                if (err) {
+                  res.status(400).json({
+                    code: 400,
+                    failed: 'error occurred',
+                    error: err
+                  });
+                } else {
+                  res.status(200).json({
+                    code: 200,
+                    message: '회원가입 및 로그인 성공',
+                    email: user.user_email,
+                    name: user.user_name
+                  });
+                }
+              }
+            );
+          }
         }
       }
     );
