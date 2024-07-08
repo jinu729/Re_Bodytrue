@@ -27,7 +27,7 @@ import UserFaq from '../views/UserFaq.vue'
 //재영작성
 import MainPage from '../views/MainPage.vue'
 import ProgramList from '../views/ProgramList.vue'
-
+import UserUpdate from '../views/UserUpdate.vue'
 //재영작성완
 
 
@@ -72,14 +72,14 @@ const routes = [
     path: '/admin/trainerlist',
     name: 'AdminTrainer',
     component: AdminTrainer
-  }
+  },
   // {
   //   path: '/admin/adminfaq',
   //   name: 'AdminFaq',
   //   component: AdminFaq
   // }
   //승호작성
-  ,
+  
   {
     path: '/test',
     name: 'test',
@@ -143,7 +143,11 @@ const routes = [
 
 
 //재영작성
-
+,{
+  path: '/userupdate/:user_no',
+  naem: 'UserUpdate',
+  component: UserUpdate
+},
 
 //재영작성완
 

@@ -454,9 +454,61 @@ router.get('/programlist/:pro_tag', (req, res) => {
     });
   });
 
-
-
-
+// 사용자 정보 가져오기
+router.get('/info/:user_no', (req, res) => {
+    const userNo = req.params.user_no;
+    db.query('SELECT * FROM USER WHERE USER_NO = ?', [userNo], (err, results) => {
+      if (err) {
+        console.error('Error fetching user info:', err);
+        res.status(500).send('Error fetching user info');
+        return;
+      }
+      if (results.length > 0) {
+        const user = results[0];
+        // 전화번호를 '-'로 분리하여 객체에 추가
+        const telParts = user.USER_TEL.split('-');
+        user.tel1 = telParts[0];
+        user.tel2 = telParts[1];
+        user.tel3 = telParts[2];
+        res.json(user);
+      } else {
+        res.status(404).send('User not found');
+      }
+    });
+  });
+  
+  // 사용자 정보 수정
+  router.post('/update', (req, res) => {
+    const updatedUser = req.body;
+    const userNo = updatedUser.user_no;
+  
+    // 전화번호를 합쳐서 USER_TEL 필드에 저장
+    updatedUser.USER_TEL = `${updatedUser.tel1}-${updatedUser.tel2}-${updatedUser.tel3}`;
+  
+    db.query('UPDATE USER SET USER_EMAIL = ?, USER_PWD = ?, USER_TEL = ? WHERE USER_NO = ?',
+      [updatedUser.USER_EMAIL, updatedUser.USER_PWD, updatedUser.USER_TEL, userNo],
+      (err, results) => {
+        if (err) {
+          console.error('Error updating user info:', err);
+          res.status(500).send('Error updating user info');
+          return;
+        }
+        res.status(200).send('User info updated successfully');
+      });
+  });
+  
+  // 사용자 탈퇴
+  router.post('/delete', (req, res) => {
+    const userNo = req.body.user_no;
+    db.query('DELETE FROM USER WHERE USER_NO = ?', [userNo], (err, results) => {
+      if (err) {
+        console.error('Error deleting user:', err);
+        res.status(500).send('Error deleting user');
+        return;
+      }
+      res.status(200).send('User deleted successfully');
+    });
+  });
   
 //재영작성완
 
