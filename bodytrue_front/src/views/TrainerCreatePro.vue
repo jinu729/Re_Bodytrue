@@ -4,7 +4,7 @@
             <p>프로그램 등록</p>
         </div>
         <div class="prc_content">
-                <form>
+                <!-- <form> -->
             <div class="content_left">
                 <div class="upload_img">
                     <div class="img-box">
@@ -105,7 +105,7 @@
                     <div class="preview-container" id="preview-container3"></div>
                 </div>
             </div>
-                </form>
+                <!-- </form> -->
         </div>
         <div class="prc_btn">
             <button type="submit" name="create" id="prc_create" @click="ProInsert">등록</button>

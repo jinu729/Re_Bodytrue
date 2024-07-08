@@ -422,7 +422,7 @@ router.post("/kakaologin", async (req, res) => {
     const user_name = req.body.user_name;
   
     db.query(
-      "select * from user where USER_EMAIL = ?",
+      "select user_no, user_email, user_name, user_pwd, user_auth from user where user_email = ?",
       email,
       async (err, results) => {
         if (err) {
@@ -435,13 +435,14 @@ router.post("/kakaologin", async (req, res) => {
         } else {
           if (results.length > 0) {
             console.log("results",results[0]);            
-            console.log("res.data",user_name);
+            console.log("res.data",results[0].user_no);
             // 이미 회원인 경우, 해당 정보를 클라이언트에게 응답합니다.
             res.status(200).json({
               user_no: results[0].user_no,
               email: results[0].user_email,
               user_name: results[0].user_name
             });
+            // console.log(user_no);
           } else {
             // 회원이 아닌 경우, 회원가입을 수행합니다.
             const user = {
@@ -452,8 +453,8 @@ router.post("/kakaologin", async (req, res) => {
             };
             console.log("user",user);
             db.query(
-              'INSERT INTO user (user_email, user_name, user_auth, user_social) VALUES (?, ?, ?, ?)',
-              [user.user_email, user.user_name, user.user_auth, user.user_social],
+              'insert into user (user_no,user_email, user_name, user_auth, user_social) values (?, ?, ?, ?, ?)',
+              [user.user_no,user.user_email, user.user_name, user.user_auth, user.user_social],
               (err) => {
                 if (err) {
                   res.status(400).json({
@@ -465,8 +466,10 @@ router.post("/kakaologin", async (req, res) => {
                   res.status(200).json({
                     code: 200,
                     message: '회원가입 및 로그인 성공',
+                    user_no: result.insertId, // 새로 생성된 회원 번호 반환
                     email: user.user_email,
-                    name: user.user_name
+                    user_name: user.user_name,
+                    user_auth: user.user_auth,
                   });
                 }
               }
