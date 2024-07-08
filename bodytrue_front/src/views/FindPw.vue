@@ -39,7 +39,8 @@
                     <button type="button" @click="checkPassword">비밀번호 찾기</button>
                 </div>
                 <div>
-                    <p v-if="tmp_pwd " style="text-align: center; height: 80px; line-height: 80px;">{{ tmp_pwd }}</p>
+                    <p v-if="tmp_pwd " style="text-align: center; height: 80px; line-height: 40px;">임시비밀번호는 {{ tmp_pwd }}입니다. <br> 로그인 후 변경해주시기 바랍니다.</p>
+                    <p v-else-if="error" style="text-align: center; height: 80px; line-height: 80px;">{{ error }}</p>
                 </div>
                 <div>
                     <button class="close"  @click="goToLogin">로그인</button>
@@ -53,8 +54,6 @@
 </template>
 <script>
 import axios from 'axios';
-// import FindIdModal from '../components/FindId.vue';
-// import FindPwModal from '../views/F';
 
 export default {
     props: {
@@ -71,27 +70,24 @@ export default {
             number3: '',
             user_email: '',
             tmp_pwd: '',
-            // showFindPwModal: false,
+            user_auth: '1',
+            error: '',
         };
     },
-    // components: {
-    //     FindIdModal,
-    //     // FindPwModal,
-    // },
     methods: {
         async checkPassword(){
             // 이름 및 핸드폰번호로 이메일 찾기
-            // const endpoint = (this.user_auth === '1') ? 'findId_user' : 'findId_tr';
+            const endpoint = (this.user_auth === '1') ? 'findPw_user' : 'findPw_tr';
             const data = {
                 user_name : this.user_name,
                 user_tel : `${this.number1}-${this.number2}-${this.number3}`,
                 user_email : this.user_email,
             };
-            // console.log("endpoint",endpoint);
+            console.log("endpoint",endpoint);
             console.log(data);
 
             try{
-                const response = await axios.post(`http://localhost:3000/auth/findPw`, data, {
+                const response = await axios.post(`http://localhost:3000/auth/${endpoint}`, data, {
                     headers: {
                     'Content-Type': 'application/json'
                 }
@@ -99,17 +95,18 @@ export default {
                 console.log(response.data);
                 this.tmp_pwd = response.data.tmp_pwd;
                 // this.tr_email = response.data.tr_email;
-                console.log(this.tmp_pwd);
+                console.log("this.tmp_pwd",this.tmp_pwd);
 
                 this.error = ''; // 성공 시 에러 메시지 초기화
             } catch(error){
+                console.error("error", error);
                 if (error.response && error.response.data && error.response.data.message) {
                     this.error = error.response.data.message;
                 } else {
                     this.error = "일치하는 사용자가 없습니다.";
                 }
-                //this.user_email = ''; // 에러 발생 시 이메일 초기화
-                console.error(error);
+                this.tmp_pwd = ''; // 에러 발생 시 임시 비밀번호 초기화
+                console.error("error_message",this.error);
             }
         },
         goToLogin(){
@@ -166,7 +163,7 @@ export default {
     border-radius: 5px;
 }
 #number2, #number3{
-    height: 20px;
+    height: 40px;
     width: 80px;
     font-size: 16px;
 }
@@ -177,7 +174,7 @@ export default {
     /* position: absolute;
     left: 50%; */
     /* transform: translateX(-50%); */
-    width: 500px;
+    width: 460px;
     height: 40px;
     bottom: 10px; /* 하단에 배치 */
     font-size: 16px;
@@ -252,7 +249,7 @@ export default {
 .form-group input[type="text"],
 .form-group input[type="email"] {
     width: 450px; /* 입력 필드 너비 설정 */
-    height: 20px;
+    height: 40px;
     margin-top: 10px; /* 위 여백 설정 */
     padding: 10px; /* 안쪽 여백 설정 */
     border: 1px solid #ccc; /* 테두리 설정 */

@@ -4,7 +4,7 @@
                 <form action="">
                     <div class="form-group">
                         <button type="button" class="right-button2" >비밀번호 찾기</button>
-                        <button type="button" class="left-button2" >아이디 찾기</button>
+                        <button type="button" class="left-button2"  >아이디 찾기</button>
                     </div>
                 </form>
             <h2>아이디 찾기</h2>
@@ -38,6 +38,9 @@
                     <p v-if="user_email " style="text-align: center; height: 80px; line-height: 80px;">{{ user_email }}</p>
                     <p v-else-if="tr_email" style="text-align: center; height: 80px; line-height: 80px;">{{ tr_email }}</p>
                     <p v-else-if="error" style="text-align: center; height: 80px; line-height: 80px;">{{ error }}</p>
+                    <!-- <p v-if="error " style="text-align: center; height: 80px; line-height: 80px;">{{ error }}</p>
+                    <p v-else-if="user_email" style="text-align: center; height: 80px; line-height: 80px;">{{ user_email }}</p>
+                    <p v-else-if="tr_email" style="text-align: center; height: 80px; line-height: 80px;">{{ tr_email }}</p> -->
                 </div>
                 <div>
                     <button class="close"  @click="goToLogin">로그인</button>
@@ -70,9 +73,6 @@ export default {
         };
     },
     methods: {
-        async submitFindid(){
-            
-        },
         async checkEmail(){
             // 이름 및 핸드폰번호로 이메일 찾기
             const endpoint = (this.user_auth === '1') ? 'findId_user' : 'findId_tr';
@@ -90,18 +90,27 @@ export default {
                 }
                 });
                 console.log(response.data);
-                this.user_email = response.data.user_email;
-                this.tr_email = response.data.tr_email;
+                if (endpoint === 'findId_user') {
+                    this.user_email = response.data.user_email;
+                    } else {
+                    this.tr_email = response.data.tr_email;
+                    }
+
+                    this.error = ''; // 성공 시 에러 메시지 초기화
 
                 this.error = ''; // 성공 시 에러 메시지 초기화
             } catch(error){
-                if (error.response && error.response.data && error.response.data.message) {
+                console.log("Error response:", error.response);
+    
+                    if (error.response && error.response.data && error.response.data.message) {
                     this.error = error.response.data.message;
-                } else {
+                    } else {
                     this.error = "일치하는 사용자가 없습니다.";
-                }
-                this.user_email = ''; // 에러 발생 시 이메일 초기화
-                console.error(error);
+                    }
+
+                    this.user_email = ''; // 에러 발생 시 이메일 초기화
+                    this.tr_email = ''; // 에러 발생 시 이메일 초기화
+                    console.error("Error message:", this.error);
             }
         },
         goToLogin(){
@@ -158,7 +167,7 @@ export default {
     border-radius: 5px;
 }
 #number2, #number3{
-    height: 20px;
+    height: 40px;
     width: 80px;
     font-size: 16px;
 }
@@ -169,7 +178,7 @@ export default {
     /* position: absolute;
     left: 50%; */
     /* transform: translateX(-50%); */
-    width: 500px;
+    width: 460px;
     height: 40px;
     bottom: 10px; /* 하단에 배치 */
     font-size: 16px;

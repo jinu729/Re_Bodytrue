@@ -173,7 +173,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 header{
     width: 100%;
     height: 80px;
@@ -215,7 +215,7 @@ header .logo img{
 }
 .menu_list .list{
     height: 40px;
-    line-height: 40px;
+    line-height: 60px;
     font-size: 22px;
     font-weight: bold;
     cursor: pointer;

@@ -286,7 +286,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 .join_main{
     width: 100%;
     height: 85%;
@@ -426,7 +426,8 @@ export default {
     height: 120px;
 }
 .address_group .address_row{
-    border: 1px solid #bbdcdf;
+
+    border: 1px solid black;
     height: 40px;
 }
 #postcode{
@@ -445,6 +446,7 @@ export default {
     border: none;
     box-shadow: 1px 1px 5px rgba(255, 218, 5, 0.5);
 }
+
 .address_row .address_search:hover{
     width: 100px;
     font-size: 16px;
