@@ -72,22 +72,31 @@ router.post('/createprogram/:tr_no', function (req, res) {
                         })
                     }
                     try {
-                        const pastDir0 = `${__dirname}` + `../uploads/` + data.pro_img
-                        const pastDir1 = `${__dirname}` + `../uploads/` + data.pro_img1
-                        const pastDir2 = `${__dirname}` + `../uploads/` + data.pro_img2
-                        const pastDir3 = `${__dirname}` + `../uploads/` + data.pro_imgprice
+                        const pastDir0 = `${__dirname}` + `../../uploads/` + data.pro_img
+                        const pastDir1 = `${__dirname}` + `../../uploads/` + data.pro_img1
+                        const pastDir2 = `${__dirname}` + `../../uploads/` + data.pro_img2
+                        const pastDir3 = `${__dirname}` + `../../uploads/` + data.pro_imgprice
                         
                         console.log('pastDir-------------------');
                         console.log(pastDir0);
+                        console.log(pastDir1);
+                        console.log(pastDir2);
+                        console.log(pastDir3);
                         console.log('-------------------');
 
                         const newDir = `${__dirname}` + `../../uploads/program/`;
                         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
 
                         const extension = data.pro_img.substring(data.pro_img.lastIndexOf('.'))
+                        const extension1 = data.pro_img1.substring(data.pro_img1.lastIndexOf('.'))
+                        const extension2 = data.pro_img2.substring(data.pro_img2.lastIndexOf('.'))
+                        const extension3 = data.pro_imgprice.substring(data.pro_imgprice.lastIndexOf('.'))
 
                         console.log('Extenstion-------------------');
                         console.log(extension);
+                        console.log(extension1);
+                        console.log(extension2);
+                        console.log(extension3);
                         console.log('-------------------');
 
                         // 등록 상품의 번호 불러오기
@@ -108,17 +117,17 @@ router.post('/createprogram/:tr_no', function (req, res) {
                                     throw err;
                                 }
                             });
-                            fs.rename(pastDir1, newDir + filename + '-1' + extension, (err) => {
+                            fs.rename(pastDir1, newDir + filename + '-1' + extension1, (err) => {
                                 if (err) {
                                     throw err;
                                 }
                             });
-                            fs.rename(pastDir2, newDir + filename + '-2' + extension, (err) => {
+                            fs.rename(pastDir2, newDir + filename + '-2' + extension2, (err) => {
                                 if (err) {
                                     throw err;
                                 }
                             });
-                            fs.rename(pastDir3, newDir + filename + '-3' + extension, (err) => {
+                            fs.rename(pastDir3, newDir + filename + '-3' + extension3, (err) => {
                                 if (err) {
                                     throw err;
                                 }
@@ -131,17 +140,17 @@ router.post('/createprogram/:tr_no', function (req, res) {
                                 if (error) {
                                     throw error;
                                 }db.query(`insert into img (img_type,img_path,img_pro_no) values (?,?,?)`,
-                                         [1,filename + '-1' + extension,filename], 
+                                         [1,filename + '-1' + extension1,filename], 
                                          function (error, results, fields) {
                                         if (error) {
                                             throw error;
                                         }db.query(`insert into img (img_type,img_path,img_pro_no) values (?,?,?)`,
-                                                 [2,filename + '-2' + extension,filename], 
+                                                 [2,filename + '-2' + extension2,filename], 
                                                  function (error, results, fields) {
                                                 if (error) {
                                                     throw error;
                                                 }db.query(`insert into img (img_type,img_path,img_pro_no) values (?,?,?)`,
-                                                         [3,filename + '-3' + extension,filename], 
+                                                         [3,filename + '-3' + extension3,filename], 
                                                          function (error, results, fields) {
                                                         if (error) {
                                                             throw error;
