@@ -4,19 +4,22 @@
         <div class="admin_container">
             <div class="admin_faq_ans">
                 <div class="admin_faq_question">
-                    <div class="admin_question" id="Q">
                         <div v-for="(faq, i) in paginatedFaqList" :key="i" class="faq_item">
                         <div class="question_box">
-                            <div>Q{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_q }}</div>
-                            <button class="admin_toggle_update">✔</button>
-                            <button class="admin_toggle_delete" @click="delFAQ(faq.faq_no)">❌</button>
-                            <button class="show_toggle" v-if="!faq.visible" @click="toggleAnswer(faq)">▼</button>
-                            <button v-else @click="toggleAnswer(faq)">▲</button>
+                            <div class="question">
+                                Q{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_q }}
+                            </div>
+                            <div class="toggle_button">
+                                <button class="admin_toggle_update">✔</button>
+                                <button class="admin_toggle_delete" @click="delFAQ(faq.faq_no)">❌</button>
+                                <button class="show_toggle" v-if="!faq.visible" @click="toggleAnswer(faq)">▼</button>
+                                <button class="hidden_toggle" v-else @click="toggleAnswer(faq)">▲</button>
+                            </div>
                         </div>
                         <div v-if="faq.visible" class="answer_box">
                             ▶A{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_a }}
+                            <button class="admin_toggle_update2">✔</button>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -106,7 +109,7 @@
     height: 60px;
 }
 .admin_container {
-    width: 80%;
+    width: 50%;
     padding-top: 30px;
     margin: 0 auto;
 }
@@ -121,7 +124,7 @@
     border: 1px solid rgb(229, 226, 226);
     margin: 20px auto;
     font-size: 25px;
-    width: 60%;
+    width:100%;
 }
 .admin_btn_box {
     float: right;
@@ -147,6 +150,13 @@
     border: none;
  }
  .show_toggle {
+    padding: 3px 1px;
+    cursor: pointer;
+    font-size: 16px;
+    background: none;
+    border: none;
+ }
+ .hidden_toggle {
     padding: 3px 1px;
     cursor: pointer;
     font-size: 16px;
@@ -190,11 +200,32 @@
 .question_box{
     padding: 10px;
     border-radius: 5px;
-    
+    border: 1px solid rgb(229, 226, 226);
+    margin-top: 30px;
 }
-
 .answer_box {
     padding: 10px;
     border-radius: 5px;
+    margin-top: 15px;
+    border: 1px solid rgb(229, 226, 226);
+    font-size: 25px;
+    font-weight: bold;
+}
+.question {
+    width: 90%;
+    font-size: 25px;
+    font-weight: bold;
+}
+.toggle_button {
+    float: right;
+    margin-top: -35px;
+}
+.admin_toggle_update2 {
+    float: right;
+    padding: 3px 1px;
+    cursor: pointer;
+    font-size: 20px;
+    background: none;
+    border: none;
 }
 </style>
