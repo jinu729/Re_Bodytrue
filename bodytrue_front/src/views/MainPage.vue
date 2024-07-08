@@ -13,25 +13,25 @@
     </div>
     <div class="page-buttons">
       <router-link to="/prolist/0" class="page-button">
-        <img src="../image/buttonImage/다이어트.png" alt="Page 1"><span>&nbsp;&nbsp;&nbsp;다이어트</span>
+        <img src="../image/buttonImage/다이어트.png" alt="Page 1"><span>다이어트</span>
       </router-link>
       <router-link to="/prolist/1" class="page-button">
-        <img src="../image/buttonImage/체형교정.png" alt="Page 2"><span>&nbsp;&nbsp;체형교정</span>
+        <img src="../image/buttonImage/체형교정.png" alt="Page 2"><span>체형교정</span>
       </router-link>
       <router-link to="/prolist/2" class="page-button">
-        <img src="../image/buttonImage/대회.png" alt="Page 3"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;대회</span>
+        <img src="../image/buttonImage/대회.png" alt="Page 3"><span>대회</span>
       </router-link>
       <router-link to="/prolist/3" class="page-button">
-        <img src="../image/buttonImage/체력증진.png" alt="Page 4"><span>&nbsp;&nbsp;체력증진</span>
+        <img src="../image/buttonImage/체력증진.png" alt="Page 4"><span>체력증진</span>
       </router-link>
       <router-link to="/prolist/4" class="page-button">
-        <img src="../image/buttonImage/홈트.png" alt="Page 5"><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;홈트</span>
+        <img src="../image/buttonImage/홈트.png" alt="Page 5"><span>홈트</span>
       </router-link>
     </div>
     </div>
   </template>
   
-  <script>
+<script>
   export default {
     data() {
       return {
@@ -53,9 +53,9 @@
       }
     }
   };
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
   /* 전체 캐러셀 컨테이너 스타일 */
   .carousel {
     width: 800px; /* 캐러셀 전체 너비 */
@@ -118,12 +118,15 @@
   padding: 0;
   cursor: pointer;
   margin: 50px 50px;
-
+  justify-content: center;
 }
-
+.page-button span{
+  display: flex;
+  justify-content: center;
+}
 .page-button img {
   width: 100%; /* 이미지 너비 100%로 설정 */
   height: 100%; /* 이미지 높이 100%로 설정 */
 }
-  </style>
+</style>
   

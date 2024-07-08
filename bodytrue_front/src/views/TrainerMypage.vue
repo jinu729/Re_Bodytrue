@@ -1,6 +1,4 @@
 <template>
-    <html>
-    <body>
          <div class="mypage_main">
                 <div class="section1">
                     <div class="profile">
@@ -41,171 +39,116 @@
                     <div class="mpro_list">
                         <p class="mpro_user">내 프로그램</p>
                     </div>
-                    <div class="mpro_table">
-                        <table class="table_list">
-                            <thead>
-                                <tr>
-                                    <th>프로그램 명</th>
-                                    <th>태그</th>
-                                    <th>프로그램 운영 기간</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-for="pro in pagingData" :key="pro.pro_name">
-                                    <td>{{pro.pro_name}}</td>
-                                    <td>{{pro.pro_tag }}</td>
-                                    <td>{{pro.pro_startdate}} - {{ pro.pro_enddate }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div v-if="myPro.length > 0" class="mpro_table">
+                        <div class="mpro_table">
+                            <table class="table_list">
+                                <thead>
+                                    <tr>
+                                        <th>프로그램 명</th>
+                                        <th>태그</th>
+                                        <th>프로그램 운영 기간</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="pro in pagingData" :key="pro.pro_name">
+                                        <td @click="goToProdetail(pro.pro_no)">{{pro.pro_name}}</td>
+                                        <td>{{getTag(pro.pro_tag)}}</td>
+                                        <td>{{pro.pro_startdate}} - {{ pro.pro_enddate }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--내 프로그램 리스트 페이징-->
+                        <div class="pagination">
+                            <ul class="number_box">
+                                <li @click="prevPageGroup" :class="{disabled: currentPageGroup === 1}"><img src="../image/prev.png"/></li>
+                                <li v-for="page in currentGroupPages" :key="page" @click="changePage(page)" :class="{active: page === currentPage}">
+                                {{ page }}</li>
+                                <li @click="nextPageGroup" :class="{disabled: currentPageGroup === pageGroups.length}"><img src="../image/next.png"/></li>
+                            </ul>
+                        </div>
                     </div>
-                    <!--내 프로그램 리스트 페이징-->
-                    <div class="pagination">
-                        <ul class="number_box">
-                            <li @click="prevPageGroup" :class="{disabled: currentPageGroup === 1}"><img src="../image/prev.png"/></li>
-                            <li v-for="page in currentGroupPages" :key="page" @click="changePage(page)" :class="{active: page === currentPage}">
-                            {{ page }}</li>
-                            <li @click="nextPageGroup" :class="{disabled: currentPageGroup === pageGroups.length}"><img src="../image/next.png"/></li>
-                        </ul>
+                    <div v-else class="noprogram">
+                        <p>프로그램을 등록하세요.</p>
                     </div>
                 </div>
                 <div class="section4" id="section4">
                     <div class="cal_list">
                         <p class="cal_user">프로그램 예약</p>
                     </div>
-                    <div class="cal_table">
-                        <table class="table_list">
-                            <thead>
-                                <tr>
-                                    <th>프로그램 명</th>
-                                    <th>예약 회원</th>
-                                    <th>예약시간</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>김숭메 선생님의 잃어버린키 5센치를 찾아주는 기적의손길</td>
-                                    <td>김유연</td>
-                                    <td>2024-06-18 09:00</td>
-                                </tr>
-                                <tr>
-                                    <td>민승호선생님의 뼈와 살을 분리해주마 다이어트코스</td>
-                                    <td>이광호</td>
-                                    <td>2024-06-18 11:00</td>
-                                </tr>
-                                <tr>
-                                    <td>민승호선생님의 뼈와 살을 분리해주마 다이어트코스</td>
-                                    <td>문승혁</td>
-                                    <td>2024-06-20 09:00</td>
-                                </tr>
-                                <tr>
-                                    <td>SNS에서 대회 입상사진만 보던 내가 이제는 보디빌딩 챔피언?!</td>
-                                    <td>박진혁</td>
-                                    <td>2024-06-22 09:00</td>
-                                </tr>
-                                <tr>
-                                    <td>김숭메의 요가타임</td>
-                                    <td>밍숭맹숭</td>
-                                    <td>2024-06-25 09:00</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div v-if="myCal.length > 0">
+                        <div class="cal_table">
+                            <table class="table_list">
+                                <thead>
+                                    <tr>
+                                        <th>프로그램 명</th>
+                                        <th>예약 회원</th>
+                                        <th>예약시간</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="cal in cpagingData" :key="cal.cal_startdate">
+                                        <td @click="goToProdetail(cal.pro_no)">{{cal.pro_name}}</td>
+                                        <td>{{cal.user_name}}</td>
+                                        <td>{{cal.cal_startdate}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!--내 예약리스트 페이징-->
+                        <div class="pagination">
+                                <ul class="number_box">
+                                    <li @click="cprevPageGroup" :class="{disabled: cCurrentPageGroup === 1}"><img src="../image/prev.png"/></li>
+                                    <li v-for="page in cCurrentGroupPage" :key="page" @click="cchangePage(page)" :class="{active: page === cCurrentPage}">
+                                        {{page}}</li>
+                                    <li @click="cnextPageGroup" :class="{disabled: cCurrentPageGroup === cpageGroups.length}"><img src="../image/next.png"/></li>
+                                </ul>
+                        </div>
                     </div>
-                    <div class="list_number">
-                        <ul class="number_box">
-                            <li>1</li>
-                            <li>2</li>
-                            <li>3</li>
-                            <li>4</li>
-                            <li>5</li>
-                        </ul>
+                    <div v-else class="noprogram">
+                        <p>예약 내역이 없습니다.</p>
                     </div>
                 </div>
                 <div class="section5" id="section5">
                     <div class="prore_list">
                         <p class="prore_user">프로그램 리뷰</p>
                     </div>
-                    <div class="prore_table">
-                        <div class="section5_list">
-                            <div class="prore_left">
-                                <div class="prore_leftop">
-                                    <ul class="table_list">
-                                        <li class="prore_proname"><img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span>4.8</span></li>
-                                        <li class="prore_content"><textarea name="content" id="review_content" disabled style="width: 720px; height: 100px; resize: none; background-color: white; font-size: 16px; color: black; padding: 10px;border: 0;">선생님이 너무 착해요</textarea></li>
-                                        <li class="prore_reviewdate">작성일 : 2024-06-20</li>
+                    <div v-if="myRe.length > 0">
+                        <div class="prore_table">
+                            <div v-for="review in moreReviewData" :key="review.re_no" class="section5_list">
+                                <div class="prore_left">
+                                    <div class="prore_leftop">
+                                        <ul class="table_list">
+                                            <li class="prore_proname"><img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span>{{review.re_rate}}</span></li>
+                                            <li class="prore_content">
+                                                <textarea v-model="review.re_comment" name="content" id="review_content" disabled style="width: 720px; height: 100px; resize: none; background-color: white; font-size: 16px; color: black; padding: 10px;border: 0;"></textarea></li>
+                                            <li class="prore_reviewdate">작성일 : {{review.re_date}}</li>
+                                        </ul>
+                                    </div>
+                                    <div class="prore_leftbottom">
+                                        <!--이미지 있을때만 이미지 보여주기-->
+                                        <img v-if="review.img_path" :src="require(`../../../bodytrue_back/uploads/program/${review.img_path}`)" >
+                                    </div>
+                                </div>
+                                <div class="prore_right">
+                                    <ul class="text_list">
+                                        <li class="protext_writeuser">작성자</li>
+                                        <li class="protext_username">[{{ naming(review.user_name) }}]</li>
+                                        <li class="protext_proname">프로그램 명 </li>
+                                        <li class="protext_proname">[{{review.pro_name}}]</li>
                                     </ul>
                                 </div>
-                                <div class="prore_leftbottom">
-                                    <img src="../image/running.png" alt="">
-                                    <img src="../image/running.png" alt="">
-                                    <img src="../image/running.png" alt="">
-                                </div>
-                            </div>
-                            <div class="prore_right">
-                                <ul class="text_list">
-                                    <li class="protext_writeuser">작성자</li>
-                                    <li class="protext_username">[문**]</li>
-                                    <li class="protext_proname">프로그램 명 </li>
-                                    <li class="protext_proname">[민승호선생님의 뼈와 살을 분리해주마 다이어트코스]</li>
-                                </ul>
                             </div>
                         </div>
-                        <div class="section5_list">
-                            <div class="prore_left">
-                                <div class="prore_leftop">
-                                    <ul class="table_list">
-                                        <li class="prore_proname"><img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span>4.8</span></li>
-                                        <li class="prore_content"><textarea name="content" id="review_content" disabled style="width: 720px; height: 100px; resize: none; background-color: white; font-size: 16px; color: black; padding: 10px;border: 0;">잃어 버렸던 키를 찾은 느낌이에요</textarea></li>
-                                        <li class="prore_reviewdate">작성일 : 2024-06-20</li>
-                                    </ul>
-                                </div>
-                                <div class="prore_leftbottom">
-                                    <img src="../image/running.png" alt="">
-                                    <img src="../image/running.png" alt="">
-                                    <img src="../image/running.png" alt="">
-                                </div>
-                            </div>
-                            <div class="prore_right">
-                                <ul class="text_list">
-                                    <li class="protext_writeuser">작성자</li>
-                                    <li class="protext_username">[김**]</li>
-                                    <li class="protext_proname">프로그램 명 </li>
-                                    <li class="protext_proname">[김숭메 선생님의 잃어버린키 5센치를 찾아주는 기적의손길]</li>
-                                </ul>
-                            </div>
+                        <div class="addview">
+                            <button v-if="myRe.length > moreCount " class="addview_btn" type="button" @click="showmore()">더보기</button>
                         </div>
-                        <div class="section5_list content" id="moreContent" style="display: flex;">
-                            <div class="prore_left">
-                                <div class="prore_leftop">
-                                    <ul class="table_list">
-                                        <li class="prore_proname"><img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span>4.8</span></li>
-                                        <li class="prore_content"><textarea name="content" id="review_content" disabled style="width: 720px; height: 100px; resize: none; background-color: white; font-size: 16px; color: black; padding: 10px;border: 0;">잃어 버렸던 키를 찾은 느낌이에요</textarea></li>
-                                        <li class="prore_reviewdate">작성일 : 2024-06-20</li>
-                                    </ul>
-                                </div>
-                                <div class="prore_leftbottom">
-                                    <img src="../image/mainpage/main1.jpg" alt="">
-                                    <img src="../image/running.png" alt="">
-                                    <img src="../image/running.png" alt="">
-                                </div>
-                            </div>
-                            <div class="prore_right">
-                                <ul class="text_list">
-                                    <li class="protext_writeuser">작성자</li>
-                                    <li class="protext_username">[박**]</li>
-                                    <li class="protext_proname">프로그램 명 </li>
-                                    <li class="protext_proname">[SNS에서 대회 입상사진만 보던 내가 이제는 보디빌딩 챔피언?!]</li>
-                                </ul>
-                            </div>
-                        </div>
-                    <div class="addview">
-                        <button class="addview_btn" type="button" onclick="toggleContent()">더보기</button>
+                    </div>
+                    <div v-else class="noreviewlist">
+                        <p>리뷰 내역이 없습니다.</p>
                     </div>
                 </div>
-                </div>
             </div>
-    </body>
-</html>
 </template>
 <script>
 import axios from 'axios';
@@ -216,12 +159,21 @@ export default {
             trData:{},
             tr_no: this.$route.params.tr_no,
             myPro:[],
+            myCal:[],
+            myRe:[],
 
             //페이징용
             currentPage: 1,
             itemsPerPage: 5,
+            
+            cCurrentPage: 1,
+            citemsPerPage: 5,
 
-            currentPageGroup:1 //프로그램 리스트 페이지 그룹 
+            currentPageGroup:1, //프로그램 리스트 페이지 그룹 
+            cCurrentPageGroup:1, //예약 리스트 페이지 그룹
+
+            //리뷰 더보기용
+            moreCount:1
         }
     },
 
@@ -255,15 +207,52 @@ export default {
                 }
                 return [];
         },
+        //예약 리스트 페이지 계산
+        cpagingData(){
+                const start = (this.cCurrentPage -1 ) * this.citemsPerPage;
+                const end = start + this.citemsPerPage;
+                return this.myCal.slice(start,end);
+        },
+        ctotalPages(){
+            return Math.ceil(this.myCal.length / this.citemsPerPage);
+        },
+        cpageGroups(){
+            const groups=[];
+            for(let i = 1; i<= this.ctotalPages; i+=5){
+                groups.push({
+                    start:i,
+                    end: Math.min(i + 4, this.ctotalPages),
+                });
+            }
+            return groups;
+        },
+        cCurrentGroupPage(){
+            const group = this.cpageGroups[this.cCurrentPageGroup - 1];
+            if(group){
+                return Array.from({ length: group.end - group.start + 1}, (_,i) => group.start + i); 
+            }
+            return [];
+        },
+
+        //리뷰 카운트 계산
+        moreReviewData(){
+            return this.myRe.slice(0, this.moreCount);
+        }
+
     },
 
     created(){
         this.trinfo();
         this.prolist();
-
+        this.callist();
+        this.relist();
     },
 
     methods:{
+        //상품 페이지로 이동
+        goToProdetail(pro_no){
+            this.$router.push(`/prodetail/${pro_no}`);
+        },
         //트레이너 정보 확인
         async trinfo(){
             const tr_no = this.$route.params.tr_no;
@@ -289,7 +278,49 @@ export default {
                 console.error('프로그램 리스트 에러 발생',error);
             }
         },
-
+        //태그 네이밍 붙히기
+        getTag(pro_tag){
+            const tagmapping ={
+                0: '다이어트',
+                1: '체형교정',
+                2: '대회',
+                3: '체력증진',
+                4: '홈트'
+            };
+            return tagmapping[pro_tag];
+        },
+        //내 예약 리스트 확인
+        async callist(){
+            const tr_no = this.$route.params.tr_no;
+            try{
+                const res = await axios.post(`http://localhost:3000/trainer/trcallist`,{tr_no: tr_no});
+                const data = res.data;
+                this.myCal = data;
+                console.log("myCal", this.myCal);
+            }catch(error){
+                console.error('예약 리스트 에러 발생', error);
+            }
+        },
+        //내 리뷰 리스트 확인
+        async relist(){
+            const tr_no = this.$route.params.tr_no;
+            try{
+                const res = await axios.post(`http://localhost:3000/trainer/trrelist`, {tr_no : tr_no});
+                const data = res.data;
+                this.myRe = data;
+                console.log("myRe", this.myRe);
+            } catch(error){
+                console.error('리뷰 리스트 에러 발생', error);
+            }
+        },
+        // 리뷰에 이름 ** 채워넣기
+        naming(username){
+            if(!username){
+                return '';
+            }
+            const making = username.slice(0,1) + '**';
+            return making;
+        },
         //페이징
             changePage(page){
                 if(page > 0 && page <= this.totalPages){
@@ -318,6 +349,39 @@ export default {
                 this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
                 }
             },
+            cchangePage(page){
+                if(page > 0 && page <= this.ctotalPages){
+                    this.cCurrentPage = page;
+                }
+            },
+            prevCPage(){
+                if(this.cCurrentPage > 1){
+                    this.cchangePage(this.cCurrentPage - 1);
+                }
+            },
+            nextCPage(){
+                if(this.cCurrentPage < this.ctotalPages){
+                    this.cchangePage(this.cCurrentPage + 1);
+                }
+            },
+            cnextPageGroup(){
+                if(this.cCurrentPageGroup < this.cpageGroups.length){
+                    this.cCurrentPageGroup++;
+                    this.cchangePage(this.cpageGroups[this.cCurrentPageGroup - 1].start);
+                }
+            },
+            cprevPageGroup(){
+                if(this.cCurrentPageGroup > 1){
+                    this.cCurrentPageGroup--;
+                    this.cchangePage(this.cpageGroups[this.cCurrentPageGroup -1].start);
+                }
+            },
+
+            //리뷰목록 더보기
+            showmore(){
+                console.log("coutn",this.moreCount);
+                return this.moreCount += 1;
+            }
 
     },
     
@@ -334,13 +398,13 @@ export default {
 /* section1 = user */
 .mypage_main .section1{
     width: 100%;
-    height: 300px;
+    /* height: 300px; */
     /* background-color: aqua; */
     border-bottom: 1px solid black;
 }
 .section1 .profile{
     width: 100%;
-    margin: 0 auto;
+    /* margin: 0 auto; */
     display: flex;
     flex-wrap: wrap;
     /* justify-content: space-between; */
@@ -482,7 +546,8 @@ export default {
         /* color: white; */
     }
     .number_box img{
-        width:15px;
+        width:20px;
+        /* padding-top:5px; */
     }
 
 /* section4 = review */
@@ -565,13 +630,13 @@ export default {
 }
 .table_list .prore_reviewdate{
     font-size: 16px;
-    padding-top: 90px;
 }
 
 .prore_left .prore_leftbottom{
     width: 740px;
     display: flex;
     justify-content: space-between;
+    padding-top: 
 }
 .prore_left .prore_leftbottom img{
     width: 200px;
@@ -613,5 +678,19 @@ export default {
 .addview .addview_btn:hover{
     background-color: #0056b3;
 }
-
+.noprogram{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 150px;
+        font-size: 26px;
+}
+.noreviewlist{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 150px;
+        font-size: 26px;
+        padding-bottom: 50px;
+}
 </style>
