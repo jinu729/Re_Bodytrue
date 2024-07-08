@@ -600,6 +600,7 @@ router.post("/user_join", async (req, res) => {
 
   const email = req.body.email1 + '@' + req.body.email2;
   const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
+  
   const user = {
     //프론트에서 전달해주는 데이터
     USER_EMAIL: req.body.email,
@@ -630,6 +631,7 @@ router.post("/user_join", async (req, res) => {
               code: 200,
               message: "회원가입 성공",
               });
+              
           }
   });
 });
