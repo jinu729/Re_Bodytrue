@@ -3,7 +3,7 @@
         <div class="join_wrap">
             <form @submit.prevent="onSubmitForm">
             <div class="main_title">
-                <h2>회원가입</h2>
+                <h2 style="font-weight: bold;">회원가입</h2>
             </div>
             <div class="join_list">
                 <form action="#" method="post">
@@ -12,7 +12,7 @@
                             <span>&nbsp;&nbsp;&nbsp;이메일</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="email" v-model="user_email1" id="email1" name="email"> 
+                            <input type="email" v-model="user_email1" id="email1" name="email" maxlength="16" placeholder="이메일"> 
                             <span>&nbsp;@&nbsp;</span>
                             <select name="email" v-model="user_email2" id="email2">
                                 <option value="naver.com">naver.com</option>
@@ -22,33 +22,37 @@
                             </select>
                             <span class="confirm">&nbsp;&nbsp;(영소문자/숫자,3~16자)</span>
                             <button type="button" class="btn_confirm" @click="confirm_email">중복확인</button>
-                        </div>                        
+                        </div>  
+                        <div v-if="errors.email" class="error" hidden>{{ errors.email }}</div>                      
                     </div>                    
                     <div class="form_group">
                         <div class="form_left">
                             <span>&nbsp;&nbsp;&nbsp;비밀번호</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="password" id="password1" v-model="password1" name="password1">
+                            <input type="password" id="password1" v-model="password1" name="password1" maxlength="20" placeholder="비밀번호">
                             <span class="confirm">&nbsp;&nbsp;(영문 대소문자/숫자/특수문자 중 3가지 이상 조합,8~20자)</span>
-                        </div>                        
+                        </div>
+                        <div v-if="errors.password1" class="error" hidden>{{ errors.password1 }}</div>                          
                     </div>                    
                     <div class="form_group">
                         <div class="form_left">
                             <span>&nbsp;&nbsp;&nbsp;비밀번호 확인</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="password" id="password2" v-model="password2" name="password2">
+                            <input type="password" id="password2" v-model="password2" name="password2" maxlength="20" placeholder="비밀번호 확인">
                             <button type="button" class="btn_confirm1" @click="confirm_password">비밀번호확인</button>
-                        </div>                        
+                        </div> 
+                        <div v-if="errors.password2" class="error" hidden>{{ errors.password2 }}</div>                          
                     </div>                    
                     <div class="form_group">
                         <div class="form_left">
                             <span>&nbsp;&nbsp;&nbsp;이름</span>
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
-                            <input type="text" id="username" v-model="user_name" name="username">
-                        </div>                        
+                            <input type="text" id="username" v-model="user_name" name="username" placeholder="이름">
+                        </div>  
+                        <div v-if="errors.user_name" class="error" hidden>{{ errors.user_name }}</div>                      
                     </div>                    
                     <div class="form_group">
                         <div class="form_left">
@@ -61,7 +65,8 @@
                             <label for="trainer">
                                 <input type="radio" id="trainer" v-model="user_auth" name="auth" value="2"> 트레이너
                             </label>
-                        </div>                        
+                        </div>
+                        <div v-if="errors.user_auth" class="error" hidden>{{ errors.user_auth }}</div>                        
                     </div>                    
                     <div class="form_group">
                         <div class="form_left">
@@ -74,7 +79,8 @@
                             <label for="women">
                                 <input type="radio" id="women" v-model="gender" name="sex" value="F"> 여자
                             </label>
-                        </div>                        
+                        </div>   
+                        <div v-if="errors.gender" class="error" hidden>{{ errors.gender }}</div>                     
                     </div>                    
                     <div class="form_group">
                         <div class="form_left">
@@ -94,6 +100,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div v-if="errors.address" class="error" hidden>{{ errors.address }}</div>
                     </div>    
                     <div class="form_group">
                         <div class="form_left">
@@ -106,11 +113,12 @@
                                 <option value="012">012</option>
                             </select>
                             <span> - </span>
-                            <input type="text" name="number2" v-model="number2" id="number2">
+                            <input type="text" name="number2" v-model="number2" id="number2" maxlength="4">
                             <span> - </span>
-                            <input type="text" name="number3" v-model="number3" id="number3">
+                            <input type="text" name="number3" v-model="number3" id="number3" maxlength="4">
                         </div>                        
-                    </div>                  
+                    </div>  
+                    <div v-if="errors.phone" class="error" hidden>{{ errors.phone }}</div>                
                 </form>
             </div>
             <div class="join_btn">
@@ -140,9 +148,92 @@ export default {
             number1: '010',
             number2: '',
             number3: '',
+            errors: {},
         };
     },
     methods: {
+        validateForm() {
+            this.errors = {};
+
+            // 이메일 유효성 검사
+            if (!this.user_email1) {
+                this.errors.email = '이메일을 입력해 주세요.';
+                alert(this.errors.email);
+                return false;
+            } else if (this.user_email1.length < 3 || this.user_email1.length > 16) {
+                this.errors.email = '이메일은 3~16자 사이여야 합니다.';
+                alert(this.errors.email);
+                return false;
+            }
+
+            // 비밀번호 유효성 검사
+            if (!this.password1) {
+                this.errors.password1 = '비밀번호를 입력해 주세요.';
+                alert(this.errors.password1);
+                return false;
+            } else {
+                const password = this.password1;
+                if (password.length < 8 || password.length > 20) {
+                    this.errors.password1 = '비밀번호는 8~20자 사이여야 합니다.';
+                    alert(this.errors.password1);
+                    return false;
+                }
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasLowerCase = /[a-z]/.test(password);
+                const hasNumbers = /\d/.test(password);
+                const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
+                if (typesCount < 3) {
+                    this.errors.password1 = '비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.';
+                    alert(this.errors.password1);
+                    return false;
+                }
+            }
+
+            // 비밀번호 확인 유효성 검사
+            if (this.password1 !== this.password2) {
+                this.errors.password2 = '비밀번호가 일치하지 않습니다.';
+                alert(this.errors.password2);
+                return false;
+            }
+
+            // 이름 유효성 검사
+            if (!this.user_name) {
+                this.errors.user_name = '이름을 입력해 주세요.';
+                alert(this.errors.user_name);
+                return false;
+            }
+
+            // 가입자 유형 유효성 검사
+            if (!this.user_auth) {
+                this.errors.user_auth = '가입자 유형을 선택해 주세요.';
+                alert(this.errors.user_auth);
+                return false;
+            }
+
+            // 성별 유효성 검사
+            if (!this.gender) {
+                this.errors.gender = '성별을 선택해 주세요.';
+                alert(this.errors.gender);
+                return false;
+            }
+
+            // 주소 유효성 검사
+            if (!this.zipcode || !this.address) {
+                this.errors.address = '주소를 입력해 주세요.';
+                alert(this.errors.address);
+                return false;
+            }
+
+            // 전화번호 유효성 검사
+            if (!this.number2 || !this.number3) {
+                this.errors.phone = '휴대전화번호를 입력해 주세요.';
+                alert(this.errors.phone);
+                return false;
+            }
+
+            return true;
+        },
         async confirm_email() {
 
             if (this.user_email1.length < 3 || this.user_email1.length > 16) {
@@ -256,6 +347,10 @@ export default {
         //     }
         // },
         async onSubmitForm() {
+            if (!this.validateForm()) {
+                return;
+            }
+            
             const endpoint = this.user_auth === '1' ? 'user_join' : 'trainer_join';
             const data = {
                 email: `${this.user_email1}@${this.user_email2}`,
@@ -284,7 +379,13 @@ export default {
             }
         },
         exit(){
-            this.$router.push({path: "/"})
+            if (Object.values(this.$data).some(field => field)) {
+                if (confirm("회원가입을 취소하시겠습니까?")) {
+                    this.$router.push({ path: "/" });
+                }
+            } else {
+                this.$router.push({ path: "/" });
+            }
         }
     }
 }
@@ -313,7 +414,7 @@ export default {
 }
 .join_main .join_list{
     width: 100%;
-    padding-top: 10px;
+    padding-top: 25px;
     padding-left: 5px;
 }
 .join_list .form_group{
@@ -322,6 +423,7 @@ export default {
     /* border: 1px solid black; */
     height: 40px;
     line-height: 40px;
+    /* margin-top: 10px; */
 }
 .form_group .form_left{
     width: 15%;
@@ -330,12 +432,13 @@ export default {
     background-color: #4fced2;
     color: white;
     height: 40px;
-    
+    border-radius: 5px 0 0 5px;
 }
 .form_group .form_right{
     width: 84.5%;
     height: 40px;
     border: 1px solid #bbdcdf;
+    border-radius: 0 5px 5px 0;
 }
 #email1{
     width: 130px;
@@ -344,6 +447,7 @@ export default {
     font-size: 16px;
     height: 27px;
     border: 1px solid #bbdcdf;
+    padding-left: 5px;
 }
 #email2{
     width: 150px;
@@ -356,6 +460,7 @@ export default {
 }
 .form_right .btn_confirm{
     width: 100px;
+    height: 27px;
     font-size: 16px;
     margin-left: 10px;
     line-height: 20px;
@@ -367,6 +472,7 @@ export default {
 }
 .form_right .btn_confirm:hover{
     width: 100px;
+    height: 27px;
     font-size: 16px;
     margin-left: 10px;
     line-height: 20px;
@@ -379,15 +485,20 @@ export default {
 #password1{
     width: 400px;
     line-height: 20px;
+    height: 27px;
     border: 1px solid #bbdcdf;
+    padding-left: 5px;
 }
 #password2{
     width: 400px;
     line-height: 20px;
+    height: 27px;
     border: 1px solid #bbdcdf;
+    padding-left: 5px;
 }
 .form_right .btn_confirm1{
     width: 150px;
+    height: 27px;
     font-size: 16px;
     margin-left: 10px;
     line-height: 20px;
@@ -399,6 +510,7 @@ export default {
 }
 .form_right .btn_confirm1:hover{
     width: 150px;
+    height: 27px;
     font-size: 16px;
     margin-left: 10px;
     line-height: 20px;
@@ -410,8 +522,9 @@ export default {
 }
 #username{
     border: 1px solid #bbdcdf;
-    height: 20px;
+    height: 27px;
     font-size: 16px;
+    padding-left: 5px;
 }
 .form_group:nth-child(7){
     height: 120px;
@@ -429,22 +542,26 @@ export default {
     height: 120px;
 }
 .address_group .address_row{
-
+    border-radius: 0 5px 5px 0;
     border: 1px solid #bbdcdf;
     height: 40px;
 }
 #postcode{
     line-height: 20px;
     font-size: 16px;
+    height: 27px;
     border: 1px solid #bbdcdf;
+    padding-left: 5px;
 }
 .address_row .address_search{
     width: 100px;
+    height: 27px;
     font-size: 16px;
     margin-left: 10px;
     line-height: 22px;
     background-color:#f2c444;
-    color:rgb(69, 63, 61);
+    /* color:rgb(69, 63, 61); */
+    color: white;
     border-radius: 5px;
     border: none;
     box-shadow: 1px 1px 5px rgba(255, 218, 5, 0.5);
@@ -465,15 +582,18 @@ export default {
     width: 300px;
     line-height: 20px;
     font-size: 16px;
+    height: 27px;
     border: 1px solid #bbdcdf;
+    padding-left: 5px;
 }
 #number1{
+    height: 27px;
     border: 1px solid #bbdcdf;
     font-size: 16px;
 }
 #number2, #number3{
     height: 27px;
-    width: 54px;
+    width: 70px;
     font-size: 16px;
     border: 1px solid #bbdcdf;
 }
@@ -484,7 +604,8 @@ export default {
     text-align: center;
 }
 #clear{
-    width: 100px;
+    width: 120px;
+    height: 35px;
     font-size: 18px;
     margin: 0 20px;
     border-radius: 5px;
@@ -497,7 +618,8 @@ export default {
     box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
 }
 #clear:hover{
-    width: 100px;
+    width: 120px;
+    height: 35px;
     font-size: 18px;
     margin: 0 20px;
     border-radius: 5px;
@@ -510,7 +632,8 @@ export default {
     box-shadow: 1px 1px 5px rgba(97, 242, 255, 0.5);
 }
 #exit{
-    width: 100px;
+    width: 120px;
+    height: 35px;
     font-size: 18px;
     margin: 0 20px;
     border-radius: 5px;
@@ -520,7 +643,8 @@ export default {
     color: white;
 }
 #exit:hover{
-    width: 100px;
+    width: 120px;
+    height: 35px;
     font-size: 18px;
     margin: 0 20px;
     border-radius: 5px;

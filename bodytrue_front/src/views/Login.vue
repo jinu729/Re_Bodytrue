@@ -1,6 +1,6 @@
 <template>
     <body>
-        <h1 style="text-align: center; margin-top: 20px">로그인</h1>
+        <h1 style="text-align: center; padding-top: 20px">로그인</h1>
         <div class="line-center"></div>
         <div class="login-container">
                 <div class="form_right">
@@ -115,194 +115,224 @@ export default {
             setUser: 'user', // user 뮤테이션을 setUser 메서드로 매핑
             setTrainer: 'trainer', // trainer 뮤테이션을 setTrainer 메서드로 매핑
             setAdmin: 'admin', // user 뮤테이션을 setUser 메서드로 매핑
-        }),
-        // loadUserId() {
-        //     const savedUserId = localStorage.getItem('savedUserId');
-        //     if (savedUserId) {
-        //         this.email = savedUserId;
-        //         this.rememberMe = true;
-        //     }
-        // },
-        async login() {
-            const endpoint = (this.user_auth === '0' || this.user_auth === '1') ? 'login_user' : 'login_tr';
-            try {
-                console.log(endpoint);
-                const res = await axios({
-                    url: `http://localhost:3000/auth/${endpoint}`,
-                    method: "POST",
-                    data: {
-                        email: this.email,
-                        pwd: this.pwd,
-                        user_auth: this.user_auth,
-                    },
-                });
-                console.log(res.data.data);
-                console.log(res.data);
-                console.log("res.data.email", res.data.email);
-                console.log("res.data.user_auth", res.data.user_auth);
+            }),
+            // loadUserId() {
+            //     const savedUserId = localStorage.getItem('savedUserId');
+            //     if (savedUserId) {
+            //         this.email = savedUserId;
+            //         this.rememberMe = true;
+            //     }
+            // },
+            async login() {
+                const endpoint = (this.user_auth === '0' || this.user_auth === '1') ? 'login_user' : 'login_tr';
+                try {
+                    console.log(endpoint);
+                    const res = await axios({
+                        url: `http://localhost:3000/auth/${endpoint}`,
+                        method: "POST",
+                        data: {
+                            email: this.email,
+                            pwd: this.pwd,
+                            user_auth: this.user_auth,
+                        },
+                    });
+                    console.log(res.data.data);
+                    console.log(res.data);
+                    console.log("res.data.email", res.data.email);
+                    console.log("res.data.user_auth", res.data.user_auth);
 
-                if (res.data.code === 200) {
-                    // 로그인 성공 시
-                    if (this.user_auth === '1') {
-                        const userPayload = {
-                            user_email: res.data.email,
-                            user_no: res.data.user_no,
-                            user_auth: res.data.user_auth,
-                        };
-                        this.$store.commit('setUser',userPayload);
-                        // this.setUser(userPayload);
-                        window.location.href = "/";
-                        console.log(userPayload);
-                        console.log("user_email",res.data.email);
-                        console.log("user_auth",res.data.user_auth);
-                        //console.log({user_auth : userPayload.user_auth});
-                    } else if (this.user_auth === '2') {
-                        const tr_admit = res.data.tr_admit || 0;
-                        if (tr_admit === 1) {
-                                const trainerPayload = {
-                                    tr_email: res.data.email,
-                                    tr_no: res.data.tr_no,
-                                    tr_admit: res.data.tr_admit,
-                                };
-                                this.$store.commit('setTrainer', trainerPayload);
-                                window.location.href = "/trainer";
-                                console.log("trainerpayload", trainerPayload);
-                            } else {
-                                // tr_admit이 1이 아닐 때 처리
-                                console.log("트레이너 승인 대기 중");
-                                alert("트레이너 승인이 필요합니다.");
-                            }
-                    } else {
-                        //     const adminPayload = {
-                        //         user_email : res.data.email,
-                        //         user_no : res.data.user_no,
-                        //         user_auth: res.data.user_auth,
-                        //     };
-                        // this.$store.commit('setUser',adminPayload);
-                        // window.location.href = "/admin";
-                        const user_auth = res.data.user_auth;
-                        if(user_auth === 0){
-                            const adminPayload = {
-                                user_email : res.data.email,
-                                user_no : res.data.user_no,
+                    if (res.data.code === 200) {
+                        // 로그인 성공 시
+                        if (this.user_auth === '1') {
+                            const userPayload = {
+                                user_email: res.data.email,
+                                user_no: res.data.user_no,
                                 user_auth: res.data.user_auth,
                             };
-                            this.$store.commit('setUser',adminPayload);
-                            window.location.href = "/admin";
-                            console.log(user_auth);
-                        } else{
-                            console.log("관리자가 아닙니다.");
-                            alert("관리자가 아닙니다.")
+                            this.$store.commit('setUser',userPayload);
+                            // this.setUser(userPayload);
+                            window.location.href = "/";
+                            console.log(userPayload);
+                            console.log("user_email",res.data.email);
+                            console.log("user_auth",res.data.user_auth);
+                            //console.log({user_auth : userPayload.user_auth});
+                        } else if (this.user_auth === '2') {
+                            const tr_admit = res.data.tr_admit || 0;
+                            if (tr_admit === 1) {
+                                    const trainerPayload = {
+                                        tr_email: res.data.email,
+                                        tr_no: res.data.tr_no,
+                                        tr_admit: res.data.tr_admit,
+                                    };
+                                    this.$store.commit('setTrainer', trainerPayload);
+                                    window.location.href = "/trainer";
+                                    console.log("trainerpayload", trainerPayload);
+                                } else {
+                                    // tr_admit이 1이 아닐 때 처리
+                                    console.log("트레이너 승인 대기 중");
+                                    alert("트레이너 승인이 필요합니다.");
+                                }
+                        } else {
+                            //     const adminPayload = {
+                            //         user_email : res.data.email,
+                            //         user_no : res.data.user_no,
+                            //         user_auth: res.data.user_auth,
+                            //     };
+                            // this.$store.commit('setUser',adminPayload);
+                            // window.location.href = "/admin";
+                            const user_auth = res.data.user_auth;
+                            if(user_auth === 0){
+                                const adminPayload = {
+                                    user_email : res.data.email,
+                                    user_no : res.data.user_no,
+                                    user_auth: res.data.user_auth,
+                                };
+                                this.$store.commit('setUser',adminPayload);
+                                window.location.href = "/admin";
+                                console.log(user_auth);
+                            } else{
+                                console.log("관리자가 아닙니다.");
+                                alert("관리자가 아닙니다.")
+                            }
                         }
+
+                        // this.$swal({
+                        //     position: 'top',
+                        //     icon: 'success',
+                        //     title: '로그인 성공!',
+                        //     showConfirmButton: false,
+                        //     timer: 3000
+                        // });
+
+                        // window.location.href = "/";
+                    } else if (res.data.code === 401) {
+                        // 비밀번호 오류 시
+                        alert(res.data.message);
+                        // window.location.href = "/login";
+                    } else if (res.data.code === 404) {
+                        // 존재하지 않는 이메일일 때
+                        alert(res.data.message);
+                        // window.location.href = "/login";
                     }
-
-                    // this.$swal({
-                    //     position: 'top',
-                    //     icon: 'success',
-                    //     title: '로그인 성공!',
-                    //     showConfirmButton: false,
-                    //     timer: 3000
-                    // });
-
-                    // window.location.href = "/";
-                } else if (res.data.code === 401) {
-                    // 비밀번호 오류 시
-                    alert(res.data.message);
-                    // window.location.href = "/login";
-                } else if (res.data.code === 404) {
-                    // 존재하지 않는 이메일일 때
-                    alert(res.data.message);
-                    // window.location.href = "/login";
+                } catch (err) {
+                    alert(err);
                 }
-            } catch (err) {
-                alert(err);
-            }
-        },
+            },
 
-        goEmailFind() {
-            // 아이디 찾기 로직
-            this.isFindIdModalOpen = true;
-            console.log(this.isFindIdModalOpen);
-            // console.log('아이디 찾기');
+            goEmailFind() {
+                // 아이디 찾기 로직
+                this.isFindIdModalOpen = true;
+                console.log(this.isFindIdModalOpen);
+                // console.log('아이디 찾기');
+            },
+            goPwdFind() {
+                // 비밀번호 찾기 로직
+                this.isFindPwModalOpen = true;
+                console.log(this.isFindPwModalOpen);
+                console.log('비밀번호 찾기');
+            },
+            goToJoin() {
+                // 회원가입 페이지로 이동
+                this.$router.push({path: '/join'})
+                console.log('회원가입 페이지로 이동');
+            },
+            loginKakao() {
+                window.Kakao.Auth.login({
+                    scope: "profile_nickname, account_email",
+                    success: this.getKakaoProfile,
+                    fail: err => {
+                    console.error(err);
+                    alert('카카오 로그인에 실패했습니다.');
+                    }
+                });
+            },
+            getKakaoProfile(authObj) {
+                console.log(authObj);  // authObj에는 access token 정보가 포함됩니다.
+                window.Kakao.API.request({
+                    url: '/v2/user/me',
+                    success: res => {
+                    const kakao_account = res.kakao_account;
+                    console.log(kakao_account);
+                    this.loginWithKakao(kakao_account);
+                    alert("로그인 성공");
+                    },
+                    fail: err => {
+                    console.error(err);
+                    alert('카카오 프로필을 가져오는 데 실패했습니다.');
+                    }
+                });
+            },
+            async loginWithKakao(kakao_account) {
+                console.log("kakao_account",kakao_account);
+                try {
+                    console.log("Sending request to server with email:", kakao_account.email);
+                    // console.log("Sending request to server with user_no:", response.data.user_no);
+                    const response = await axios.post('http://localhost:3000/auth/kakaologin', {
+                        user_email: kakao_account.email,
+                        user_name: kakao_account.profile.nickname,
+                        // user_no : response.data.user_no
+                    });
+                    console.log("res.data",response.data);
+                    this.$store.commit('setUser', {
+                        user_email: response.data.email,
+                        user_no: response.data.user_no,
+                        user_auth: response.data.user_auth || 1 // 기본 값으로 일반 사용자 권한 설정
+                        });
+                        console.log("User data stored in Vuex:", this.$store.state.user);
+                    console.log("res.data",response.data);
+                    window.location.href = "/";
+                } catch (error) {
+                    console.error(error);
+                    alert('로그인에 실패했습니다.');
+                }
+            },
+
+            loginNaver() {
+                // 네이버 로그인 로직
+                this.naverLogin.init();
+                this.naverLogin.authorize();
+                console.log('네이버 로그인 시도');
+            },
+            cancel() {
+                // 취소 로직
+                this.$router.push({path: "/"})
+                console.log('취소');
+            },
+            closeFindIdModal(){
+                this.isFindIdModalOpen = false;
+            },
+            closeFindPwModal(){
+                this.isFindPwModalOpen = false;
+            },
         },
-        goPwdFind() {
-            // 비밀번호 찾기 로직
-            this.isFindPwModalOpen = true;
-            console.log(this.isFindPwModalOpen);
-            console.log('비밀번호 찾기');
-        },
-        goToJoin() {
-            // 회원가입 페이지로 이동
-            this.$router.push({path: '/join'})
-            console.log('회원가입 페이지로 이동');
-        },
-        loginKakao() {
-            window.Kakao.Auth.login({
-                scope: "profile_nickname, account_email",
-                success: this.getKakaoProfile,
-                fail: err => {
-                console.error(err);
-                alert('카카오 로그인에 실패했습니다.');
+        mounted() {
+            this.naverLogin = new window.naver.LoginWithNaverId({
+                clientId: "Ozm1PPMPASRIBq508on0",
+                callbackUrl: "http://localhost:8081/loginNaver",
+                isPopup: true,
+                // loginButton: {
+                //     color: "green", type: 3, height: 60
+                // },
+            });
+
+            this.naverLogin.init();
+
+            this.naverLogin.getLoginStatus((status) => {
+                if(status) {
+                    console.log(status);
+                    console.log(this.naverLogin.user);
+
+                    var email = this.naverLogin.user.getEmail();
+                    if(email == undefined || email == null) {
+                        alert("이메일은 필수 정보입니다. 정보 제공을 동의해주세요");
+                        this.naverLogin.reprompt();
+                        return;
+                    }
+                } else {
+                    console.log("callback 처리에 실패하였습니다.");
                 }
             });
         },
-        getKakaoProfile(authObj) {
-            console.log(authObj);  // authObj에는 access token 정보가 포함됩니다.
-            window.Kakao.API.request({
-                url: '/v2/user/me',
-                success: res => {
-                const kakao_account = res.kakao_account;
-                console.log(kakao_account);
-                this.loginWithKakao(kakao_account);
-                alert("로그인 성공");
-                },
-                fail: err => {
-                console.error(err);
-                alert('카카오 프로필을 가져오는 데 실패했습니다.');
-                }
-             });
-        },
-        async loginWithKakao(kakao_account) {
-            console.log("kakao_account",kakao_account);
-            try {
-                console.log("Sending request to server with email:", kakao_account.email);
-                // console.log("Sending request to server with user_no:", response.data.user_no);
-                const response = await axios.post('http://localhost:3000/auth/kakaologin', {
-                    user_email: kakao_account.email,
-                    user_name: kakao_account.profile.nickname,
-                    // user_no : response.data.user_no
-                });
-                console.log("res.data",response.data);
-                this.$store.commit('setUser', {
-                    user_email: response.data.email,
-                    user_no: response.data.user_no,
-                    user_auth: response.data.user_auth || 1 // 기본 값으로 일반 사용자 권한 설정
-                    });
-                    console.log("User data stored in Vuex:", this.$store.state.user);
-                console.log("res.data",response.data);
-                window.location.href = "/";
-            } catch (error) {
-                console.error(error);
-                alert('로그인에 실패했습니다.');
-            }
-        },
-
-        loginNaver() {
-            // 네이버 로그인 로직
-            console.log('네이버 로그인 시도');
-        },
-        cancel() {
-            // 취소 로직
-            this.$router.push({path: "/"})
-            console.log('취소');
-        },
-        closeFindIdModal(){
-            this.isFindIdModalOpen = false;
-        },
-        closeFindPwModal(){
-            this.isFindPwModalOpen = false;
-        },
-    }
 }
 </script>
 <style scoped>
