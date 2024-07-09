@@ -6,7 +6,7 @@
                     <div class="upload_img">
                         <img id="profile-picture" class="profile-picture" src="../image/user2.png" alt="Profile Picture">
                         <div class="file-input">
-                            <input type="file" id="image-upload" accept="image/*">
+                            <input type="file" id="image-upload" accept="image/*" @change="uploadFile($event.target.files, 0)">
                         </div>
                     </div>
                 </div>
@@ -206,6 +206,7 @@ export default {
         console.log("마운트됨");
         this.myrecheck();
         this.mycalcheck();
+        this.myImg();
 
     },
 
@@ -292,6 +293,51 @@ export default {
     },
 
     methods:{
+        async uploadFile(file, type) {
+            let name = "";
+            if (file) {
+                name = file[0].name;
+                console.log("name", name);
+            } else {
+                return; // 파일 미선택 시 반환
+            }
+
+            const user_no = this.$route.params.user_no;
+
+            const formData = new FormData();
+
+            formData.append('img', file[0]); // 파일 자체를 전송
+            formData.append('user_no',user_no);
+
+            console.log(formData);
+            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
+            
+
+            for (let key of formData.keys()) {
+                console.log(key, ":", formData.get(key));
+            }
+
+            try {
+                const res = await axios({
+                    url: 'http://localhost:3000/user/upload_Uimg',
+                    method: 'POST',
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    data: formData
+                });
+
+                if (res.data.message == 'success') {
+                    if (type == 0) {
+                        this.user_img = res.img; // 서버가 반환한 파일명으로 수정
+                        console.log("0", this.user_img);
+                    }
+                } else {
+                    this.$swal("DB 에러");
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        },
         //내 정보 확인
         async myinfo(){
             const user_no = this.$route.params.user_no;
@@ -305,6 +351,17 @@ export default {
         },
         //내 예약 확인
         async mycalcheck(){
+            const user_no = this.$route.params.user_no;
+            try{
+                const response = await axios.post(`http://localhost:3000/user/mycalcheck`,{user_no:user_no});
+                const data = response.data
+                this.calData = data;
+                console.log("calData",this.calData);
+            } catch(error){
+                console.error('예약 정보 불러오는 중 오류 발생', error);
+            }
+        },
+        async myImg(){
             const user_no = this.$route.params.user_no;
             try{
                 const response = await axios.post(`http://localhost:3000/user/mycalcheck`,{user_no:user_no});

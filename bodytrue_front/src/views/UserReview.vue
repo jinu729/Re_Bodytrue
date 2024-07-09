@@ -15,7 +15,7 @@
             <div>
               <!-- 이미지 업로드 -->
               <img  alt="Image 1"><br><br>
-              <input type="file" name="review_image" accept="image/*" ref="img" @change="uploadFile($event.target.files, 0)">
+              <input type="file" name="review_image" accept="image/*" @change="uploadFile($event.target.files, 0)">
             </div>
             <div class="review-title">
               <h1>{{reviewData.pro_name}}</h1>
@@ -138,7 +138,6 @@ export default {
       this.starsSet = 0;
     },
 async uploadFile(file, type) {
-
             let name = "";
             if (file) {
                 name = file[0].name;
@@ -152,8 +151,8 @@ async uploadFile(file, type) {
 
             formData.append('img', file[0].name);
 
-            
             this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
 
             for (let key of formData.keys()) {
                 console.log(key, ":", formData.get(key));
