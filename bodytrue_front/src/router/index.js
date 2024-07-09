@@ -37,6 +37,7 @@ import Admin from '../views/Admin.vue'
 import AdminUser from '../views/userlist.vue'
 import AdminTrainer from '../views/trainerlist.vue'
 import AdminFaq  from '../views/AdminFaq.vue'
+import AdminReview from '../views/AdminReview.vue'
 //회창작성완
 
 const routes = [
@@ -77,6 +78,11 @@ const routes = [
     path: '/admin/adminfaq',
     name: 'AdminFaq',
     component: AdminFaq
+  },
+  {
+    path: '/admin/adminreview',
+    name: 'AdminReview',
+    component: AdminReview
   },
   //승호작성
   

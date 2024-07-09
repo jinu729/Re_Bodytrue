@@ -4,21 +4,25 @@
         <div class="admin_container">
             <div class="admin_faq_ans">
                 <div class="admin_faq_question">
-                        <div v-for="(faq, i) in paginatedFaqList" :key="i" class="faq_item">
+                    <div v-for="(faq, i) in paginatedFaqList" :key="faq.faq_no" class="faq_item">
                         <div class="question_box">
                             <div class="question">
-                                Q{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_q }}
+                                {{ (currentPage - 1) * perPage + i + 1 }}.
+                                <input type="text" v-if="faq.isEditingQuestion" v-model="faq.faq_q">
+                                <span v-else>{{ faq.faq_q }}</span>
                             </div>
                             <div class="toggle_button">
-                                <button class="admin_toggle_update">✔</button>
+                                <button class="admin_toggle_update" @click="toggleEditQuestion(faq)">✔</button>
                                 <button class="admin_toggle_delete" @click="delFAQ(faq.faq_no)">❌</button>
-                                <button class="show_toggle" v-if="!faq.visible" @click="toggleAnswer(faq)">▼</button>
-                                <button class="hidden_toggle" v-else @click="toggleAnswer(faq)">▲</button>
+                                <button class="show_toggle" v-if="activeFAQ !== faq.faq_no" @click="toggleAnswer(faq.faq_no)">▼</button>
+                                <button class="hidden_toggle" v-else @click="toggleAnswer(null)">▲</button>
                             </div>
                         </div>
-                        <div v-if="faq.visible" class="answer_box">
-                            ▶A{{ (currentPage - 1) * perPage + i + 1 }}. {{ faq.faq_a }}
-                            <button class="admin_toggle_update2">✔</button>
+                        <div v-if="activeFAQ === faq.faq_no" class="answer_box">
+                            ▶A{{ (currentPage - 1) * perPage + i + 1 }}.
+                            <input type="text" v-if="faq.isEditingAnswer" v-model="faq.faq_a">
+                            <span v-else>{{ faq.faq_a }}</span>
+                            <button class="admin_toggle_update2" @click="toggleEditAnswer(faq)">✔</button>
                         </div>
                     </div>
                 </div>
@@ -34,65 +38,101 @@
     </div>
 </template>
 
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-      data() {
-          return {
-              faqList: [],
-              currentPage: 1,
-              perPage: 10, // 페이지 당 아이템 수
-          };
-      },
-      computed: {
-          paginatedFaqList() {
-              const start = (this.currentPage - 1) * this.perPage;
-              const end = start + this.perPage;
-              return this.faqList.slice(start, end);
-          },
-          totalPages() {
-              return Math.ceil(this.faqList.length / this.perPage);
-          }
-      },
-      methods: {
-          getfaqList() {
-              axios.get('http://localhost:3000/admin/faqlist')
-                  .then(response => {
-                      this.faqList = response.data.map(faq => ({
-                          ...faq,
-                          visible: false // Initialize visibility state for each FAQ
-                      }));
-                  })
-                  .catch(error => {
-                      console.error('Error fetching faqlist:', error);
-                  });
-          },
-          async delFAQ(faq_no) {
-              try {
-                  await axios.post('http://localhost:3000/admin/delfaq', { faq_no });
-                  alert('FAQ 목록에서 삭제 되었습니다.');
-                  this.getfaqList(); // 삭제 후 목록 다시 불러오기
-              } catch (error) {
-                  console.error("FAQ 삭제 도중 에러 발생", error);
-              }
-          },
-          toggleAnswer(faq) {
-              faq.visible = !faq.visible; // Toggle the visibility state
-          },
-          gotoPage(page) {
-              if (page > 0 && page <= this.totalPages) {
-                  this.currentPage = page;
-              }
-          }
-      },
-      mounted() {
-          this.getfaqList();
-      }
-  };
-  </script>
-  
+<script>
+import axios from 'axios';
+
+export default {
+    data() {
+        return {
+            faqList: [],
+            currentPage: 1,
+            perPage: 10,
+            activeFAQ: null,
+        };
+    },
+    computed: {
+        paginatedFaqList() {
+            const start = (this.currentPage - 1) * this.perPage;
+            const end = start + this.perPage;
+            return this.faqList.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.faqList.length / this.perPage);
+        }
+    },
+    methods: {
+        getfaqList() {
+            axios.get('http://localhost:3000/admin/faqlist')
+                .then(response => {
+                    this.faqList = response.data.map(faq => ({
+                        ...faq,
+                        isEditingQuestion: false,
+                        isEditingAnswer: false,
+                    }));
+                })
+                .catch(error => {
+                    console.error('Error fetching faqlist:', error);
+                });
+        },
+        async delFAQ(faq_no) {
+            try {
+                await axios.post('http://localhost:3000/admin/delfaq', { faq_no });
+                alert('FAQ 목록에서 삭제 되었습니다.');
+                this.getfaqList();
+            } catch (error) {
+                console.error("FAQ 삭제 도중 에러 발생", error);
+            }
+        },
+        toggleAnswer(faq_no) {
+            if (this.activeFAQ === faq_no) {
+                this.activeFAQ = null;
+            } else {
+                this.activeFAQ = faq_no;
+            }
+        },
+        async toggleEditQuestion(faq) {
+            if (faq.isEditingQuestion) {
+                try {
+                    await axios.post('http://localhost:3000/admin/updatefaq_q', {
+                        Q: faq.faq_q,
+                        faq_no: faq.faq_no
+                    });
+                    alert('질문이 성공적으로 수정되었습니다.');
+                    faq.isEditingQuestion = false;
+                } catch (error) {
+                    console.error('Error updating question:', error);
+                }
+            } else {
+                faq.isEditingQuestion = true;
+            }
+        },
+        async toggleEditAnswer(faq) {
+            if (faq.isEditingAnswer) {
+                try {
+                    await axios.post('http://localhost:3000/admin/updatefaq_a', {
+                        A: faq.faq_a,
+                        faq_no: faq.faq_no
+                    });
+                    alert('답변이 성공적으로 수정되었습니다.');
+                    faq.isEditingAnswer = false;
+                } catch (error) {
+                    console.error('Error updating answer:', error);
+                }
+            } else {
+                faq.isEditingAnswer = true;
+            }
+        },
+        gotoPage(page) {
+            if (page > 0 && page <= this.totalPages) {
+                this.currentPage = page;
+            }
+        }
+    },
+    mounted() {
+        this.getfaqList();
+    }
+};
+</script>
 
 <style scoped>
 .admin_faq_main {

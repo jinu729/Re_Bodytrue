@@ -180,9 +180,9 @@ module.exports = router;
 
 //리뷰리스트 불러오기
 
-router.get("/reviewlist",async(req,res)=>{
+router.get("/adminreview",async(req,res)=>{
 
-    db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer",(err,results)=>{
+    db.query(`SELECT RE_NO,DATE_FORMAT(RE_DATE,"%y-%m-%d") as re_date ,PRO_NAME,USER_NAME,TR_NAME FROM REVIEW R left JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO left JOIN USER U ON R.RE_USER_NO = U.USER_NO left JOIN TRAINER T ON R.RE_TR_NO = T.TR_NO;`,(err,results)=>{
         if (err) {
             res.send({
               // 에러 발생 시
@@ -391,55 +391,49 @@ router.post("/insertA",async(req,res)=>{
 //     });
 // });
 
-//질문 수정하기
+// 질문 수정하기
+router.post("/updatefaq_q", async (req, res) => {
+  const data = {
+      Q: req.body.Q,
+      faq_no: req.body.faq_no
+  };
 
-router.post("/updateQ",async(req,res)=>{
+  db.query("UPDATE faq SET faq_q = ? WHERE faq_no = ?",
+      [data.Q, data.faq_no],
+      (err, results) => {
+          if (err) {
+              res.send({
+                  code: 400,
+                  failed: "error occurred",
+                  error: err,
+              });
+          } else {
+              res.send(results);
+          }
+      });
+});
 
-    const data={
-        Q : req.body.Q,
-        faq_no : req.body
-    }
+// 답글 수정하기
+router.post("/updatefaq_a", async (req, res) => {
+  const data = {
+      A: req.body.A,
+      faq_no: req.body.faq_no
+  };
 
-    db.query("update faq set faq_q = ? where faq_no = ?",
-        [data.Q , data.faq_no],
-        (err,results)=>{
-        if (err) {
-            res.send({
-            // 에러 발생 시
-            code: 400,
-            failed: "error occurred",
-            error: err,
-            });
-        } else {
-            res.send(results);
-        }
-    });
-})
-
-//답글 수정하기
-
-router.post("/updateA",async(req,res)=>{
-
-    const data={
-        A : req.body.A,
-        faq_no : req.body
-    }
-
-    db.query("update faq set faq_a = ? where faq_no = ?",
-        [data.A , data.faq_no],
-        (err,results)=>{
-        if (err) {
-            res.send({
-            // 에러 발생 시
-            code: 400,
-            failed: "error occurred",
-            error: err,
-            });
-        } else {
-            res.send(results);
-        }
-    });
-})
+  db.query("UPDATE faq SET faq_a = ? WHERE faq_no = ?",
+      [data.A, data.faq_no],
+      (err, results) => {
+          if (err) {
+              res.send({
+                  code: 400,
+                  failed: "error occurred",
+                  error: err,
+              });
+          } else {
+              res.send(results);
+          }
+      });
+});
 
 //FAQ 삭제하기
 
