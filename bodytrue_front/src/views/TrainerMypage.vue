@@ -7,7 +7,7 @@
                                 <div class="img-box">
                                     <img id="profile-picture" class="profile-picture" :src="trData.img_path ? require(`../../../bodytrue_back/uploads/program/${trData.img_path}`) : '/goodsempty2.jpg'" alt="Profile Picture">
                                 </div>
-                                <input type="file" id="image-upload" accept="image/*">
+                                <input type="file" id="image-upload" accept="image/*" @change="uploadFile($event.target.files, 0)">
                                 <label for="image-upload" class="file-upload-label" style="font-size: 16px;"></label><br>   
                                 <span style="font-size: 13px;">사이즈(256 * 256)이내</span>
                             </div>
@@ -237,7 +237,8 @@ export default {
         //리뷰 카운트 계산
         moreReviewData(){
             return this.myRe.slice(0, this.moreCount);
-        }
+        },
+        
 
     },
 
@@ -249,6 +250,52 @@ export default {
     },
 
     methods:{
+        async uploadFile(file, type) {
+            let name = "";
+            if (file) {
+                name = file[0].name;
+                console.log("name", name);
+            } else {
+                return; // 파일 미선택 시 반환
+            }
+
+            const tr_no = this.$route.params.tr_no;
+            const formData = new FormData();
+
+            console.log("tr_no : " , tr_no);
+
+            formData.append('img', file[0]); // 파일 자체를 전송
+            formData.append('tr_no',tr_no);
+
+            console.log(formData);
+            this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
+            
+
+            for (let key of formData.keys()) {
+                console.log(key, ":", formData.get(key));
+            }
+
+            try {
+                const res = await axios({
+                    url: 'http://localhost:3000/trainer/upload_Timg',
+                    method: 'POST',
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                    data: formData
+                });
+
+                if (res.data.message == 'success') {
+                    if (type == 0) {
+                        this.tr_img = res.img; // 서버가 반환한 파일명으로 수정
+                        console.log("0", this.tr_img);
+                    }
+                } else {
+                    this.$swal("DB 에러");
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        },
         //상품 페이지로 이동
         goToProdetail(pro_no){
             this.$router.push(`/prodetail/${pro_no}`);
@@ -636,8 +683,9 @@ export default {
     width: 740px;
     display: flex;
     justify-content: space-between;
-    padding-top: 
+    padding-top: 10px;
 }
+
 .prore_left .prore_leftbottom img{
     width: 200px;
     height: 200px;
