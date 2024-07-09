@@ -481,7 +481,7 @@ router.post("/kakaologin", async (req, res) => {
   });
 
 //네이버가입
-router.post("/패스명",async(req,res)=>{
+router.post("/Naverlogin",async(req,res)=>{
 
     const user ={
         user_email : req.body.email, 

@@ -68,6 +68,7 @@ export default {
             number2: '',
             number3: '',
             user_email: '',
+            tr_email: '',
             user_auth: '1',
             error: ''
         };
@@ -89,28 +90,33 @@ export default {
                     'Content-Type': 'application/json'
                 }
                 });
-                console.log(response.data);
+                console.log("response.data",response.data);
+               // 응답 데이터가 기대한 형태인지 확인
                 if (endpoint === 'findId_user') {
-                    this.user_email = response.data.user_email;
+                    if (response.data && response.data.user_email) {
+                        this.user_email = response.data.user_email;
+                        this.error = ''; // 성공 시 에러 메시지 초기화
                     } else {
-                    this.tr_email = response.data.tr_email;
+                        throw new Error("일치하는 사용자가 없습니다.");
                     }
-
-                    this.error = ''; // 성공 시 에러 메시지 초기화
-
-                this.error = ''; // 성공 시 에러 메시지 초기화
-            } catch(error){
-                console.log("Error response:", error.response);
-    
-                    if (error.response && error.response.data && error.response.data.message) {
+                } else {
+                    if (response.data && response.data.tr_email) {
+                        this.tr_email = response.data.tr_email;
+                        this.error = ''; // 성공 시 에러 메시지 초기화
+                    } else {
+                        throw new Error("일치하는 사용자가 없습니다.");
+                    }
+                }
+            } catch (error) {
+                if (error.response && error.response.data && error.response.data.message) {
                     this.error = error.response.data.message;
-                    } else {
-                    this.error = "일치하는 사용자가 없습니다.";
-                    }
+                } else {
+                    this.error = error.message || "일치하는 사용자가 없습니다.";
+                }
 
-                    this.user_email = ''; // 에러 발생 시 이메일 초기화
-                    this.tr_email = ''; // 에러 발생 시 이메일 초기화
-                    console.error("Error message:", this.error);
+                this.user_email = ''; // 에러 발생 시 이메일 초기화
+                this.tr_email = ''; // 에러 발생 시 이메일 초기화
+                console.error("Error message:", this.error);
             }
         },
         goToLogin(){
