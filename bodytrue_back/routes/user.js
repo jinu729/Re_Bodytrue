@@ -630,26 +630,56 @@ router.get('/programlist/:pro_tag', (req, res) => {
 });
 
 //회원정보 삭제하기
+// router.post('/deleteuser', function(request, response, next){
+//     const user_no = request.body.user_no;
+    
+//     db.query(`delete from user where user_no = ?`,[user_no], function(error, result){
+//         if(error){
+//             console.error(error);
+//             return response.status(500).json({ error: '회원 정보 삭제 중 오류' });
+//         }
+//         response.json(result);
+//         console.log(result);
+//     })
+// });
 router.post('/deleteuser', function(request, response, next){
     const user_no = request.body.user_no;
+
+    // user_no가 숫자인지 확인
+    if (typeof user_no !== 'number') {
+        console.error('Invalid user_no:', user_no);
+        return response.status(400).json({ error: '잘못된 user_no 값' });
+    }
+
+    console.log('Deleting user with user_no:', user_no);
     
-    db.query(`delete from user where user_no = ?`,[user_no], function(error, result){
-        if(error){
-            console.error(error);
+    db.query('DELETE FROM user WHERE user_no = ?', [user_no], function(error, result){
+        if (error) {
+            console.error('SQL Error:', error);
             return response.status(500).json({ error: '회원 정보 삭제 중 오류' });
         }
         response.json(result);
-        console.log(result);
-    })
+        console.log('Delete result:', result);
+    });
 });
 
 //회원정보 수정하기
 router.post('/updateuser', function(request, response, next){
+
+
+    const tel = request.body.number1 + '-' + request.body.number2 + '-' + request.body.number3;
     const user_no = request.body.user_no;
-    const user_pwd = request.body.re_pwd;
-    const user_tel = request.body.re_tel;
+    const user_tel = request.body.user_tel;
+    const user_add1 = request.body.user_add1;
+    const user_add2 = request.body.user_add2;
+    const user_addno = request.body.user_addno;
+    const user_pwd = request.body.user_pwd;
     
-    db.query(`update user set user_tel=?,user_pwd = ? where user_no = ?`,[user_tel,user_pwd, user_no], function(error, result){
+    console.log('Updating user with user_no:', user_no);
+
+    db.query(`update user set user_pwd = ?, user_addno = ?, user_add1 = ?, user_add2 = ?, user_tel = ?
+where user_no = ?;`,[user_pwd, user_addno, user_add1, user_add2, user_tel, user_no], function(error, result){
+            
         if(error){
             console.error(error);
             return response.status(500).json({ error: '회원 정보 수정 중 오류' });
