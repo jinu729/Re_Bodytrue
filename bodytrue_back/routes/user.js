@@ -85,6 +85,7 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
                         })
                 }
         }
+        
     )}
     catch(err){
         console.log(err);
@@ -96,7 +97,7 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
    
     return res.status(200).json({
         message: 'success',
-        img  // 업로드된 파일명 반환
+        img // 업로드된 파일명 반환
     });
 });
 
@@ -249,12 +250,51 @@ router.post('/makeplike', function(request, response, next) {
 /* 상품 디테일 끝 */
 
 /* 마이페이지 시작 */
+//내 이미지 가져오기
+// router.post('/getimg',function(request,response,next){
+//         const user_no = request.body.user_no;
+    
+//         db.query(`select img_path from img where img_user_no = ? and img_type = 0`,
+//             [user_no], function(error, result, field){
+//                     if(error){
+//                         console.error(error);
+//                         return response.status(500).json({ error: '이미지 정보 에러'});
+//                     }
+//                     response.json(result);
+//                     console.log(result);
+                   
+//             }
+//         )
+//     });
+
+router.post('/getimg',function(request,response,next){
+    const user_no = request.body.user_no;
+
+    db.query(`select img_path from img where img_user_no = ? and img_type = 0`,
+        [user_no], function(error, result, field){
+                console.log('aaaaa:', result);
+
+                if (Array.isArray(result) && result.length > 0 && result[0].img_path) {
+                    response.json({"img_path": result[0].img_path});
+                } else {
+                    console.log("널이에용");
+                    response.json({"img_path":"noimg.png"});
+                }
+
+                if(error){
+                    console.error(error);
+                    return response.status(500).json({ error: '이미지 정보 에러'});
+                }
+               
+        }
+    )
+});
 
 //내 정보 확인
 router.post('/mypage/:user_no', function(request, response, next){
     const user_no = request.params.user_no;
     
-    db.query(`select user_name, user_email, user_tel from user where user_no = ?`,
+    db.query(`select user_no, user_name, user_email, user_tel from user where user_no = ?`,
         [user_no],
          function(error, result, field){
         if(error){
@@ -288,7 +328,7 @@ router.post('/myrecheck', function(request, response, next){
     const cal_user_no = request.body.user_no;
 
     db.query(`select 
-        distinct r.re_no, p.pro_no, p.pro_name, t.tr_name,t.tr_no, date_format(r.re_date, '%y년 %m월 %d일 %h시') as re_date, r.re_rate
+        distinct r.re_no, p.pro_no, p.pro_name, t.tr_name,t.tr_no, date_format(r.re_date, '%y년 %m월 %d일 %H시') as re_date, r.re_rate
         from program p join trainer t on p.pro_tr_no = t.tr_no 
         join review r on p.pro_no = r.re_pro_no 
         where r.re_user_no = ? and r.re_rate is not null`,[cal_user_no], function(error, result, field){
@@ -341,80 +381,79 @@ router.post('/delmyplike', function(request, response, next){
 
 //리뷰 작성하기
   
-  router.post('/upload_img', upload.single('img'), (req, res) => {
-    console.log("filr : ",req.body.img);
-    
+const upload2 = multer({
+    storage: multer.diskStorage({
+        destination(req, file, cb) {
+            const uploadPath = path.join(__dirname, '..', 'uploads');
+            console.log('Upload Destination:', uploadPath); // 업로드 경로 확인
+            cb(null, uploadPath);
+        },
+        filename(req, file, cb) {
+            console.log('Uploaded File:', file.originalname); // 업로드된 파일 이름 확인
+            cb(null, file.originalname);
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
+});
 
+router.post('/upload_img', upload2.single('img'), (req, res) => {
+    console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
     return res.status(200).json({
         message: 'success',
-        re_img: req.body.img  // 업로드된 파일명 반환
+        filename: req.file.filename  // 업로드된 파일명 반환
     });
-  });
+});
 
-  router.post('/makereview', function(request, response, next){
-        console.log( request.body);
-        const {re_comment, re_user_no, re_pro_no, re_tr_no, re_rate, re_img} = request.body;
-  
-        try{
-          db.query(`insert into review (re_comment, re_user_no, re_pro_no, re_tr_no, re_rate) values (?, ?, ?, ?, ?)`,
-              [re_comment, re_user_no, re_pro_no, re_tr_no, re_rate],
-               function(error, result){
-                  if(error){
-                      console.error(error);
-                      return response.status(500).json({ error: '리뷰 작성 오류' });
-                  }
-                  try {
-                    db.query("select re_no from review where re_comment = ?", 
-                        [re_comment], 
-                        function (error, results, fields) {
-  
-                        const re_no = results[0].re_no
-  
-                        
-                        console.log("re_no : ",re_no);
-                         
-                    const pastDir = `${__dirname}` + `../../uploads/` + re_img
-                    
-                    console.log("__dirname : ", `${__dirname}`);
-                    console.log("pastDir : " ,pastDir);
+router.post('/makereview', function(req, res) {
+    const { re_comment, re_user_no, re_pro_no, re_tr_no, re_rate, re_img } = req.body;
 
-                    const newDir = `${__dirname}` + `../../uploads/trainer/`;
+    db.query(`INSERT INTO review (re_comment, re_user_no, re_pro_no, re_tr_no, re_rate) VALUES (?, ?, ?, ?, ?)`,
+        [re_comment, re_user_no, re_pro_no, re_tr_no, re_rate], function(error, result) {
+            if (error) {
+                console.error('리뷰 작성 오류:', error);
+                return res.status(500).json({ error: '리뷰 작성 오류' });
+            }
 
-                    const extension =re_img.substring(re_img.lastIndexOf('.'))
+            const re_no = result.insertId;
+            const pastDir0 = path.join(__dirname, '..','uploads', re_img);
 
-                    console.log("extension : ",extension);
+            console.log('pastDir:', pastDir0);
 
-                    console.log("newDir : " , newDir);
-                    // 이미지 폴더 및 이름(상품번호-타입) 변경
-                    // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
-                    fs.rename(pastDir, newDir + re_no + '-0' + extension, (err) => {
-                        if (err) {
-                            throw err;
-                        }
-                    });
+            const newDir = path.join(__dirname, '..', 'uploads', 'review');
+            if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
 
-              
-  
-                        // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
-                        db.query(`insert into img (img_type,img_path,img_re_no) values (?,?,?)`,
-                             [0,re_no + '-0' + extension,re_no], 
-                             function (error, results, fields) {
+            const extension = path.extname(re_img);
+            const newFileName = `${re_no}-0${extension}`;
+            const newFilePath = path.join(newDir, newFileName);
+
+            console.log('newDir:', newDir);
+            console.log('newFilePath:', newFilePath);
+
+            fs.access(pastDir0, fs.constants.F_OK, (err) => {
+                if (err) {
+                    console.error('파일 존재하지 않음:', pastDir0);
+                    return res.status(500).json({ error: '파일 존재하지 않음' });
+                }
+
+                fs.rename(pastDir0, newFilePath, (err) => {
+                    if (err) {
+                        console.error('파일 이동 오류:', err);
+                        return res.status(500).json({ error: '파일 이동 오류' });
+                    }
+
+                    db.query(`INSERT INTO img (img_type, img_path, img_re_no) VALUES (?, ?, ?)`,
+                        [0, newFileName, re_no], function(error, result) {
                             if (error) {
-                                throw error;
+                                console.error('이미지 저장 오류:', error);
+                                return res.status(500).json({ error: '이미지 저장 오류' });
                             }
-                })
-            })
-        }catch(err){
-            console.log(err);
-        }
-  
-            })
-            } catch {
-              return response.status(200).json({
-                  message: 'DB_error'
-              })
-          }
-  });
+
+                            res.json({ message: 'success' });
+                        });
+                });
+            });
+        });
+});
   
 //예약 삭제하기
 router.post('/deletecal', function(request, response, next){

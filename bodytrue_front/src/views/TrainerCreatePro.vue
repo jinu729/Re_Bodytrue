@@ -114,9 +114,7 @@
     </div>    
 </template>
 <script>
-
 //사악하디 사악한 숭메마녀에게 저주를 받아버린 뷰에요!! 어느 용기있는 용자가와서 이 저주받은 뷰를 해방시켜줄거에요!
-
 import axios from 'axios';
 
 export default {
@@ -135,7 +133,6 @@ export default {
                 img_textarea1:"",
                 img_textarea2:"",
                 tags:"",
-
                 pro_img:"",
                 pro_img1:"",
                 pro_img2:"",
@@ -144,17 +141,14 @@ export default {
             },
             tr_no : localStorage.tr_no,
         }
-
     },
      computed: {
       trainer(){
         return this.$store.state.trainer;
       },
      },
-
     methods:{
         async uploadFile(file, type) {
-
             let name = "";
             if (file) {
                 name = file[0].name;
@@ -163,16 +157,12 @@ export default {
             else {
                 return;     // 파일 미선택 시 반환
             }
-
             const formData = new FormData();
-
             formData.append('img', file[0]);
             this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
-
             for (let key of formData.keys()) {
                 console.log(key, ":", formData.get(key));
             }
-
             try {
                 axios({
                     url: `http://localhost:3000/trainer/upload_img`,
@@ -208,15 +198,12 @@ export default {
                         console.log(e);
                     })
                 return true;
-
             } catch (err) {
                 console.log(err);
                 return false;
             }
-
         },
         async uploadFile2(file, type) {
-
             let name = "";
             if (file) {
                 name = file[0].name;
@@ -225,16 +212,12 @@ export default {
             else {
                 return;     // 파일 미선택 시 반환
             }
-
             const formData = new FormData();
-
             formData.append('img', file[0]);
             this.fileName2 = file ? file[0].name : '이미지를 업로드 하세요';
-
             for (let key of formData.keys()) {
                 console.log(key, ":", formData.get(key));
             }
-
             try {
                 axios({
                     url: `http://localhost:3000/trainer/upload_img`,
@@ -269,14 +252,11 @@ export default {
                         console.log(e);
                     })
                 return true;
-
             } catch (err) {
                 console.log(err);
                 return false;
             }
-
         },async uploadFile3(file, type) {
-
             let name = "";
             if (file) {
                 name = file[0].name;
@@ -284,16 +264,12 @@ export default {
             else {
                 return;     // 파일 미선택 시 반환
             }
-
             const formData = new FormData();
-
             formData.append('img', file[0]);
             this.fileName3 = file ? file[0].name : '이미지를 업로드 하세요';
-
             for (let key of formData.keys()) {
                 console.log(key, ":", formData.get(key));
             }
-
             try {
                 axios({
                     url: `http://localhost:3000/trainer/upload_img`,
@@ -328,14 +304,11 @@ export default {
                         console.log(e);
                     })
                 return true;
-
             } catch (err) {
                 console.log(err);
                 return false;
             }
-
         },async uploadFile4(file, type) {
-
             let name = "";
             if (file) {
                 name = file[0].name;
@@ -343,16 +316,12 @@ export default {
             else {
                 return;     // 파일 미선택 시 반환
             }
-
             const formData = new FormData();
-
             formData.append('img', file[0]);
             this.fileName4 = file ? file[0].name : '이미지를 업로드 하세요';
-
             for (let key of formData.keys()) {
                 console.log(key, ":", formData.get(key));
             }
-
             try {
                 axios({
                     url:`http://localhost:3000/trainer/upload_img`,
@@ -387,12 +356,10 @@ export default {
                         console.log(e);
                     })
                 return true;
-
             } catch (err) {
                 console.log(err);
                 return false;
             }
-
         },
         ProInsert() {
             console.log("program",this.program);
@@ -452,8 +419,6 @@ export default {
 }
 </script>
 <style scoped>
-
-
 *{
     margin: 0;
     padding: 0;
@@ -472,7 +437,6 @@ body{
     min-width: 1280px;
     line-height: 1.5;
 }   
-
 /* header */
 header{
     width: 100%;
@@ -522,7 +486,6 @@ header .nav_right{
     height: 18px;
     /* padding-top: 1px; */
 }
-
 /* prc_main */
 .prc_main{
     width: 80%;
@@ -551,7 +514,6 @@ header .nav_right{
     flex-wrap: wrap;
     box-shadow: 4px 4px 5px rgba(0, 199, 174, 0.5);
 }
-
 /* content_left */
 .prc_content .content_left{
     width: 20%;
@@ -580,7 +542,6 @@ header .nav_right{
     object-fit: cover;
     object-position: center;
 }
-
 /* content_right */
 .prc_content .content_right{
     width: 74%;
@@ -675,7 +636,6 @@ header .nav_right{
 .prc_detail .detail_title span{
     font-size: 22px;
 }
-
 /* tag */
 .prc_tag .detail_tag{
     display: flex;
@@ -684,13 +644,11 @@ header .nav_right{
 .prc_tag .detail_tag .tags {
     display: flex;
 }
-
 .prc_tag .detail_tag .tags label {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
 }
-
 .prc_tag .detail_tag .tags input[type="checkbox"] {
     margin-right: 10px;
 }
@@ -698,8 +656,6 @@ header .nav_right{
     font-size: 16px;
     padding-right: 10px;
 }
-
-
 /* img upload */
 .content_right .prc_detail ,.prc_price{
     padding-top: 20px;
@@ -728,7 +684,6 @@ header .nav_right{
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     border-radius: 5px;
 }
-
 .prc_detail .preview-container {
     margin-top: 20px;
     display: flex;
@@ -744,7 +699,6 @@ header .nav_right{
     box-shadow: 0 0 5px rgba(0,0,0,0.1);
     margin: 14px;
 }
-
 .prc_price .preview-container {
     margin-top: 20px;
     display: flex;
@@ -775,8 +729,6 @@ header .nav_right{
     box-shadow: 0 0 5px rgba(0,0,0,0.1);
     margin: 14px;
 }
-
-
 /* img 공통 */
 .img_upload .img_content{
     width: 150px;
@@ -797,7 +749,6 @@ header .nav_right{
     border: 1px solid #ccc;
     border-radius: 5px;
 }
-
 /* 등록 취소 버튼 */
 .prc_main .prc_btn{
     width: 100%;

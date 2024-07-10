@@ -4,9 +4,11 @@
             <div class="profile">
                 <div class="pro_left">                   
                     <div class="upload_img">
-                        <img id="profile-picture" class="profile-picture" src="../image/user2.png" alt="Profile Picture">
                         <div class="file-input">
+                            <img :src="imgData.img_path ? require(`../../../bodytrue_back/uploads/user/${imgData.img_path}`) : '/goodsempty2.jpg'" alt="Profile Picture">
                             <input type="file" id="image-upload" accept="image/*" @change="uploadFile($event.target.files, 0)">
+                            <label for="image-upload" class="file-upload-label" style="font-size: 16px;"></label>   
+                                <span style="font-size: 13px;">사이즈(256 * 256)이내</span>
                         </div>
                     </div>
                 </div>
@@ -16,7 +18,7 @@
                     <span class="user_email">{{userData.user_email}}</span>
                     <span class="user_phnumber">{{userData.user_tel}}</span>
                     <div class="user_update">                        
-                        <button class="update" type="button">정보수정</button>
+                        <button class="update" type="button" @click="gotoupdate(userData.user_no)">정보수정</button>
                     </div>
                 </div>
             </div>
@@ -178,6 +180,7 @@ export default {
                 user_email: '',
                 user_tel: ''
             },
+            imgData: {},
             calData: [],
             reData:[],
             plikeData:[],
@@ -207,7 +210,6 @@ export default {
         this.myrecheck();
         this.mycalcheck();
         this.myImg();
-
     },
 
     created(){
@@ -216,6 +218,7 @@ export default {
         this.mycalcheck();
         // this.myrecheck();
         this.myplike();
+        
         // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
         // const user_no = this.$route.params.user_no;
         // axios.post(`http://localhost:3000/user/mypage/${user_no}`)
@@ -231,6 +234,11 @@ export default {
         user() {
             return this.$store.state.user;    
         },
+        //이미지 불러오기용
+        // imgsrc(){
+        //     return this.imgData.length > 0 ? `http://localhost:3000/uploads/user/${this.imgData.img_path}` : '/goodsempty2.jpg';
+        // },
+
         // //예약 현재 페이지 계산
         pagingData(){
             const start = (this.currentPage - 1 )* this.itemsPerPage;
@@ -364,12 +372,14 @@ export default {
         async myImg(){
             const user_no = this.$route.params.user_no;
             try{
-                const response = await axios.post(`http://localhost:3000/user/mycalcheck`,{user_no:user_no});
+                const response = await axios.post(`http://localhost:3000/user/getimg`,{user_no:user_no});
                 const data = response.data
-                this.calData = data;
-                console.log("calData",this.calData);
+                this.imgData = data;
+                console.log("imgData",this.imgData.img_path);
+                // this.$router.go(0);
             } catch(error){
-                console.error('예약 정보 불러오는 중 오류 발생', error);
+                console.error('이미지 데이터 불러오는 중 에러 발생', error);
+                this.imgData = '';
             }
         },
         //내 리뷰 확인
@@ -497,6 +507,9 @@ export default {
         goToProdetail(pro_no){
             this.$router.push(`/prodetail/${pro_no}`);
         },
+        gotoupdate(user_no){
+            this.$router.push(`/userupdate/${user_no}`);
+        },
         //리뷰작성하기 위해 모달창 오픈 
         openReviewModal(calOrre){
             console.log("calOrre.tr_no",calOrre.tr_no);
@@ -621,7 +634,7 @@ export default {
     /* section1 = user */
     .mypage_main .section1{
         width: 100%;
-        height: 300px;
+        /* height: 300px; */
         /* background-color: aqua; */
         border-bottom: 1px solid black;
     }
@@ -639,7 +652,8 @@ export default {
         padding-left: 50px;
     }
     .section1 .pro_left img{
-        width: 60%;
+        width: 200px;
+        height: 200px;
     }
     .section1 .pro_left .upload_img{
         width: 70%;
@@ -795,23 +809,23 @@ export default {
         padding-top: 10px;
     }
     .pagination .number_box{
-        display: flex;
-        flex-wrap: wrap;
-        text-align: center;
-        width: 150px;
-        margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    /* width: 150px; */
+    margin: 0 auto;
     }
     .number_box li{
-        width: 20px;
+    width: 20px;
     }
     .number_box li.active{
-        background-color: #00c8c8;
-        border-radius: 5px;
-        /* color: white; */
+    background-color: #00c8c8;
+    border-radius: 5px;
+    /* color: white; */
     }
     .number_box img{
         width:15px;
-        padding-top:5px;
+        padding-bottom:5px;
     }
 
     /* section4 = review */
