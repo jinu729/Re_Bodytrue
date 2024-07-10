@@ -111,8 +111,8 @@ router.post('/createprogram/:tr_no', function (req, res) {
       //프론트에서 전달해주는 데이터
       tr_no : req.params.tr_no,
       pro_name : req.body.prcn_text,
-    //   pro_tel : req.body.phn_text,
-    //   pro_add : req.body.adddress_text,S
+      pro_tel : req.body.phn_text,
+      pro_add : req.body.adddress_text,
       pro_startdate : req.body.start_date,
       pro_enddate : req.body.end_date,
       pro_comment1 : req.body.img_textarea1,
@@ -133,9 +133,9 @@ router.post('/createprogram/:tr_no', function (req, res) {
 
         try {
                 // 이미지를 제외한 프로그램 정보 먼저 입력
-                db.query(`INSERT INTO PROGRAM (pro_tr_no,PRO_NAME,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)
+                db.query(`INSERT INTO PROGRAM (pro_tr_no,PRO_TEL,PRO_ADD1,PRO_NAME,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)
                     values (?,?,?,?,?,?,?);`, 
-                    [data.tr_no,data.pro_name, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag],
+                    [data.tr_no,data.pro_tel,data.pro_add,data.pro_name, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag],
                      function (error, results, fields) {
                     if (error) {
                         return res.status(200).json({
