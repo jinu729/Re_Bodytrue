@@ -428,6 +428,47 @@ router.post("/패스명", async(req,res)=>{
 
 //재영작성
 
+//트레이너 정보 확인
+router.post('/trainerupdate/:tr_no', function(request, response, next){
+    const tr_no = request.params.tr_no;
+    
+    db.query(`select tr_name, tr_email, tr_tel, tr_sex from trainer where tr_no = ?`,
+        [tr_no],
+         function(error, result, field){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '트레이너정보 에러'});
+        }
+        response.json(result);
+        console.log(result);
+    });
+});
+
+//트레이너 정보 수정하기
+router.post('/updatetrainer', function(request, response, next){
+
+
+    const tel = request.body.number1 + '-' + request.body.number2 + '-' + request.body.number3;
+    const tr_no = request.body.tr_no;
+    const tr_tel = request.body.tr_tel;
+    const tr_add1 = request.body.tr_add1;
+    const tr_add2 = request.body.tr_add2;
+    const tr_addno = request.body.tr_addno;
+    const tr_pwd = request.body.tr_pwd;
+    
+    console.log('Updating trainer with tr_no:', tr_no);
+
+    db.query(`update trainer set tr_pwd = ?, tr_addno = ?, tr_add1 = ?, tr_add2 = ?, tr_tel = ?
+where tr_no = ?;`,[tr_pwd, tr_addno, tr_add1, tr_add2, tr_tel, tr_no], function(error, result){
+            
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '트레이너 정보 수정 중 오류' });
+        }
+        response.json(result);
+        console.log(result);
+    })
+});
 
 //재영작성완
 
