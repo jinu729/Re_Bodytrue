@@ -30,7 +30,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(trainer, i) in trainerList" :key="i">
+            <tr v-for="(trainer, i) in paginatedTrainers" :key="i">
               <td>{{ trainer.tr_email }}</td>
               <td>{{ trainer.tr_pwd }}</td>
               <td>{{ trainer.tr_name }}</td>
@@ -45,7 +45,7 @@
               <td>
                 <button @click="Trban(trainer, true)" :disabled="trainer.tr_ban === 1">✔</button>
                 <button @click="Trban(trainer, false)" :disabled="trainer.tr_ban === 0">❌</button>
-            </td>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -58,9 +58,9 @@
     </main>
   </div>
 </template>
+
 <script>
 import axios from 'axios';
-import Swal from 'sweetalert2';
 
 export default {
   data() {
@@ -79,18 +79,17 @@ export default {
       return this.trainerList.slice(start, end);
     },
     totalPages() {
-    const pages = Math.max(Math.ceil(this.trainerList.length / this.perPage), 1);
-    console.log('Total Pages:', pages);
-    return pages;
-  }
-
+      const pages = Math.max(Math.ceil(this.trainerList.length / this.perPage), 1);
+      console.log('Total Pages:', pages);
+      return pages;
+    }
   },
   methods: {
     getTrainerList() {
       axios.get('http://localhost:3000/admin/trainerlist')
         .then(response => {
           this.trainerList = response.data;
-          console.log('Trainer List:',this.trainerList);
+          console.log('Trainer List:', this.trainerList);
         })
         .catch(error => {
           console.error('Error fetching userlist:', error);
@@ -111,8 +110,8 @@ export default {
     },
     Trban(trainer, isBaned) {
       const newBanStatus = isBaned ? 1 : 0;
-      console.log('trainer.tr_no',trainer.tr_no,);
-      console.log('newBanStatus',newBanStatus,)
+      console.log('trainer.tr_no', trainer.tr_no);
+      console.log('newBanStatus', newBanStatus);
       axios({
           url: 'http://localhost:3000/admin/trban',
           method: 'POST',
@@ -123,78 +122,53 @@ export default {
         })
         .then(res => {
           if (res.data.message === '트레이너 정지') {
-            Swal.fire('정지 업데이트', `트레이너가 ${isBaned ? '정지' : '미정지'} 처리되었습니다.`, 'success');
+            this.$swal('정지 업데이트', `트레이너가 ${isBaned ? '정지' : '미정지'} 처리되었습니다.`, 'success');
             trainer.tr_ban = newBanStatus; // 삭제 상태 업데이트 반영
-            console.log("newBanStatus",newBanStatus);
+            console.log("newBanStatus", newBanStatus);
           } else {
             console.warn('Unexpected response:', res.data);
           }
         })
         .catch(error => {
           console.error('Error updating trainer:', error);
-          Swal.fire('에러', '트레이너 정지 중 오류가 발생했습니다.', 'error');
+          this.$swal('에러', '트레이너 정지 중 오류가 발생했습니다.', 'error');
         });
-      },
-
-    //트레이너 삭제
-    // Trdelete(trainer, isDeleted) {
-    //   const newDeleteStatus = isDeleted ? 1 : 0;
-    //   axios({
-    //       url: 'http://localhost:3000/admin/trdelete',
-    //       method: 'POST',
-    //       data: {
-    //         tr_no: trainer.te_no,
-    //         tr_ban: newDeleteStatus
-    //       }
-    //     })
-    //     .then(res => {
-    //       if (res.data.message === '삭제 상태 업데이트') {
-    //         Swal.fire('삭제 업데이트', `트레이너가 ${isDeleted ? '삭제' : '미삭제'} 처리되었습니다.`, 'success');
-    //         trainer.tr_ban = newDeleteStatus; // 삭제 상태 업데이트 반영
-    //         console.log("newDeleteStatus",newDeleteStatus);
-    //       } else {
-    //         console.warn('Unexpected response:', res.data);
-    //       }
-    //     })
-    //     .catch(error => {
-    //       console.error('Error deleting trainer:', error);
-    //       Swal.fire('에러', '트레이너 삭제 중 오류가 발생했습니다.', 'error');
-    //     });
-    //   },
-        updateAdmit(trainer, isAdmitted) {
-          const newAdmitStatus = isAdmitted ? 1 : 0;
-          axios({
-              url: 'http://localhost:3000/admin/trupdate',
-              method: 'POST',
-              data: {
-                tr_no: trainer.tr_no,
-                tr_admit: newAdmitStatus
-              }
-            })
-            .then(res => {
-              if (res.data.message === '승인 상태 업데이트') {
-                Swal.fire('승인 업데이트', `트레이너가 ${isAdmitted ? '승인' : '미승인'} 처리되었습니다.`, 'success');
-                trainer.tr_admit = newAdmitStatus; // 상태 업데이트 반영
-              } else {
-                console.warn('Unexpected response:', res.data);
-              }
-            })
-            .catch(error => {
-              console.error('Error updating trainer admit status:', error);
-              Swal.fire('에러', '승인 상태 업데이트 중 오류가 발생했습니다.', 'error');
-            });
-        },
-        gotoPage(page) {
-          if (page >= 1 && page <= this.totalPages) {
-          this.currentPage = page;
+    },
+    updateAdmit(trainer, isAdmitted) {
+      const newAdmitStatus = isAdmitted ? 1 : 0;
+      axios({
+          url: 'http://localhost:3000/admin/trupdate',
+          method: 'POST',
+          data: {
+            tr_no: trainer.tr_no,
+            tr_admit: newAdmitStatus
           }
-        }
-      },
-      mounted() {
-        this.getTrainerList();
+        })
+        .then(res => {
+          if (res.data.message === '승인 상태 업데이트') {
+            this.$swal('승인 업데이트', `트레이너가 ${isAdmitted ? '승인' : '미승인'} 처리되었습니다.`, 'success');
+            trainer.tr_admit = newAdmitStatus; // 상태 업데이트 반영
+          } else {
+            console.warn('Unexpected response:', res.data);
+          }
+        })
+        .catch(error => {
+          console.error('Error updating trainer admit status:', error);
+          this.$swal('에러', '승인 상태 업데이트 중 오류가 발생했습니다.', 'error');
+        });
+    },
+    gotoPage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
       }
+    }
+  },
+  mounted() {
+    this.getTrainerList();
+  }
 };
 </script>
+
 <style scoped>
 /* admin_userlist main 스타일 시작 */
 .admin_userlist-main {
