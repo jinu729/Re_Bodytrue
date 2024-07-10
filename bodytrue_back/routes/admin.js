@@ -180,21 +180,24 @@ module.exports = router;
 
 //리뷰리스트 불러오기
 
-router.get("/adminreview",async(req,res)=>{
-
-    db.query(`SELECT RE_NO,DATE_FORMAT(RE_DATE,"%y-%m-%d") as re_date ,PRO_NAME,USER_NAME,TR_NAME FROM REVIEW R left JOIN PROGRAM P ON R.RE_PRO_NO = P.PRO_NO left JOIN USER U ON R.RE_USER_NO = U.USER_NO left JOIN TRAINER T ON R.RE_TR_NO = T.TR_NO;`,(err,results)=>{
-        if (err) {
-            res.send({
-              // 에러 발생 시
+router.get("/adminreview", async (req, res) => {
+  db.query(`SELECT re_no, DATE_FORMAT(re_date, "%y-%m-%d") AS re_date, pro_name, user_name, tr_name 
+            FROM review r 
+            JOIN program p ON r.re_pro_no = p.pro_no 
+            JOIN user u ON r.re_user_no = u.user_no 
+            JOIN trainer t ON r.re_tr_no = t.tr_no;`, (err, results) => {
+      if (err) {
+          res.send({
               code: 400,
               failed: "error occurred",
               error: err,
-            });
-          } else {
-            res.send(results);
-          }
-    });
+          });
+      } else {
+          res.send(results);
+      }
+  });
 });
+
 
 //리뷰 상세내용 불러오기
 
