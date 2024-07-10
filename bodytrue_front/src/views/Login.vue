@@ -86,6 +86,7 @@ export default {
                 isFindIdModalOpen: false,
                 isFindPwModalOpen: false,
                 // rememberMe: false,
+                naverLogin: null,
             };
         },
         computed: {
@@ -286,9 +287,7 @@ export default {
                     alert('로그인에 실패했습니다.');
                 }
             },
-
-            loginNaver() {
-                // 네이버 로그인 로직
+            loginNaver(){
                 this.naverLogin.init();
                 this.naverLogin.authorize();
                 console.log('네이버 로그인 시도');
@@ -304,11 +303,25 @@ export default {
             closeFindPwModal(){
                 this.isFindPwModalOpen = false;
             },
+            // getAccessToken(code) {
+            // axios.post('http://localhost:3000/naverlogin', {
+            //     code: code,
+            // })
+            // .then((response) => {
+            //     // 서버로부터 받은 응답 처리
+            //     console.log(response.data);
+            //     this.accessToken = response.data.accessToken;
+            //     this.userData = response.data.userData;
+            // })
+            // .catch((error) => {
+            //     console.error('네이버 로그인 처리 중 오류:', error);
+            //     });
+            // },
         },
         mounted() {
             this.naverLogin = new window.naver.LoginWithNaverId({
                 clientId: "Ozm1PPMPASRIBq508on0",
-                callbackUrl: "http://localhost:8081/loginNaver",
+                callbackUrl: "http://localhost:8081/login",
                 isPopup: true,
                 // loginButton: {
                 //     color: "green", type: 3, height: 60
@@ -316,17 +329,37 @@ export default {
             });
 
             this.naverLogin.init();
+            // console.log("init",this.naverLogin.init);
 
-            this.naverLogin.getLoginStatus((status) => {
+            this.naverLogin.getLoginStatus(async (status) => {
+                console.log(this.naverLogin.getLoginStatus);
                 if(status) {
                     console.log(status);
                     console.log(this.naverLogin.user);
-
-                    var email = this.naverLogin.user.getEmail();
-                    if(email == undefined || email == null) {
+                    console.log("email",status.email);
+                    const user_email = this.naverLogin.user.getEmail();
+                    const user_name = this.naverLogin.user.getName();
+                    if(user_email == undefined || user_email == null) {
                         alert("이메일은 필수 정보입니다. 정보 제공을 동의해주세요");
                         this.naverLogin.reprompt();
                         return;
+                    }
+                    try {
+                        const response = await axios.post('http://localhost:3000/auth/naverlogin', {
+                            user_email: user_email,
+                            user_name: user_name,
+                    });
+                        console.log("res.user_email",user_email);
+                        this.$store.commit('setUser', {
+                            user_email: response.data.email,
+                            user_no: response.data.user_no,
+                            user_auth: response.data.user_auth || 1, // 기본 값으로 일반 사용자 권한 설정
+                    });
+
+                        window.location.href = '/';
+                    } catch (error) {
+                        console.error('서버로 네이버 로그인 데이터 전송 실패:', error);
+                        alert('로그인에 실패했습니다.');
                     }
                 } else {
                     console.log("callback 처리에 실패하였습니다.");
