@@ -157,7 +157,7 @@ create table PROGRAM(
 	PRO_STARTDATE datetime,				
 	PRO_ENDDATE datetime,	
 	PRO_TR_NO int,				
-	PRO_CNT int,				
+	PRO_CNT int default 0,				
 	FOREIGN KEY(PRO_TR_NO) REFERENCES TRAINER (TR_NO) ON DELETE SET NULL				
 );					
 
