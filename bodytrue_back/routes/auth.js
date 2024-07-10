@@ -453,9 +453,10 @@ router.post("/kakaologin", async (req, res) => {
             };
             console.log("user",user);
             db.query(
-              'insert into user (user_no,user_email, user_name, user_auth, user_social) values (?, ?, ?, ?, ?)',
-              [user.user_no,user.user_email, user.user_name, user.user_auth, user.user_social],
-              (err) => {
+              'insert into user (user_email, user_name, user_auth, user_social) values (?, ?, ?, ?)',
+              [user.user_email, user.user_name, user.user_auth, user.user_social],
+              async (err, results) => {
+                console.log(results);
                 if (err) {
                   res.status(400).json({
                     code: 400,
@@ -466,11 +467,12 @@ router.post("/kakaologin", async (req, res) => {
                   res.status(200).json({
                     code: 200,
                     message: '회원가입 및 로그인 성공',
-                    user_no: result.insertId, // 새로 생성된 회원 번호 반환
+                    user_no: results.insertId, // 새로 생성된 회원 번호 반환
                     email: user.user_email,
                     user_name: user.user_name,
                     user_auth: user.user_auth,
                   });
+                  
                 }
               }
             );
@@ -480,60 +482,122 @@ router.post("/kakaologin", async (req, res) => {
     );
   });
 
-//네이버가입
-router.post("/Naverlogin",async(req,res)=>{
 
-    const user ={
-        user_email : req.body.email, 
-        user_name : req.body.name,
-        user_social : 2
-    };
 
-    db.query("insert into user (user_email,user_name,user_social) values (?,?,2)",
-        [user.user_email,user.user_name,user.user_social],
-        (err)=>{
-            if (err) {
-                res.send({
-                  // 에러 발생 시
+router.post("/naverlogin", async (req, res) => {
+  console.log("req.body",req.body);
+  const email = req.body.user_email;
+  const user_name = req.body.user_name;
+  console.log(user_name);
+  db.query(
+    "select user_no, user_email, user_name, user_pwd, user_auth from user where user_email = ?",
+    email,
+    async (err, results) => {
+      if (err) {
+        res.send({
+          // 에러 발생 시
+          code: 400,
+          failed: "error occurred",
+          error: err,
+        });
+      } else {
+        if (results.length > 0) {
+          console.log("results",results[0]);            
+          console.log("res.data",results[0].user_no);
+          console.log("res.data22",results[0].user_name);
+          // 이미 회원인 경우, 해당 정보를 클라이언트에게 응답합니다.
+          res.status(200).json({
+            user_no: results[0].user_no,
+            email: results[0].user_email,
+            user_name: results[0].user_name
+          });
+          // console.log(user_no);
+        } else {
+          // 회원이 아닌 경우, 회원가입을 수행합니다.
+          const user = {
+            user_email: email,
+            user_name: user_name,
+            user_social: 2, // 소셜 로그인 유저 구분 (예: 카카오)
+            user_auth: 1 // 사용자 권한 설정 (예: 일반 사용자)
+          };
+          console.log("user",user);
+          db.query(
+            'insert into user (user_no,user_email, user_name, user_auth, user_social) values (?, ?, ?, ?, ?)',
+            [user.user_no,user.user_email, user.user_name, user.user_auth, user.user_social],
+            async (err, results) => {
+              if (err) {
+                res.status(400).json({
                   code: 400,
-                  failed: "error occurred",
-                  error: err,
+                  failed: 'error occurred',
+                  error: err
                 });
               } else {
-                res.send({
-                  //쿼리 실행 성공시
+                res.status(200).json({
                   code: 200,
-                  message: "회원가입 성공",
+                  message: '회원가입 및 로그인 성공',
+                  user_no: results.insertId, // 새로 생성된 회원 번호 반환
+                  email: user.user_email,
+                  user_name: user.user_name,
+                  user_auth: user.user_auth,
                 });
               }
-        })
-});
-
-//네이버로그인후
-router.post("/패스명", async (req, res) => {
-
-    const email = req.body.email;
-  
-    db.query(
-      "select * from user where USER_EMAIL = ?",
-      email,
-      async (err, results) => {
-        if (err) {
-          res.send({
-            // 에러 발생 시
-            code: 400,
-            failed: "error occurred",
-            error: err,
-          });
-        } else {
-          res.send({
-            email: results[0].USER_EMAIL,
-            name: results[0].USER_NAME,
-          });
+            }
+          );
         }
       }
-    );
-  });
+    }
+  );
+});
+
+// const CLIENT_ID = 'Ozm1PPMPASRIBq508on0';
+// const CLIENT_SECRET = 'XoLi2skUt3';
+// const REDIRECT_URI = 'http://localhost:3000/naverlogin'; // 클라이언트에서 설정한 콜백 URL
+
+
+// // 네이버 로그인 처리 엔드포인트
+// router.post('/naverlogin', async (req, res) => {
+//   const code = req.body.code;
+//   console.log(req.body);
+
+//   try {
+//     // 액세스 토큰 요청
+//     const tokenResponse = await axios.post(
+//       'https://nid.naver.com/oauth2.0/token',
+//       querystring.stringify({
+//         grant_type: 'authorization_code',
+//         client_id: CLIENT_ID,
+//         client_secret: CLIENT_SECRET,
+//         code: code,
+//         redirect_uri: REDIRECT_URI,
+//       }),
+//       {
+//         headers: {
+//           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+//         },
+//       }
+//     );
+
+//     const accessToken = tokenResponse.data.access_token;
+
+//     // 사용자 정보 요청
+//     const profileResponse = await axios.get('https://openapi.naver.com/v1/nid/me', {
+//       headers: {
+//         Authorization: `Bearer ${accessToken}`,
+//       },
+//     });
+
+//     const userData = profileResponse.data.response;
+
+//     // 클라이언트에게 액세스 토큰과 사용자 데이터 전송
+//     res.status(200).json({ accessToken: accessToken, userData: userData });
+//   } catch (error) {
+//     console.error('네이버 로그인 처리 중 오류:', error.response.data);
+//     res.status(500).json({ message: '네이버 로그인 처리 중 오류 발생' });
+//   }
+// });
+
+
+
 
 
 //승호작성완

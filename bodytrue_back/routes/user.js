@@ -656,7 +656,7 @@ router.get('/programlist/:pro_tag', (req, res) => {
   router.post('/userupdate/:user_no', function(request, response, next){
     const user_no = request.params.user_no;
     
-    db.query(`select user_name, user_email, user_tel from user where user_no = ?`,
+    db.query(`select user_name, user_email, user_tel, user_sex from user where user_no = ?`,
         [user_no],
          function(error, result, field){
         if(error){
@@ -669,18 +669,6 @@ router.get('/programlist/:pro_tag', (req, res) => {
 });
 
 //회원정보 삭제하기
-// router.post('/deleteuser', function(request, response, next){
-//     const user_no = request.body.user_no;
-    
-//     db.query(`delete from user where user_no = ?`,[user_no], function(error, result){
-//         if(error){
-//             console.error(error);
-//             return response.status(500).json({ error: '회원 정보 삭제 중 오류' });
-//         }
-//         response.json(result);
-//         console.log(result);
-//     })
-// });
 router.post('/deleteuser', function(request, response, next){
     const user_no = request.body.user_no;
 

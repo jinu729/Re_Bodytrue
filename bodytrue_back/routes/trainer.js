@@ -32,8 +32,8 @@ router.post('/createprogram/:tr_no', function (req, res) {
       //프론트에서 전달해주는 데이터
       tr_no : req.params.tr_no,
       pro_name : req.body.prcn_text,
-    //   pro_tel : req.body.phn_text,
-    //   pro_add : req.body.adddress_text,S
+      pro_tel : req.body.phn_text,
+      pro_add : req.body.adddress_text,
       pro_startdate : req.body.start_date,
       pro_enddate : req.body.end_date,
       pro_comment1 : req.body.img_textarea1,
@@ -51,9 +51,9 @@ router.post('/createprogram/:tr_no', function (req, res) {
     console.log('-------------------');
         try {
                 // 이미지를 제외한 프로그램 정보 먼저 입력
-                db.query(`INSERT INTO PROGRAM (pro_tr_no,PRO_NAME,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)
+                db.query(`INSERT INTO PROGRAM (pro_tr_no,PRO_TEL,PRO_ADD1,PRO_NAME,PRO_STARTDATE,PRO_ENDDATE,PRO_COMMENT1,PRO_COMMENT2,PRO_TAG)
                     values (?,?,?,?,?,?,?);`, 
-                    [data.tr_no,data.pro_name, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag],
+                    [data.tr_no,data.pro_tel,data.pro_add,data.pro_name, data.pro_startdate, data.pro_enddate, data.pro_comment1, data.pro_comment2, data.pro_tag],
                      function (error, results, fields) {
                     if (error) {
                         return res.status(200).json({
@@ -435,6 +435,47 @@ router.post("/패스명", async(req,res)=>{
 
 //재영작성
 
+//트레이너 정보 확인
+router.post('/trainerupdate/:tr_no', function(request, response, next){
+    const tr_no = request.params.tr_no;
+    
+    db.query(`select tr_name, tr_email, tr_tel, tr_sex from trainer where tr_no = ?`,
+        [tr_no],
+         function(error, result, field){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '트레이너정보 에러'});
+        }
+        response.json(result);
+        console.log(result);
+    });
+});
+
+//트레이너 정보 수정하기
+router.post('/updatetrainer', function(request, response, next){
+
+
+    const tel = request.body.number1 + '-' + request.body.number2 + '-' + request.body.number3;
+    const tr_no = request.body.tr_no;
+    const tr_tel = request.body.tr_tel;
+    const tr_add1 = request.body.tr_add1;
+    const tr_add2 = request.body.tr_add2;
+    const tr_addno = request.body.tr_addno;
+    const tr_pwd = request.body.tr_pwd;
+    
+    console.log('Updating trainer with tr_no:', tr_no);
+
+    db.query(`update trainer set tr_pwd = ?, tr_addno = ?, tr_add1 = ?, tr_add2 = ?, tr_tel = ?
+where tr_no = ?;`,[tr_pwd, tr_addno, tr_add1, tr_add2, tr_tel, tr_no], function(error, result){
+            
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '트레이너 정보 수정 중 오류' });
+        }
+        response.json(result);
+        console.log(result);
+    })
+});
 
 //재영작성완
 

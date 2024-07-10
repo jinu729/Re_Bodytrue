@@ -1,12 +1,12 @@
 <template>
     <div>
-    <main class="admin_userlist-main"></main>
+        <main class="admin_userlist-main"></main>
         <div class="admin_userlist-bodyheader">
             &nbsp;&nbsp;리뷰 관리
         </div>
 
         <div class="admin_userlist-bodycontent">
-            <div>
+            <table>
                 <thead>
                     <tr>
                         <th>글번호</th>
@@ -16,22 +16,26 @@
                         <th>트레이너명</th>
                     </tr>
                 </thead>
-                <tr v-for="(review, i) in reviewList" :key="i">
+                <tr v-for="(review, i) in paginatedReviews" :key="i">
                     <td>{{ review.re_no }}</td>
                     <td>{{ review.re_date }}</td>
-                    <td>{{ review.pro_name }}</td>
+                    <button class="pro_name" @click="reviewdetail(review.re_no)">{{ review.pro_name }}</button>
                     <td>{{ review.user_name }}</td>
                     <td>{{ review.tr_name }}</td>
+                    <button @click="qwer">123</button>
                 </tr>
-            </div>
-            <div class="admin_userlist-bodypaging">
-                <a href="#">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-            </div>
+            </table>
+            <ul class="admin_page">
+                <li v-for="page in totalPages" :key="page">
+                    <a href="#" @click.prevent="gotoPage(page)" :class="{ active: page === currentPage }">
+                        {{ page }}
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
+
 <script>
 import axios from 'axios';
 
@@ -44,20 +48,43 @@ export default {
         };
     },
     computed: {
-
+        paginatedReviews() {
+            const start = (this.currentPage - 1) * this.perPage;
+            const end = start + this.perPage;
+            return this.reviewList.slice(start, end);
+        },
+        totalPages() {
+            return Math.ceil(this.reviewList.length / this.perPage);
+        }
     },
-    method: {
+    methods: {
         getReviewList() {
+            console.log('Fetching review list...');
             axios.get('http://localhost:3000/admin/adminreview')
             .then(response => {
-                this.reviewList = response.data;
+                console.log('Response:', response.data);
+                if (Array.isArray(response.data)) {
+                    this.reviewList = response.data;
+                } else {
+                    console.error('Expected an array but got:', response.data);
+                }
             })
             .catch(error => {
                 console.error('Error fetching review list:', error);
             });
-        }
+        },
+        gotoPage(page) {
+            this.currentPage = page;
+        },
+        reviewdetail(re_no) {
+            this.$router.push(`/admin/reviewdetail/${re_no}`);
+        },
+    },
+    mounted() {
+        console.log('Component mounted.');
+        this.getReviewList();
     }
-}
+};
 </script>
 
 <style scoped>
@@ -107,6 +134,36 @@ export default {
 
 .admin_userlist-bodypaging{
     padding-top: 15px;
+}
+.admin_page {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    justify-content: center;
+}
+.admin_page li {
+    display: inline;
+}
+.admin_page a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #000;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.admin_page a.active {
+    background-color: #00bfa5;
+    color: white;
+    margin: 30px;
+}
+.admin_page a:hover {
+    background-color: #ddd;
+}
+.pro_name {
+    background-color: white;
+    border: none;
 }
 
 /* admin_userlist main 스타일 끝 */
