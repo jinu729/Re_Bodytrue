@@ -18,8 +18,8 @@
                        <span class="user_email">이메일 :{{trData.tr_email}}</span>
                        <span class="user_phnumber">휴대전화번호 : {{ trData.tr_tel }}</span>
                        <div class="user_update">                        
-                           <button class="update" type="button">정보수정</button>
-                           <button class="create_prc" type="button">프로그램 등록</button>
+                           <button class="update" type="button" @click="gotoupdate(tr_no)">정보수정</button>
+                           <button class="create_prc" type="button" @click="gotoprocreate(tr_no)">프로그램 등록</button>
                        </div>
                    </div>
                </div>
@@ -316,6 +316,14 @@ export default {
         //상품 페이지로 이동
         goToProdetail(pro_no){
             this.$router.push(`/prodetail/${pro_no}`);
+        },
+        //정보수정 페이지로 이동
+        gotoupdate(tr_no){
+            this.$router.push(`/trainerupdate/${tr_no}`);
+        },
+        //프로그램 등록 페이지로 이동
+        gotoprocreate(tr_no){
+            this.$router.push(`/TrainerCreatePro/${tr_no}`);
         },
         //트레이너 정보 확인
         async trinfo(){
