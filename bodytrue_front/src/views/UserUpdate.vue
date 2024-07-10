@@ -23,6 +23,7 @@
                 <input type="password" id="password1" v-model="userData.user_pwd" name="password1">
                 <span class="confirm">(영문 대소문자/숫자/특수문자 중 3가지 이상 조합, 8~20자)</span>
               </div>
+              <div v-if="errors.password1" class="error" hidden>{{ errors.password1 }}</div>
             </div>
             <div class="form_group">
               <div class="form_left">
@@ -32,6 +33,7 @@
                 <input type="password" id="password2" v-model="password2" name="password2">
                 <button type="button" class="btn_confirm1" @click="confirm_password">비밀번호확인</button>
               </div>
+              <div v-if="errors.password2" class="error" hidden>{{ errors.password2 }}</div>
             </div>
             <div class="form_group">
                         <div class="form_left">
@@ -47,7 +49,7 @@
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
                             <label for="user">
-                                <input type="radio" id="user" v-model="user_auth" name="auth" value="1" checked> 회원 &nbsp;&nbsp;
+                                <input type="radio" id="user" v-model="user_auth" name="auth" value="1" checked disabled> 회원 &nbsp;&nbsp;
                             </label>
                             <label for="trainer">
                                 <input type="radio" id="trainer" v-model="user_auth" name="auth" value="2" disabled> 트레이너
@@ -60,10 +62,10 @@
                         </div>
                         <div class="form_right">&nbsp;&nbsp;
                             <label for="men">
-                                <input type="radio" id="men" v-model="gender" name="sex" value="M"> 남자 &nbsp;&nbsp;
+                                <input type="radio" id="men" v-model="userData.user_sex" name="sex" value="M" disabled > 남자 &nbsp;&nbsp;
                             </label>
                             <label for="women">
-                                <input type="radio" id="women" v-model="gender" name="sex" value="F"> 여자
+                                <input type="radio" id="women" v-model="userData.user_sex" name="sex" value="F" disabled > 여자
                             </label>
                         </div>                        
                     </div>            
@@ -85,6 +87,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div v-if="errors.address" class="error" hidden>{{ errors.address }}</div>
                     </div>   
                     </form>
                     <div class="form_group">
@@ -103,13 +106,12 @@
                         <input type="text" name="number3" v-model="userData.user_tel3" id="number3">
                       </div>
                     </div>
-
-
+                    <div v-if="errors.phone" class="error" hidden>{{ errors.phone }}</div>
             <div class="join_btn">
 
               <button type="submit" @click="updateuser(user.user_no)" id="clear">수정완료</button>
               <button type="button" @click="exit" id="exit">수정취소</button>
-                <button type="button2" @click="deleteuser(user.user_no)" id="del">회원탈퇴</button>
+                <button  type="button" @click="deleteuser(user.user_no)" id="del">회원탈퇴</button>
             </div>
           </div>
         </div>
@@ -133,13 +135,15 @@ export default {
               user_pwd: '',
               user_addno: '',
               user_add1: '',
-              user_add2: ''
+              user_add2: '',
+              user_sex:''
             },
             zipcode : '',
             address: '',
             address_detail: '',
             password1: '',
-            password2: ''
+            password2: '',
+            errors: {}
           }
         },
         created(){
@@ -151,11 +155,62 @@ export default {
           }
         },
         methods:{
+          validateForm() {
+            this.errors = {};
+
+            // 비밀번호 유효성 검사
+            if (!this.userData.user_pwd) {
+                this.errors.password1 = '비밀번호를 입력해 주세요.';
+                alert(this.errors.password1);
+                return false;
+            } else {
+                const password = this.userData.user_pwd;
+                if (password.length < 8 || password.length > 20) {
+                    this.errors.password1 = '비밀번호는 8~20자 사이여야 합니다.';
+                    alert(this.errors.password1);
+                    return false;
+                }
+                const hasUpperCase = /[A-Z]/.test(password);
+                const hasLowerCase = /[a-z]/.test(password);
+                const hasNumbers = /\d/.test(password);
+                const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
+                if (typesCount < 3) {
+                    this.errors.password1 = '비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.';
+                    alert(this.errors.password1);
+                    return false;
+                }
+            }
+
+               // 비밀번호 확인 유효성 검사
+      if (this.userData.user_pwd !== this.password2) {
+        this.errors.password2 = '비밀번호가 일치하지 않습니다.';
+        alert(this.errors.password2);
+        return false;
+      }
+
+      // 주소 유효성 검사
+      if (!this.userData.user_addno || !this.userData.user_add1) {
+        this.errors.address = '주소를 입력해 주세요.';
+        alert(this.errors.address);
+        return false;
+      }
+
+      // 전화번호 유효성 검사
+      if (!this.userData.user_tel2 || !this.userData.user_tel3) {
+        this.errors.phone = '휴대전화번호를 입력해 주세요.';
+        alert(this.errors.phone);
+        return false;
+      }
+
+            return true;
+        },
           async myinfo(){
             const user_no = this.$route.params.user_no;
             axios.post(`http://localhost:3000/user/userupdate/${user_no}`)
             .then(response => {
                 this.userData = response.data[0];
+                this.userData.user_sex = response.data[0].user_sex; // 성별 정보 설정
             })
             .catch(error => {
                 console.error("정보수정페이지 에러 발생", error);
@@ -249,6 +304,9 @@ export default {
         //회원 정보 수정
         ...mapMutations(['setUser']),
         async updateuser(user_no) {
+          if (!this.validateForm()) {
+                return;
+            }
           const user_tel = this.userData.user_tel1 + '-' + this.userData.user_tel2 + '-' + this.userData.user_tel3;
       const user = {
         user_no: user_no,
@@ -494,12 +552,6 @@ export default {
     text-align: center;
 }
 
-#join_btn2{
-    width: 100%;
-    height: 10%;
-    padding-top: 40px;
-    text-align: right;
-}
 #clear{
     width: 100px;
     font-size: 18px;
@@ -546,6 +598,9 @@ export default {
     background-color: #ff5151;
     color: rgb(0, 0, 0);
 } 
+.btndel{
+  margin: 0 220px;
+}
   #del {
     width: 100px;
     font-size: 18px;
@@ -565,5 +620,6 @@ export default {
     background-color: #ff5151;
     color: rgb(0, 0, 0);
 } 
+
   </style>
   

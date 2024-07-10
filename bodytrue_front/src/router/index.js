@@ -28,6 +28,7 @@ import UserFaq from '../views/UserFaq.vue'
 import MainPage from '../views/MainPage.vue'
 import ProgramList from '../views/ProgramList.vue'
 import UserUpdate from '../views/UserUpdate.vue'
+import TrainerUpdate from '../views/TrainerUpdate.vue'
 //재영작성완
 
 
@@ -153,6 +154,11 @@ const routes = [
   path: '/userupdate/:user_no',
   naem: 'UserUpdate',
   component: UserUpdate
+},
+{
+  path: '/trainerupdate/:tr_no',
+  naem: 'TrainerUpdate',
+  component: TrainerUpdate
 },
 
 //재영작성완
