@@ -175,9 +175,6 @@ router.post('/trban', (req, res, next) => {
 
 
 
-module.exports = router;
-
-
 //리뷰리스트 불러오기
 
 router.get("/adminreview", async (req, res) => {

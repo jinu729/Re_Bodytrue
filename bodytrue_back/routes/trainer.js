@@ -7,7 +7,6 @@ const multer = require('multer');
 const path = require("path");
 //승호작성
 
-// 프로그램 사진저장/프로그램 정보 저장
 const upload = multer({
     storage: multer.diskStorage({
         destination(req, file, cb) {
@@ -387,35 +386,6 @@ router.post('/getimg',function(request,response,next){
     )
 });
 //트레이너 정보수정
-
-router.post("/패스명", async(req,res)=>{
-
-    const tel = req.body.number1 + '-' + req.body.number2 + '-' + req.body.number3;
-    const data={
-        tr_pwd : req.body.password1,
-        tr_addno : req.body.postcode,
-        tr_add1 : req.body.address,
-        tr_add2 : reqq.body.address-detail,
-        tr_tel : tel,
-        tr_no : req.params.tr_no
-    }
-
-    db.query("UPDATE TRAINER SET TR_PWD = ?, TR_ADDNO=?,TR_ADD1=?,TR_ADD2=?,TR_TEL = ? WHERE TR_NO=?;",
-        [data.tr_pwd,data.tr_addno,data.tr_add1,data.tr_add2,data.tr_tel,data.tr_no],
-        (err,results)=>{
-        if (err) {
-            res.send({
-            // 에러 발생 시
-            code: 400,
-            failed: "error occurred",
-            error: err,
-            });
-        } else {
-            res.send
-        }
-    })
-})
-//사진추가해야해양
 
 
 //승호작성완
