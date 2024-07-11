@@ -119,7 +119,7 @@
                            <div class="prore_left">
                                <div class="prore_leftop">
                                    <ul class="table_list">
-                                       <li class="prore_proname"><img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span>{{review.re_rate}}</span></li>
+                                       <li class="prore_proname"><img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span>{{review.re_rate || 0}}</span></li>
                                        <li class="prore_content">
                                            <textarea v-model="review.re_comment" name="content" id="review_content" disabled style="width: 720px; height: 100px; resize: none; background-color: white; font-size: 16px; color: black; padding: 10px;border: 0;"></textarea></li>
                                        <li class="prore_reviewdate">작성일 : {{review.re_date}}</li>
@@ -127,7 +127,7 @@
                                </div>
                                <div class="prore_leftbottom">
                                    <!--이미지 있을때만 이미지 보여주기-->
-                                   <img v-if="review.img_path" :src="require(`../../../bodytrue_back/uploads/program/${review.img_path}`)" >
+                                   <img v-if="review.img_path" :src="require(`../../../bodytrue_back/uploads/review/${review.img_path}`)" >
                                </div>
                            </div>
                            <div class="prore_right">

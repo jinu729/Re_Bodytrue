@@ -11,21 +11,42 @@ const path = require("path");
 const upload = multer({
     storage: multer.diskStorage({
         destination(req, file, cb) {
-            cb(null, 'uploads/');
+            const uploadPath = path.join(__dirname, '..', 'uploads');
+            console.log('Upload Destination:', uploadPath); // 업로드 경로 확인
+            cb(null, uploadPath);
         },
         filename(req, file, cb) {
+            console.log('Uploaded File:', file.originalname); // 업로드된 파일 이름 확인
             cb(null, file.originalname);
         },
     }),
     limits: { fileSize: 5 * 1024 * 1024 },
 });
-router.post('/upload_img', upload.single('img'), (request, response) => {
-    setTimeout(() => {
-        return response.status(200).json({
-            message: 'success'
-        })
-    }, 0);
-})
+router.post('/upload_img', upload.single('img'), (req, res) => {
+    console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
+    return res.status(200).json({
+        message: 'success',
+        filename: req.file.filename  // 업로드된 파일명 반환
+    });
+});
+// const upload = multer({
+//     storage: multer.diskStorage({
+//         destination(req, file, cb) {
+//             cb(null, 'uploads/');
+//         },
+//         filename(req, file, cb) {
+//             cb(null, file.originalname);
+//         },
+//     }),
+//     limits: { fileSize: 5 * 1024 * 1024 },
+// });
+// router.post('/upload_img', upload.single('img'), (request, response) => {
+//     setTimeout(() => {
+//         return response.status(200).json({
+//             message: 'success'
+//         })
+//     }, 0);
+// })
 router.post('/createprogram/:tr_no', function (req, res) {
 
     const data = {
