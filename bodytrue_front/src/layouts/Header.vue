@@ -179,7 +179,7 @@ header{
     height: 80px;
     /* background-color: gray; */
     position: relative;
-    border-bottom: 1.5px solid black;
+    border-bottom: 1.5px solid rgba(0, 0, 0, 0.2);
 }
 header .wrap{
     width: 80%;
@@ -244,19 +244,19 @@ header .nav_right{
     justify-content: space-between;
 }
 .icon_list .item{
-    line-height: 35px;
-    font-size: 18px;
+    /* line-height: 35px; */
+    font-size: 14px;
     font-weight: bold;
     padding: 5px;
     padding-left: 10px;
     padding-right: 10px;
 }
 .icon_list .line{
-    line-height: 41px;
+    line-height: 30px;
 }
 .item .icon img{
-    width: 25px;
-    height: 25px;
+    width: 16px;
+    height: 16px;
     /* padding-top: 1px; */
 }
 </style>

@@ -4,7 +4,7 @@
     <div class=slider>
       <div class="slides">
         <div>
-          <img :src="mainimg.img_path ? require(`../../../bodytrue_back/uploads/program/${mainimg.img_path}`) : '/goodsempty2.jpg'">
+          <img :src="mainimg.img_path ? require(`../../../bodytrue_back/uploads/program/${mainimg.img_path}`) : '/goodsempty2.jpg'" style="width: 800px; height: 600px; object-fit: cover; " >
           </div>
         <!-- <div class="slide" v-for="(image, index) in images" :key="index">
            메인 이미지 요소
@@ -32,14 +32,14 @@
       </div>
       <div class="description" id="detail1">
         <h2>상세 설명</h2>
-        <p><img :src="proimg.img_path ? require(`../../../bodytrue_back/uploads/program/${proimg.img_path}`) : '/goodsempty2.jpg'"></p>
+        <p><img :src="proimg.img_path ? require(`../../../bodytrue_back/uploads/program/${proimg.img_path}`) : '/goodsempty2.jpg'" style="width: 800px;  object-fit: cover; "></p>
         <p>{{ programdetail.pro_comment1 }}</p>
         <p>{{ programdetail.pro_comment2 }}</p>
         <p>{{ programdetail.pro_comment3 }}</p>
       </div>
       <div class="price-info" id="price1">
         <h2>가격 안내</h2>
-        <p><img :src="priceimg.img_path ? require(`../../../bodytrue_back/uploads/program/${priceimg.img_path}`) : '/goodsempty2.jpg'"></p>
+        <p><img :src="priceimg.img_path ? require(`../../../bodytrue_back/uploads/program/${priceimg.img_path}`) : '/goodsempty2.jpg'" style="width: 800px; object-fit: cover; "></p>
         <p>1회 비용: 100,000 원</p>
         <p>3회 비용: 300,000 원</p>
         <p>주의 사항</p>
@@ -437,6 +437,7 @@
     max-width: 1280px;
     display: flex;
     margin: 0 auto;
+    margin-top: 20px;
   }
   
   .programdetailimg{
