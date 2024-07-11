@@ -214,6 +214,10 @@ export default {
                         // 존재하지 않는 이메일일 때
                         alert(res.data.message);
                         // window.location.href = "/login";
+                    } else if (res.data.code === 402) {
+                        // 존재하지 않는 이메일일 때
+                        alert(res.data.message);
+                        // window.location.href = "/login";
                     }
                 } catch (err) {
                     alert(err);

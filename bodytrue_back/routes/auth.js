@@ -757,7 +757,7 @@ router.post("/login_user",async(req,res)=>{
   console.log("req.email",user_email);
   console.log("req.pwd",user_pwd);
 
-  db.query('select user_no, user_email, user_name, user_pwd, user_auth from user where user_email = ?',
+  db.query('select user_no, user_email, user_name, user_pwd, user_auth, user_ban from user where user_email = ?',
     [user_email],
     function(err,results,fields){
     if (err) {
@@ -777,48 +777,56 @@ router.post("/login_user",async(req,res)=>{
         console.log("user",user);
         console.log(user.user_email);
         console.log(user.user_auth);
-        if (user.user_pwd === user_pwd) {
-          if (user.user_auth === 0) {
-            res.send({
-              code: 200,
-              message: "관리자 로그인 성공",
-              data: {
-                user_no: user.user_no,
-                user_email: user.user_email,
-                user_name: user.user_name,
-                user_pwd: user.user_pwd,
-                
-              },
-              email: results[0].user_email,
-              user_no: results[0].user_no,
-              user_auth: results[0].user_auth,
-            });
-          } else if (user.user_auth === 1) {
-            res.send({
-              code: 200,
-              message: "회원 로그인 성공",
-              data: {
-                user_no: user.user_no,
-                user_email: user.user_email,
-                user_name: user.user_name,
-                user_pwd: user.user_pwd,
-                
-              },
-              email: results[0].user_email,
-              user_no: results[0].user_no,
-              user_auth: user.user_auth,
-            });
+        if(user.user_ban === 0){
+          if (user.user_pwd === user_pwd) {
+            if (user.user_auth === 0) {
+              res.send({
+                code: 200,
+                message: "관리자 로그인 성공",
+                data: {
+                  user_no: user.user_no,
+                  user_email: user.user_email,
+                  user_name: user.user_name,
+                  user_pwd: user.user_pwd,
+                  
+                },
+                email: results[0].user_email,
+                user_no: results[0].user_no,
+                user_auth: results[0].user_auth,
+              });
+            } else if (user.user_auth === 1) {
+              res.send({
+                code: 200,
+                message: "회원 로그인 성공",
+                data: {
+                  user_no: user.user_no,
+                  user_email: user.user_email,
+                  user_name: user.user_name,
+                  user_pwd: user.user_pwd,
+                  
+                },
+                email: results[0].user_email,
+                user_no: results[0].user_no,
+                user_auth: user.user_auth,
+              });
+            } else {
+              res.send({
+                code: 403,
+                message: "허가되지 않은 사용자 유형입니다.",
+              });
+            }
           } else {
             res.send({
-              code: 403,
-              message: "허가되지 않은 사용자 유형입니다.",
+              // 비밀번호 불일치 시
+              code: 401,
+              message: "비밀번호가 일치하지 않습니다.",
             });
           }
         } else {
           res.send({
             // 비밀번호 불일치 시
-            code: 401,
-            message: "비밀번호가 일치하지 않습니다.",
+            code: 402,
+            message: "정지되었습니다 관리자에게 문의하시기 바랍니다.",
           });
         }
       } else {
@@ -845,7 +853,7 @@ router.post("/login_tr",async(req,res)=>{
   const tr_pwd = req.body.pwd;
   const tr_no = req.body.tr_no;
 
-  db.query('select tr_no, tr_email, tr_name, tr_pwd, tr_admit from trainer where tr_email = ?',
+  db.query('select tr_no, tr_email, tr_name, tr_pwd, tr_admit, tr_ban from trainer where tr_email = ?',
     [tr_email],
     function(err,results,fields){
       if (err) {
@@ -866,27 +874,35 @@ router.post("/login_tr",async(req,res)=>{
         console.log(tr.tr_email);
         console.log(tr.tr_admit);
         console.log(tr.tr_no);
-        if (tr.tr_pwd === tr_pwd) {
-          res.send({
-            // 로그인 성공 시
-            code: 200,
-            message: "로그인 성공",
-            data: {
-              tr_no: tr.tr_no,
-              tr_email: tr.tr_email,
-              tr_name: tr.tr_name,
-              tr_pwd: tr.tr_pwd,
-              tr_admit: tr.tr_admit
-            },
-            email: results[0].tr_email,
-            tr_no: results[0].tr_no,
-            tr_admit: tr.tr_admit,
-          });
+        if(tr.tr_ban === 0){
+          if (tr.tr_pwd === tr_pwd) {
+            res.send({
+              // 로그인 성공 시
+              code: 200,
+              message: "로그인 성공",
+              data: {
+                tr_no: tr.tr_no,
+                tr_email: tr.tr_email,
+                tr_name: tr.tr_name,
+                tr_pwd: tr.tr_pwd,
+                tr_admit: tr.tr_admit
+              },
+              email: results[0].tr_email,
+              tr_no: results[0].tr_no,
+              tr_admit: tr.tr_admit,
+            });
+          } else {
+            res.send({
+              // 비밀번호 불일치 시
+              code: 401,
+              message: "비밀번호가 일치하지 않습니다.",
+            });
+          }
         } else {
           res.send({
             // 비밀번호 불일치 시
-            code: 401,
-            message: "비밀번호가 일치하지 않습니다.",
+            code: 402,
+            message: "정지되었습니다 관리자에게 문의하시기 바랍니다.",
           });
         }
       } else {
