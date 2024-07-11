@@ -197,6 +197,7 @@ router.get('/prodetail/:pro_no', function(request, response, next){
     // });
     
 });
+
 //프로그램 메인 이미지 불러오기
 router.post('/promain',function(request, response, next){
 
@@ -211,6 +212,33 @@ router.post('/promain',function(request, response, next){
         console.log("mainimg : ",result);
     })
 });
+//프로그램 상세 이미지 불러오기
+router.post('/proimg',function(request, response, next){
+    const pro_no = request.body.pro_no;
+
+    db.query(`select img_path from img where img_pro_no = ? and img_type = 2`,[pro_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error : '메인 이미지 에러'});
+        }
+        response.json(result);
+        console.log("mainimg : ",result);
+    })
+});
+
+//프로그램 가격 이미지 불러오기
+router.post('/priceimg', function(request, response, next){
+    const pro_no = request.body.pro_no;
+
+    db.query(`select img_path from img where img_pro_no = ? and img_type = 2`,[pro_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '가격 이미지 에러'});
+        }
+        response.json(result);
+        console.log("priceimg : ",result);
+    })
+})
 
 //예약하기
 router.post('/calendarin', function(request, response, next) {
@@ -351,6 +379,7 @@ router.post('/myrecheck', function(request, response, next){
 });
 
 //내가 찜한 정보 확인
+
 router.post('/myplike', function(request, response, next){
     const plike_user_no = request.body.user_no;
 
@@ -372,6 +401,74 @@ router.post('/myplike', function(request, response, next){
             console.log(result);
         });
 }); 
+
+// router.post('/myplike', function(request, response, next){
+//     const user_no = request.body.user_no;
+//     console.log("myplike :", user_no);
+
+//     async function plikeData(user_no) {
+//         try{
+//             const img = await new Promise((resolve, reject)=>{
+//                 db.query(`select img_path from img where img_type = 0 and img_pro_no in 
+//                     (select plike_pro_no from plike where plike_user_no = ?)`,[user_no], function(error,result, field){
+//                         if(error){
+//                             console.error(error);
+//                             return reject(error)
+//                         }
+//                         console.log("========================================");
+//                         resolve(result)
+//                         console.log(result);
+//                     });
+//             });
+
+//             const info = await new Promise((resolve,reject)=>{
+//                 db.query(`SELECT p.pro_no, pro_name, tr_name, ROUND(AVG(re_rate), 1) AS rate_avg, DATE_FORMAT(pro_startdate, '%y-%m-%d') AS pro_startdate, DATE_FORMAT(pro_enddate, '%y-%m-%d') AS pro_enddate
+//                         FROM program p 
+//                         JOIN trainer t ON p.pro_tr_no = t.tr_no 
+//                         LEFT JOIN review r ON p.pro_no = r.re_pro_no
+//                         WHERE p.pro_no IN (
+//                             SELECT plike_pro_no 
+//                             FROM plike 
+//                             WHERE plike_user_no = ?
+//                         )
+//             GROUP BY p.pro_no;`,
+//              [user_no],
+//             function(error, result, field){
+//             if(error){
+//                 console.error(error);
+//                 return reject(error);
+//             }
+//             resolve(result)
+//             console.log(result);
+//         });
+//         })
+//         response.json({
+//             img,
+//             info
+//         });
+//         }catch(error){
+//             console.error(error);
+//             response.status(500).json({ error: '서버에러'});
+//         }
+//     }
+//     plikeData(user_no)
+// }); 
+
+//찜한 정보 사진 가져오기
+router.post('/plikeimg', function(request, response, next) {
+    const cal_user_no = request.body.user_no;
+    
+    db.query(`select img_path, img_pro_no from img where img_type = 0 and img_pro_no in 
+        (select plike_pro_no from plike where plike_user_no = ?)`,[cal_user_no], function(error,result, field){
+            if(error){
+                console.error(error);
+                return response.status(500).json({ error: '찜 이미지 에러'});
+            }
+            console.log("========================================");
+            response.json(result);
+            console.log(result);
+        })
+});
 
 //찜 내역 삭제
 router.post('/delmyplike', function(request, response, next){
