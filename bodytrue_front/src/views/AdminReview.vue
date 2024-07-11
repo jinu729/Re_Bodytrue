@@ -1,6 +1,6 @@
 <template>
     <div>
-        <main class="admin_userlist-main"></main>
+        <div class="admin_userlist-main"></div>
         <div class="admin_userlist-bodyheader">
             &nbsp;&nbsp;리뷰 관리
         </div>
@@ -22,7 +22,6 @@
                     <button class="pro_name" @click="reviewdetail(review.re_no)">{{ review.pro_name }}</button>
                     <td>{{ review.user_name }}</td>
                     <td>{{ review.tr_name }}</td>
-                    <button @click="qwer">123</button>
                 </tr>
             </table>
             <ul class="admin_page">
@@ -77,7 +76,7 @@ export default {
             this.currentPage = page;
         },
         reviewdetail(re_no) {
-            this.$router.push(`/admin/reviewdetail/${re_no}`);
+            this.$router.push(`/reviewdetail/${re_no}`);
         },
     },
     mounted() {

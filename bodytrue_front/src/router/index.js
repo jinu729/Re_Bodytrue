@@ -77,17 +77,17 @@ const routes = [
     component: AdminTrainer
   },
   {
-    path: '/admin/adminfaq',
+    path: '/adminfaq',
     name: 'AdminFaq',
     component: AdminFaq
   },
   {
-    path: '/admin/adminreview',
+    path: '/adminreview',
     name: 'AdminReview',
     component: AdminReview
   },
   {
-    path: '/admin/reviewdetail',
+    path: '/reviewdetail/:re_no',
     name: 'ReviewDetail',
     component: ReviewDetail
   },
