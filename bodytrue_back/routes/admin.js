@@ -32,7 +32,7 @@ router.get("/userlist",async(req,res)=>{
 router.get("/searchname",async(req,res)=>{
 
     // const name = req.body.name;
-    const name = "req.query.name";
+    const name = req.query.name;
 
     db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user where user_name = ?",
         name,
@@ -493,6 +493,61 @@ router.post('/delfaq', function(request, response, next) {
 
 //회창작성
 
+//리뷰 상세 데이터 불러오기
+
+router.get('/review/:re_no', (req, res) => {
+  const re_no = req.params.re_no;
+  
+  const reviewQuery = `SELECT re_no, re_comment, date_format(re_date,'%Y-%m-%d') as re_date, user_name, pro_name, tr_name, re_rate FROM review r join user u on r.re_user_no = u.user_no join trainer t on r.re_tr_no = t.tr_no join program p on r.re_pro_no = p.pro_no where re_no = ?`;
+  const imagesQuery = 'SELECT img_path FROM img WHERE img_re_no = ?';
+
+  db.query(reviewQuery, [re_no],(err, reviewResult) => {
+      if (err) {
+          console.error('Error fetching review:', err);
+          res.status(500).json({ error: 'Failed to fetch review' });
+          return;
+      }
+
+      if (reviewResult.length === 0) {
+          res.status(404).json({ error: 'No review found' });
+          return;
+      }
+
+      const review = reviewResult[0];
+      db.query(imagesQuery, [re_no], (err, imagesResult) => {
+          if (err) {
+            console.error('Error fetching images:', err);
+              res.status(500).json({ error: 'Failed to fetch images' });
+              return;
+          }
+
+          review.images = imagesResult.map(image => image.img_re_no);
+          res.json(review);
+      });
+  });
+});
+
+// 리뷰 삭제하기
+
+router.post('/deletereview', function(request, response, next) {
+  const re_no = request.body.re_no;
+
+  db.query("DELETE FROM review WHERE re_no = ?", [re_no], function(error, result) {
+    if (error) {
+      console.error('Error deleting review:', error);
+      return response.status(500).json({ error: '리뷰 삭제 중 오류' });
+    }
+
+    if (result.affectedRows === 0) {
+      // 해당 re_no를 가진 리뷰가 없을 경우
+      return response.status(404).json({ error: 'Review not found' });
+    }
+
+    // 삭제 성공
+    response.json({ success: true });
+    console.log('Deleted review:', result);
+  });
+});
 
 //회창작성완
 
