@@ -129,35 +129,37 @@
                 <p class="plike_user">즐겨찾기 리스트</p>
             </div>
             <div class="plike_table">
-                <!--찜내역 있을 경우-->
-                <div v-if="plikeData.length > 0">
-                    <div class="section5_list">
-                        <div class="plike_left">
-                            <img src="../image/running.png" alt="">
-                        </div>
-                        <div class="plike_right">
-                            <ul class="table_list">
-                                <li v-for="plike in moreplikeData" :key="plike.pro_name">
-                                    <div @click="goToProdetail(plike.pro_no)" class="plike_proname">{{ plike.pro_name }} 
-                                        <img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span style="font-size:22px;">{{plike.rate_avg}}</span></div>
-                                    <div class="plike_trainer">{{plike.tr_name}}</div>
-                                    <div class="pro_startdate">시작일 : {{plike.pro_startdate}}</div>
-                                    <div class="pro_enddate">마감일 : {{plike.pro_enddate}}</div>
-                                    <div class="del_btn">
-                                        <!--찜정보 가져올때 가져온 plike.pro_no으로 찜내역 삭제-->
-                                        <button class="plike_delete" @click="delplike(plike.pro_no)">삭제</button>
-                                    </div>
-                                </li>
-                            </ul>
-                            <button v-if="plikeData.length > moreplikeCount " @click="showmore" class="showmore_btn">더보기</button>
-                        </div>      
-                    </div>
-                </div>
-                <!--찜내역 아무것도 없을 경우-->
-                <div class="nolikelist" v-else >
-                    <p>찜 내역이 없습니다.</p>
-                </div>
+    <!-- 찜내역 있을 경우 -->
+    <div v-if="combinedData.length > 0">
+        <div class="section5_list" v-for="item in displayedData" :key="item.img_pro_no">
+            <div class="plike_left">
+                <img :src="require(`../../../bodytrue_back/uploads/program/${item.img_path}`)">
             </div>
+            <div class="plike_right">
+                <ul class="table_list">
+                    <li>
+                        <div @click="goToProdetail(item.pro_no)" class="plike_proname">{{ item.pro_name }} 
+                            <img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span style="font-size:22px;">{{ item.rate_avg || 0}}</span>
+                        </div>
+                        <div class="plike_trainer">{{ item.tr_name }}</div>
+                        <div class="pro_startdate">시작일 : {{ item.pro_startdate }}</div>
+                        <div class="pro_enddate">마감일 : {{ item.pro_enddate }}</div>
+                        <div class="del_btn">
+                            <!-- 찜정보 가져올 때 가져온 item.pro_no으로 찜내역 삭제 -->
+                            <button class="plike_delete" @click="delplike(item.pro_no)">삭제</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <button v-if="combinedData.length > displayedData.length" @click="showmore" class="showmore_btn">더보기</button>
+    </div>
+    <!-- 찜내역 아무것도 없을 경우 -->
+    <div class="nolikelist" v-else>
+        <p>찜 내역이 없습니다.</p>
+    </div>
+</div>
+
         </div>
          <ReviewModal :isOpen="isReviewModalOpen" :reviewData="reviewData" 
          @close="closeReviewModal" @review-submitted="handleReviewSubmitted"/>
@@ -202,7 +204,12 @@ export default {
                 re_tr_no: null,
                 re_rate: 0,
                 re_no: null
-            }
+            },
+            //찜 이미지용
+            plikeimg:[],
+            combinedData: [], // 결합된 데이터
+            displayedData: [], // 표시할 데이터
+            
         };
     },
     mounted(){
@@ -218,6 +225,7 @@ export default {
         this.mycalcheck();
         // this.myrecheck();
         this.myplike();
+        this.getplikeimg();
         
         // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
         // const user_no = this.$route.params.user_no;
@@ -410,6 +418,20 @@ export default {
             }
         },
         //내 찜 확인
+        // async myplike(){
+        //     const user_no = this.$route.params.user_no;
+        //     try{
+        //         const response = await axios.post(`http://localhost:3000/user/myplike`,{user_no: user_no});
+        //         const data = response.data;
+        //         this.plikeData = data.info;
+        //         console.log("plikeData : ",this.plikeData);
+
+        //         this.plikeimg = data.img;
+        //         console.log("plikeimg : ", this.plikeimg);
+        //     } catch(error){
+        //         console.error('찜 목록 불러오는 도중 오류 발생',error);
+        //     }
+        // },
         async myplike(){
             const user_no= this.$route.params.user_no;
             try{
@@ -417,11 +439,35 @@ export default {
                 const data = response.data;
                 this.plikeData = data;
                 console.log("plikeData:", this.plikeData);
+                this.combineData(); // 데이터 결합
             } catch(error){
                 console.error("찜 정보 불러오는 중 에러 발생", error);
             }
         },
-
+        //찜 이미지 확인
+        async getplikeimg(){
+            const user_no = this.$route.params.user_no;
+            try{
+                const response = await axios.post(`http://localhost:3000/user/plikeimg`, {user_no:user_no});
+                const data = response.data;
+                this.plikeimg = data;
+                console.log("plikeimg: ", this.plikeimg);
+                this.combineData(); // 데이터 결합
+            } catch(error){
+                console.error("찜 이미지 가져오는 중 에러 발생", error);
+            }
+        },
+        combineData() {
+            // plikeData와 plikeimg 데이터를 결합
+            if (this.plikeData.length > 0 && this.plikeimg.length > 0) {
+                this.combinedData = this.plikeData.map(plike => {
+                    const img = this.plikeimg.find(pimg => pimg.img_pro_no === plike.pro_no);
+                    return { ...plike, ...img };
+                });
+                console.log("combined: ", this.combinedData);
+                this.displayedData = this.combinedData.slice(0, this.moreplikeCount);
+            }
+        },
         //페이징
         changePage(page){
             if(page > 0 && page <= this.totalPages){
@@ -481,7 +527,13 @@ export default {
 
         //찜 목록 더보기
         showmore(){
-            return this.moreplikeCount += 1; //한번에 보여줄 개수 3개
+             // 더보기 버튼을 눌렀을 때 추가로 항목을 표시하는 로직
+             let newCount = this.displayedData.length + this.moreplikeCount;
+            if (newCount > this.combinedData.length) {
+                newCount = this.combinedData.length;
+            }
+            this.displayedData = this.combinedData.slice(0, newCount);
+            // return this.moreplikeCount += 1; //한번에 보여줄 개수 3개
         },
         //찜 목록 삭제
         async delplike(plike_pro_no){ //위에서 delplike클릭 할 때 받은 변수 plike.pro_no의 매개변수 이름이 plike_pro_no
@@ -624,6 +676,9 @@ export default {
 }
 </script>
 <style scoped>
+    ul{
+        padding-left: 20px;
+    }
     /* mypage */
     .mypage_main{
         width: 80%;
@@ -928,7 +983,7 @@ export default {
         width: 25%;
     }
     .section5_list .plike_left img{
-        width: 200px;
+        width: 220px;
     }
     .section5_list .plike_right{
         width: 70%;
@@ -936,6 +991,7 @@ export default {
     .plike_right .table_list{
         width: 100%;
         height: 84%;
+        padding-left: 20px;
     }
     .table_list .plike_proname{
         font-size: 32px;

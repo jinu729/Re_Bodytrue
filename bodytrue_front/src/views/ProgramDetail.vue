@@ -2,7 +2,7 @@
   <div class="container">
     <div class="left_panel">
     <div class=slider>
-      <div class="slides" :style="{ transform: `translateX(-${currentIndex * slideWidth}px)` }">
+      <div class="slides">
         <div>
           <img :src="mainimg.img_path ? require(`../../../bodytrue_back/uploads/program/${mainimg.img_path}`) : '/goodsempty2.jpg'">
           </div>
@@ -11,8 +11,8 @@
           <img :src="require(`../image/mainpage/${image}`)" :alt="'Slide ' + (index + 1)">
         </div> -->
       </div>
-      <button class="prev" @click="changeSlide(-1)">❮</button>
-      <button class="next" @click="changeSlide(1)">❯</button>
+      <!-- <button class="prev" @click="changeSlide(-1)">❮</button>
+      <button class="next" @click="changeSlide(1)">❯</button> -->
     </div>
       <!-- <div class="slider">
         <div class="slides">
@@ -32,12 +32,14 @@
       </div>
       <div class="description" id="detail1">
         <h2>상세 설명</h2>
+        <p><img :src="proimg.img_path ? require(`../../../bodytrue_back/uploads/program/${proimg.img_path}`) : '/goodsempty2.jpg'"></p>
         <p>{{ programdetail.pro_comment1 }}</p>
         <p>{{ programdetail.pro_comment2 }}</p>
         <p>{{ programdetail.pro_comment3 }}</p>
       </div>
       <div class="price-info" id="price1">
         <h2>가격 안내</h2>
+        <p><img :src="priceimg.img_path ? require(`../../../bodytrue_back/uploads/program/${priceimg.img_path}`) : '/goodsempty2.jpg'"></p>
         <p>1회 비용: 100,000 원</p>
         <p>3회 비용: 300,000 원</p>
         <p>주의 사항</p>
@@ -50,15 +52,7 @@
         <div v-for="reviewItem in review" :key="reviewItem.re_no">
           <p>{{ naming(reviewItem.user_name) }} 님 : {{ reviewItem.re_comment }} <img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ reviewItem.re_rate }} | 작성 날짜: {{ reviewItem.re_date }}</p>
         </div>
-        
-        <!-- <p>1회 비용: 100,000 원</p>
-        <p>3회 비용: 300,000 원</p>
-        <p>주의 사항</p>
-        <p>수업은 1회당 1시간 동안 진행되며, 수업료는 1회당 10만원입니다.</p>
-        <p>미리 예약하셔야 하며, 수용 가능한 인원이 한정되어 있으므로 선착순으로 등록됩니다.</p>
-        <p>수업료에는 요가 매트 및 필요한 장비 사용료가 포함되어 있습니다.</p> -->
-      </div>
-      
+      </div>     
     </div>
 
     <div class="right-panel">
@@ -119,6 +113,10 @@
         images: ['main1.jpg', 'main3.jpg', '메인5.jpg', '메인6.jpg' ,'메인7.jpg'], // 이미지 파일명 배열
         //메인 이미지
         mainimg:{},
+        //디테일 이미지
+        proimg:{},
+        //가격 이미지
+        priceimg:{}
       };
     },
 
@@ -169,6 +167,8 @@
       this.initWeek(); // 컴포넌트가 생성될 때 주를 초기화
       this.pro_comment();
       this.getmainimg();
+      this.getdetailimg();
+      this.getpriceimg();
 
       //id값 임의로 넣어주기 위함
       // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
@@ -189,6 +189,31 @@
         } catch(error){
           console.error('메인 이미지 데이터 에러 발생', error);
           // this.mainimg = '';
+        }
+      },
+      //상세 이미지
+      async getdetailimg(){
+        const pro_no = this.$route.params.pro_no;
+
+        try{
+          const response = await axios.post(`http://localhost:3000/user/proimg`, {pro_no:pro_no});
+          const data = response.data[0]
+          this.proimg = data;
+          console.log("proimg", this.proimg.img_path);
+        } catch(error){
+          console.error('디테일 이미지 에러 발생',error);
+        }
+      },
+      //가격 이미지
+      async getpriceimg(){
+        const pro_no = this.$route.params.pro_no;
+        try{
+          const response = await axios.post(`http://localhost:3000/user/priceimg`, {pro_no: pro_no});
+          const data = response.data[0]
+          this.priceimg = data;
+          console.log("priceimg", this.priceimg.img_path);
+        } catch(error){
+          console.error('가격 이미지 에러 발생',error);
         }
       },
 

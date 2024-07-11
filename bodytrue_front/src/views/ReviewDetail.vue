@@ -3,13 +3,39 @@
         <div class="prc_title">
             <p>리뷰 관리</p>
         </div>
-        <div class="prc_name">
-            <div class="prcn_title">
-                <span>프로그램 명</span>
+        <div  class="prc_info">
+            <div class="prc_name">
+                <span class="label">프로그램 명</span>
+                <p>{{ review.pro_name }}</p>
             </div>
-            <p>{{ proTitle }}</p>
+            <div class="prc_trainer">
+                <span class="label">트레이너명</span>
+                <p>{{ review.tr_name }}</p>
+            </div>
+            <div class="prc_user">
+                <span class="label">작성자</span>
+                <p>{{ review.user_name }}</p>
+            </div>
+            <div class="prc_date">
+                <span class="label">작성일</span>
+                <p>{{ review.re_date }}</p>
+            </div>
         </div>
-    </div>    
+        <div  class="prc_content">
+            <span class="label">내용</span>
+            <p>{{ review.re_comment }}</p>
+        </div>
+        <div v-if="review" class="prc_images">
+            <span class="label">이미지</span>
+            <div class="prci_image" v-for="(image, i) in review.images" :key="i">
+                <img :src="image" alt="Review Image" />
+            </div>
+        </div>
+        <div v-if="error" class="error-message">
+            {{ error }}
+        </div>
+        <button class="re_delete" @click="deletereview(review.re_no)">삭제</button>
+    </div>
 </template>
 
 <script>
@@ -18,331 +44,116 @@ import axios from 'axios';
 export default {
     data() {
         return {
-            proTitle: ''
+            review: {},
+            error: ''
         };
     },
     methods: {
-        getProTitle() {
-            axios.get('http://localhost:3000/admin/protitle')
+        getReviewData() {
+            const re_no = this.$route.params.re_no;
+
+            axios.get(`http://localhost:3000/admin/review/${re_no}`)
             .then(response => {
-                // 백엔드에서 여러 개의 프로그램이 반환될 경우 첫 번째 프로그램의 이름만 사용
-                if (response.data.length > 0) {
-                    this.proTitle = response.data[0].pro_name;
+                if (response.data) {
+                    this.review = response.data;
+                    console.log("review :", this.review);
                 } else {
-                    this.proTitle = 'No program found';
+                    this.error = 'No review data found';
                 }
             })
             .catch(error => {
-                console.error('Error fetching protitle:', error);
+                this.error = 'Error fetching review data: ' + (error.response ? error.response.data.error : error.message);
             });
+        },
+        deletereview(re_no) {
+            console.log('re_no', re_no);
+            axios.post('http://localhost:3000/admin/deletereview', { re_no: re_no })
+            .then(response => {
+                if (response.data.success) {
+                    // 이전 페이지로 이동
+                    this.$router.go(-1);
+                } else {
+                    this.error = 'Failed to delete review';
+                }
+            })
+            .catch(error => {
+                this.error = 'Error deleting review: ' + (error.response ? error.response.data.error : error.message);
+            });
+            
         }
     },
+    created(){
+        this.getReviewData();
+    },
     mounted() {
-        this.getProTitle();
+        this.getReviewData();
     }
 }
 </script>
 
 
 <style scoped>
-.prc_main{
+.prc_main {
     width: 80%;
-    /* height: 100%; */
-    margin: 0 auto;
-    padding-top: 10px;
-    /* background-color: aqua; */
-}
-.prc_main .prc_title{
-    width: 100%;
-    height: 50px;
-    background-color: #00C7AE;
-}
-.prc_title p{
-    font-size: 20px;
-    line-height: 50px;
-    padding-left: 20px;
-    color: white;
-}
-.prc_main .prc_content{
-    width: 100%;
-    margin-top: 20px;
-    background-color: white;
-    border: 1px solid black;
-    display: flex;
-    flex-wrap: wrap;
-    box-shadow: 4px 4px 5px rgba(0, 199, 174, 0.5);
+    margin: auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
 }
 
-/* content_left */
-.prc_content .content_left{
-    width: 20%;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 20px;
-    padding-right: 10px;
-}
-.content_left .upload_img{
-    width: 100%;
-}
-.content_left .upload_img span{
-    padding-left: 40px;
-}
-.content_left .upload_img .img-box{
-    width: 250px;
-    height: 250px;
-    border: 2px solid #ccc;
-    overflow: hidden;
-    display: inline-block;
-    position: relative;    
-}
-.content_left .upload_img .profile-picture{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
+.prc_title p {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* content_right */
-.prc_content .content_right{
-    width: 74%;
-    padding-top: 20px;
-    padding-bottom: 20px;
-    padding-left: 10px;
-    padding-right: 20px;
-}
-.content_right .prc_name{
-    width: 100%;
-    /* border: 1px solid #ccc;     */
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 15px;
-    border-radius: 5px;
-}
-.prc_name .prcn_title{
-    width: 150px;
-    height: 30px;
-    text-align: left;
-    margin: 5px;
-    margin-left: 10px;
-}
-.prc_name .prcn_title span{
-    line-height: 37px;
-    font-size: 22px;
-}
-#prcn_text{
-    width: 750px;
-    height: 35px;
-    margin: 5px;
-    margin-right: 10px;
-    text-align: center;
-    font-size: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-#phn_text{
-    width: 750px;
-    height: 35px;
-    margin: 5px;
-    margin-right: 10px;
-    text-align: center;
-    font-size: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-#address_text{
-    width: 750px;
-    height: 35px;
-    margin: 5px;
-    margin-right: 10px;
-    text-align: center;
-    font-size: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-.content_right .prc_name:nth-child(4){
-    box-shadow: 0 0 0 0;
-}
-.content_right .prc_name .prc_date{
-    width: 47%;
-    border: 0 1px 1px 0 solid #ccc;    
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    display: flex;
-    flex-wrap: wrap;
-    /* margin-top: 15px; */
-}
-.prc_name .prc_date .prcn_title{
-    width: 150px;
-    height: 30px;
-    text-align: left;
-    margin: 5px;
-    margin-left: 10px;
-}
-#start_date, #end_date{
-    width: 230px;
-    height: 35px;
-    margin: 5px;
-    margin-right: 10px;
-    text-align: center;
-    font-size: 20px;
-}
-.prc_name .prc_date:nth-child(2){
-    margin-left: 56px;
-}
-.content_right .prc_detail{
-    padding-top: 20px;
-    margin-left: 10px;
-}
-.prc_detail .detail_title span{
-    font-size: 22px;
-}
-
-/* tag */
-.prc_tag .detail_tag{
+.prc_info {
     display: flex;
     justify-content: space-between;
-}
-.prc_tag .detail_tag .tags {
-    display: flex;
+    margin-bottom: 20px;
 }
 
-.prc_tag .detail_tag .tags label {
-    display: flex;
-    align-items: center;
+.prc_info > div {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.prc_info > div:last-child {
+    margin-right: 0;
+}
+
+.label {
+    display: block;
+    font-weight: bold;
     margin-bottom: 5px;
 }
 
-.prc_tag .detail_tag .tags input[type="checkbox"] {
-    margin-right: 10px;
-}
-.prc_tag .detail_tag .tags span{
-    font-size: 16px;
-    padding-right: 10px;
+.prc_content {
+    margin-bottom: 20px;
 }
 
-
-/* img upload */
-.content_right .prc_detail ,.prc_price{
-    padding-top: 20px;
-    margin-left: 10px;
-}
-.prc_price .img_title span{
-    font-size: 22px;
-}
-.prc_price .img_upload{
-    width: 950px;
-    height: 40px;
-    /* border: 1px solid black; */
+.prc_images {
     display: flex;
-    line-height: 40px;
-    margin-top: 10px;
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    border-radius: 5px;
-}
-.prc_detail .img_upload{
-    width: 950px;
-    height: 40px;
-    /* border: 1px solid black; */
-    display: flex;
-    line-height: 40px;
-    margin-top: 10px;
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    border-radius: 5px;
+    justify-content: space-between;
 }
 
-.prc_detail .preview-container {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.prc_detail .preview-container img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    margin: 14px;
+.prci_image {
+    width: 23%;
 }
 
-.prc_price .preview-container {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.prc_price .preview-container img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    margin: 14px;
-}
-.prc_detail .preview-container {
-    margin-top: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-.prc_detail .preview-container img {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border: 2px solid #ddd;
-    border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    margin: 14px;
-}
-
-
-/* img 공통 */
-.img_upload .img_content{
-    width: 150px;
-    padding-left: 10px;
-}   
-.img_upload .prcimg_upload{
-    line-height: 40px;
-    width: 700px;
-}
-#img_textarea{
-    width: 940px;
-    height: 150px;
-    font-size: 18px;    
-    margin-top: 15px;
-    padding-left: 10px;
-    padding-top: 10px;
-    resize: none;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-/* 등록 취소 버튼 */
-.prc_main .prc_btn{
+.prci_image img {
     width: 100%;
-    margin-top: 50px;
-    height: 80px;
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
     text-align: center;
-}
-#prc_create{
-    width: 80px;
-    height: 30px;
-    background-color: #00C7AE ;
-    border: 0;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-    margin-right: 10px;
-}
-#prc_cancel{
-    width: 80px;
-    height: 30px;
-    background-color: #ccc;
-    border: 0;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px;
 }
 </style>
