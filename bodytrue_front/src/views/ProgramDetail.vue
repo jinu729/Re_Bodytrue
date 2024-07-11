@@ -3,10 +3,13 @@
     <div class="left_panel">
     <div class=slider>
       <div class="slides" :style="{ transform: `translateX(-${currentIndex * slideWidth}px)` }">
-        <div class="slide" v-for="(image, index) in images" :key="index">
-            <!-- 메인 이미지 요소 -->
+        <div>
+          <img :src="mainimg.img_path ? require(`../../../bodytrue_back/uploads/program/${mainimg.img_path}`) : '/goodsempty2.jpg'">
+          </div>
+        <!-- <div class="slide" v-for="(image, index) in images" :key="index">
+           메인 이미지 요소
           <img :src="require(`../image/mainpage/${image}`)" :alt="'Slide ' + (index + 1)">
-        </div>
+        </div> -->
       </div>
       <button class="prev" @click="changeSlide(-1)">❮</button>
       <button class="next" @click="changeSlide(1)">❯</button>
@@ -63,7 +66,7 @@
       <h2><p>{{ programdetail.pro_name }}</p></h2>
       <h3><p>{{ programdetail.tr_name }}</p></h3>
       <h4><p v-if="formattedEndDate">프로그램 종료 날짜&nbsp;:&nbsp;{{ formattedEndDate }}</p></h4>
-      <p><img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ programdetail.rate_avg }}</p>
+      <p><img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ programdetail.rate_avg || 0}}</p>
       <div class="calendar">
         <div class="controls">
           <button @click="previousWeek" class="prev2">이전</button>
@@ -114,6 +117,8 @@
         slideWidth: 800,
         slideInterval: 5000,
         images: ['main1.jpg', 'main3.jpg', '메인5.jpg', '메인6.jpg' ,'메인7.jpg'], // 이미지 파일명 배열
+        //메인 이미지
+        mainimg:{},
       };
     },
 
@@ -163,6 +168,7 @@
     created() {
       this.initWeek(); // 컴포넌트가 생성될 때 주를 초기화
       this.pro_comment();
+      this.getmainimg();
 
       //id값 임의로 넣어주기 위함
       // this.$store.commit('user', { user_email: 'aaa@naver' , user_no: 1 });
@@ -172,6 +178,20 @@
     },
 
     methods: {
+      //메인 이미지
+      async getmainimg(){
+        const pro_no = this.$route.params.pro_no;
+        try{
+          const response = await axios.post(`http://localhost:3000/user/promain`,{pro_no:pro_no});
+          const data = response.data[0]
+          this.mainimg = data;
+          console.log("mainimg:", this.mainimg.img_path);
+        } catch(error){
+          console.error('메인 이미지 데이터 에러 발생', error);
+          // this.mainimg = '';
+        }
+      },
+
       // 현재 주의 날짜를 계산하여 weekDays에 저장
       initWeek() {
         const currentDateObj = new Date(this.currentYear, this.currentMonth, this.currentDate); // 현재 날짜 객체 생성

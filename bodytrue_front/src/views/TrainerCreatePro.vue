@@ -32,7 +32,7 @@
                     <div class="prcn_title">
                         <span>주소</span>
                     </div>
-                    <input type="submit" id="address_text" v-model="program.adddress_text" value="주소">
+                    <input type="text" id="address_text" v-model="program.address_text" value="주소">
                 </div>
                 <div class="prc_name">
                     <div class="prc_date">
@@ -127,7 +127,7 @@ export default {
             program:{
                 prcn_text:"",
                 // phn_text:"",
-                // adddress_text:"",
+                address_text:"",
                 start_date:"",
                 end_date:"",
                 img_textarea1:"",
@@ -370,7 +370,7 @@ export default {
                     data: {     
                         prcn_text: this.program.prcn_text,
                         // phn_text:"트레이너번호",
-                        // adddress_text:this.program.p,
+                        address_text:this.program.address_text,
                         start_date:this.program.start_date,
                         end_date:this.program.end_date,
                         img_textarea1:this.program.img_textarea1,

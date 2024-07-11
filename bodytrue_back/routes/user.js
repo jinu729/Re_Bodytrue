@@ -198,10 +198,19 @@ router.get('/prodetail/:pro_no', function(request, response, next){
     
 });
 //프로그램 메인 이미지 불러오기
-router.get('/promain',function(request, response, next){
+router.post('/promain',function(request, response, next){
 
-    db.query(`select img_path from img where img_pro_no = ? and img_type = 1`,)
-})
+    const pro_no = request.body.pro_no;
+
+    db.query(`select img_path from img where img_pro_no = ? and img_type = 1`,[pro_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error : '메인 이미지 에러'});
+        }
+        response.json(result);
+        console.log("mainimg : ",result);
+    })
+});
 
 //예약하기
 router.post('/calendarin', function(request, response, next) {
