@@ -552,7 +552,7 @@ export default {
     /* border-bottom: 1px solid gray; */
     }
     .section2 .mp_list{
-    width: 30%;
+    width: 450px;
     padding-top: 15px;
     padding-right: 50px;
     float: right;

@@ -32,7 +32,7 @@ router.get("/userlist",async(req,res)=>{
 router.get("/searchname",async(req,res)=>{
 
     // const name = req.body.name;
-    const name = "req.query.name";
+    const name = req.query.name;
 
     db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user where user_name = ?",
         name,
