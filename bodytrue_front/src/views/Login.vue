@@ -326,10 +326,7 @@ export default {
             this.naverLogin = new window.naver.LoginWithNaverId({
                 clientId: "Ozm1PPMPASRIBq508on0",
                 callbackUrl: "http://localhost:8081/login",
-                isPopup: true,
-                // loginButton: {
-                //     color: "green", type: 3, height: 60
-                // },
+                isPopup: true
             });
 
             this.naverLogin.init();
