@@ -698,10 +698,11 @@ export default {
         margin: 0 auto;
         display: flex;
         flex-wrap: wrap;
+        padding-bottom: 20px;
         /* justify-content: space-between; */
     }
     .section1 .pro_left{
-        width: 20%;
+        width: 23%;
         height: 100%;
         padding-top: 30px;
         padding-left: 50px;
@@ -726,7 +727,7 @@ export default {
         cursor: pointer;
     }
     .section1 .pro_right{
-        width: 70%;
+        width: 77%;
         height: 100%;
         padding-top: 30px;
         display: grid;
@@ -791,8 +792,9 @@ export default {
     /* section3 = calendar list */
     .mypage_main .section3{
         width: 100%;
-        height: 400px;
+        /* height: 400px; */
         border-bottom: 1px solid black;
+        padding-bottom: 20px;
     }
     .section3 .calendar_list{
         width: 90%;
@@ -805,6 +807,7 @@ export default {
         width: 100%;
         margin: 0 auto;    
         padding-top: 10px;
+        padding-bottom: 10px;
     }
     .calendar_table .table_list{
         width: 90%;
@@ -817,7 +820,8 @@ export default {
         padding: 10px;
     }
     .table_list th{
-        background-color: rgb(218, 218, 218);
+        /* background-color: rgb(218, 218, 218); */
+        background-color: rgba(218, 218, 218, 0.5);
     }
     .table_list .re_btn{
         font-size: 16px;
@@ -872,10 +876,12 @@ export default {
     }
     .number_box li{
     width: 20px;
+    cursor: pointer;
     }
     .number_box li.active{
     background-color: #00c8c8;
     border-radius: 5px;
+    cursor: pointer;
     /* color: white; */
     }
     .number_box img{
@@ -888,7 +894,7 @@ export default {
         width: 100%;
         /* height: 400px; */
         border-bottom: 1px solid black;
-        padding-bottom: 10px;
+        padding-bottom: 20px;
     }
     .section4 .review_list{
         width: 90%;
@@ -902,6 +908,7 @@ export default {
         width: 100%;
         margin: 0 auto;    
         padding-top: 10px;
+        padding-bottom: 10px;
     }
     .review_table .table_list{
         width: 90%;
@@ -914,7 +921,8 @@ export default {
         padding: 10px;
     }
     .table_list th{
-        background-color: rgb(218, 218, 218);
+        /* background-color: rgb(218, 218, 218); */
+        background-color: rgba(218, 218, 218, 0.5);
     }
     .table_list .reupdate_btn{
         font-size: 16px;
@@ -957,7 +965,7 @@ export default {
     /* section5 = plike */
     .mypage_main .section5{
         width: 100%;
-        height: 760px;
+        margin-bottom: 50px;
         /* border-bottom: 1px solid black; */
     }
     .section5 .plike_list{
@@ -975,18 +983,22 @@ export default {
     }
     .plike_table .section5_list{
         width: 100%;
+        height: 220px;
         display: flex;
         flex-wrap: wrap;
-        padding-top: 20px;
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
     .section5_list .plike_left{
-        width: 25%;
+        width: 220px;
     }
     .section5_list .plike_left img{
         width: 220px;
+        height: 220px;
+        object-fit: cover;
     }
     .section5_list .plike_right{
-        width: 70%;
+        width: 75%;
     }
     .plike_right .table_list{
         width: 100%;

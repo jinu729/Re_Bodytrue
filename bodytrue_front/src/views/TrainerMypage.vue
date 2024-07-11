@@ -76,7 +76,7 @@
                <div class="cal_list">
                    <p class="cal_user">프로그램 예약</p>
                </div>
-               <div v-if="myCal.length > 0">
+               <div v-if="myCal.length > 0" style="padding-bottom: 10px">
                    <div class="cal_table">
                        <table class="table_list">
                            <thead>
@@ -478,10 +478,11 @@ export default {
     /* margin: 0 auto; */
     display: flex;
     flex-wrap: wrap;
+    padding-bottom: 10px;
     /* justify-content: space-between; */
     }
     .section1 .pro_left{
-    width: 20%;
+    width: 23%;
     /* height: 100%; */
     padding-top: 30px;
     padding-left: 50px;
@@ -517,7 +518,7 @@ export default {
     }
 
     .section1 .pro_right{
-    width: 70%;
+    width: 77%;
     height: 100%;
     padding-top: 30px;
     display: grid;
@@ -569,8 +570,9 @@ export default {
     /* section3 = calendar list */
     .mypage_main .section3{
     width: 100%;
-    height: 400px;
+    /* height: 400px; */
     border-bottom: 1px solid black;
+    padding-bottom: 10px;
     }
     .section3 .mpro_list{
     width: 90%;
@@ -583,6 +585,7 @@ export default {
     width: 100%;
     margin: 0 auto;    
     padding-top: 10px;
+    padding-bottom: 10px;
     }
     .mpro_table .table_list{
     width: 90%;
@@ -595,7 +598,7 @@ export default {
     padding: 10px;
     }
     .table_list th{
-    background-color: rgb(218, 218, 218);
+        background-color: rgba(218, 218, 218, 0.5);
     }
 
 
@@ -615,10 +618,12 @@ export default {
     }
     .number_box li{
     width: 20px;
+    cursor: pointer;
     }
     .number_box li.active{
     background-color: #00c8c8;
     border-radius: 5px;
+    cursor: pointer;
     /* color: white; */
     }
     .number_box img{
@@ -629,8 +634,9 @@ export default {
     /* section4 = review */
     .mypage_main .section4{
     width: 100%;
-    height: 400px;
+    /* height: 400px; */
     border-bottom: 1px solid black;
+    padding-bottom: 10px;
     }
     .section4 .cal_list{
     width: 90%;
@@ -644,6 +650,7 @@ export default {
     width: 100%;
     margin: 0 auto;    
     padding-top: 10px;
+    padding-bottom: 10px;
     }
     .cal_table .table_list{
     width: 90%;
@@ -656,7 +663,7 @@ export default {
     padding: 10px;
     }
     .table_list th{
-    background-color: rgb(218, 218, 218);
+        background-color: rgba(218, 218, 218, 0.5);
     }
 
 
