@@ -1,6 +1,6 @@
 <template>
     <div class="admin_faq_main">
-        <div class="admin_faq">FAQ 관리</div>
+        <div class="admin_faq123">FAQ 관리</div>
         <div class="admin_container">
             <div class="admin_faq_ans">
                 <div class="admin_faq_question">
@@ -141,6 +141,7 @@ export default {
     padding: 2px; /* 내부 패딩을 10px로 설정 */
     margin-top: 20px;
 }
+
 
 .admin_faq {
     background-color: #00C7AE; /* 배경색을 청록색으로 설정 */

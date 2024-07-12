@@ -89,61 +89,115 @@ router.post('/createprogram/:tr_no', function (req, res) {
                     console.log('-------------------');
 
                     // 등록 상품의 번호 불러오기
-                    db.query("select pro_no from program where pro_name = ?", 
-                        [data.pro_name], 
-                        function (error, results, fields) {
-                            if (error) {
-                                return res.status(200).json({
-                                    message: 'fail'
+                    db.query("select pro_no from program where pro_name = ?", [data.pro_name], function (error, results, fields) {
+                        if (error) {
+                            return res.status(200).json({
+                                message: 'fail'
+                            });
+                        }
+
+                        const filename = results[0].pro_no;
+                        console.log('filename-------------------');
+                        console.log(filename);
+                        console.log('-------------------');
+
+                        const renameFile = (oldPath, newPath, callback) => {
+                            if (fs.existsSync(oldPath)) {
+                                fs.rename(oldPath, newPath, (err) => {
+                                    if (err) {
+                                        console.error(err);
+                                        callback(err);
+                                    } else {
+                                        console.log(`File moved from ${oldPath} to ${newPath}`);
+                                        callback(null);
+                                    }
+                                });
+                            } else {
+                                console.error(`File not found: ${oldPath}`);
+                                callback(`File not found: ${oldPath}`);
+                            }
+                        };
+
+                        // 이미지 폴더 및 이름(상품번호-타입) 변경
+                        renameFile(pastDir0, path.join(newDir, `${filename}-0${extension}`), (err) => {
+                            if (err) {
+                                console.error(err);
+                                return res.status(500).json({
+                                    message: 'Failed to move image file'
                                 });
                             }
 
-                            const filename = results[0].pro_no;
-                            console.log('filename-------------------');
-                            console.log(filename);
-                            console.log('-------------------');
-
-                            const renameFile = (oldPath, newPath) => {
-                                if (fs.existsSync(oldPath)) {
-                                    fs.rename(oldPath, newPath, (err) => {
-                                        if (err) throw err;
+                            renameFile(pastDir1, path.join(newDir, `${filename}-1${extension1}`), (err) => {
+                                if (err) {
+                                    console.error(err);
+                                    return res.status(500).json({
+                                        message: 'Failed to move image file'
                                     });
-                                } else {
-                                    console.error(`File not found: ${oldPath}`);
                                 }
-                            };
 
-                            // 이미지 폴더 및 이름(상품번호-타입) 변경
-                            renameFile(pastDir0, path.join(newDir, `${filename}-0${extension}`));
-                            renameFile(pastDir1, path.join(newDir, `${filename}-1${extension1}`));
-                            renameFile(pastDir2, path.join(newDir, `${filename}-2${extension2}`));
-                            renameFile(pastDir3, path.join(newDir, `${filename}-3${extension3}`));
-
-                            // 파일 변경 모두 성공했으면 바뀐 이름으로 DB에 입력 
-                            db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`,
-                                [0, `${filename}-0${extension}`, filename], 
-                                function (error, results, fields) {
-                                    if (error) throw error;
-
-                                    db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`,
-                                        [1, `${filename}-1${extension1}`, filename], 
-                                        function (error, results, fields) {
-                                            if (error) throw error;
-
-                                            db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`,
-                                                [2, `${filename}-2${extension2}`, filename], 
-                                                function (error, results, fields) {
-                                                    if (error) throw error;
-
-                                                    db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`,
-                                                        [3, `${filename}-3${extension3}`, filename], 
-                                                        function (error, results, fields) {
-                                                            if (error) throw error;
-                                                        });
-                                                });
+                                renameFile(pastDir2, path.join(newDir, `${filename}-2${extension2}`), (err) => {
+                                    if (err) {
+                                        console.error(err);
+                                        return res.status(500).json({
+                                            message: 'Failed to move image file'
                                         });
+                                    }
+
+                                    renameFile(pastDir3, path.join(newDir, `${filename}-3${extension3}`), (err) => {
+                                        if (err) {
+                                            console.error(err);
+                                            return res.status(500).json({
+                                                message: 'Failed to move image file'
+                                            });
+                                        }
+
+                                        // 모든 파일 변경 성공 시 DB에 데이터 입력
+                                        db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [0, `${filename}-0${extension}`, filename], function (error, results, fields) {
+                                            if (error) {
+                                                console.error(error);
+                                                return res.status(500).json({
+                                                    message: 'DB insertion failed'
+                                                });
+                                            }
+
+                                            db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [1, `${filename}-1${extension1}`, filename], function (error, results, fields) {
+                                                if (error) {
+                                                    console.error(error);
+                                                    return res.status(500).json({
+                                                        message: 'DB insertion failed'
+                                                    });
+                                                }
+
+                                                db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [2, `${filename}-2${extension2}`, filename], function (error, results, fields) {
+                                                    if (error) {
+                                                        console.error(error);
+                                                        return res.status(500).json({
+                                                            message: 'DB insertion failed'
+                                                        });
+                                                    }
+
+                                                    db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [3, `${filename}-3${extension3}`, filename], function (error, results, fields) {
+                                                        if (error) {
+                                                            console.error(error);
+                                                            return res.status(500).json({
+                                                                message: 'DB insertion failed'
+                                                            });
+                                                        }
+
+                                                        // 모든 DB 삽입 작업이 완료되면 성공을 클라이언트에 응답
+                                                        res.status(200).json({
+                                                            message: 'success'
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
                                 });
+                            });
                         });
+                    });
+
                 } catch (err) {
                     console.log(err);
                 }

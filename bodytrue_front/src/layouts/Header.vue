@@ -152,6 +152,7 @@ export default {
         async goToList(pro_tag) {
             try {
                 window.location.href = `http://localhost:8081/prolist/${pro_tag}`;
+                // this.$router.push({ path : `/prolist/${pro_tag}`})
 
             } catch (error) {
                 console.error('전송 실패:', error);
