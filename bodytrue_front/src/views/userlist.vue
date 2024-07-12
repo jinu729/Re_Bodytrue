@@ -15,7 +15,7 @@
         <button class="search-button" @click="searchUsers">🔍</button>
       </div>
       <div class="admin_userlist-bodycontent">
-        <table>
+        <table class="bingbing">
           <thead>
             <tr>
               <th>이메일</th>
@@ -196,6 +196,7 @@ export default {
     border-collapse: collapse;
     display: flex;
     flex-direction: column;
+    border-radius: 5px;
 }
 
 .admin_userlist-bodycontent table{
@@ -276,6 +277,9 @@ export default {
     border: 0;
     background-color: #ffa4a4;
     color: rgb(0, 0, 0);
+}
+.bingbing {
+  border-radius: 5px;
 }
 /* admin_userlist main 스타일 끝 */
 
