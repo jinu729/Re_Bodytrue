@@ -284,7 +284,8 @@ export default {
   border: none;
 }
 .qwe {
-  
+  display: flex;
+  justify-content: space-around;
 }
 
 /* admin_userlist main 스타일 끝 */

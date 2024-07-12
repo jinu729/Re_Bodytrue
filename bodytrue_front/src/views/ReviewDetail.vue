@@ -231,8 +231,9 @@ export default {
     border-radius: 5px;
 }
 .qwer {
-    width: 70%;
+    width: 80%;
     margin: auto;
+    box-shadow: 2px 2px 5px #00C7AE;
 }
 .prcn_text {
     width: 750px;

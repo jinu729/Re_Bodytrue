@@ -1,6 +1,6 @@
 <template>
     <div class="admin_faq_main">
-        <div class="admin_faq123">FAQ 관리</div>
+        <div class="admin_faq">FAQ 관리</div>
         <div class="admin_container">
             <div class="admin_faq_ans">
                 <div class="admin_faq_question">
