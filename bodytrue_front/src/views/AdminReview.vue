@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="admin_userlist-main"></div>
+        <div class="admin_userlist-main">
         <div class="admin_userlist-bodyheader">
-            &nbsp;&nbsp;리뷰 관리
+            리뷰 관리
         </div>
 
         <div class="admin_userlist-bodycontent">
@@ -32,6 +32,7 @@
                 </li>
             </ul>
         </div>
+    </div>
     </div>
 </template>
 
@@ -88,9 +89,10 @@ export default {
 
 <style scoped>
 .admin_userlist-main {
-    width: 100%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
-    margin: 2px 0; /* 위아래 여백을 10px로 설정 */
+    width: 80%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
+    margin: 0 auto;
     padding: 2px; /* 내부 패딩을 10px로 설정 */
+    margin-top: 20px;
 }
 /*헤더부분(=회원목록)*/
 .admin_userlist-bodyheader {
@@ -100,6 +102,7 @@ export default {
     font-weight: bold; /* 폰트를 굵게 설정 */
     font-size: 26px; /* 폰트 크기를 24px로 설정 */
     border-radius: 10px 10px 10px 10px; /* 상단 좌우 모서리를 둥글게 설정 */
+    padding-left:20px;
 }
 
 /*회원목록테이블*/

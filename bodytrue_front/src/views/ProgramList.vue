@@ -27,7 +27,7 @@
               <!-- 트레이너 이름 표시 -->
               <p class="trainer_name">{{ program.PRO_TRAINER }}</p>
               <!-- 평점 표시 -->
-              <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG }}</span></p>
+              <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG || 0}}</span></p>
             </div>
             </router-link>
           </div>

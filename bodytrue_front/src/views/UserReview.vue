@@ -9,7 +9,7 @@
       <main class="review-main">
         <div class="review-img">
           <div>
-            <img alt="Image 1"><br><br>
+            <img :src="reimgData.img_path ? require(`../../../bodytrue_back/uploads/review/${reimgData.img_path}`) : '/goodsempty2.jpg'" alt="Profile Picture">
             <input type="file" name="review_image" accept="image/*" ref="img" @change="uploadFile($event.target.files, 0)">
           </div>
           <div class="review-title">
@@ -69,8 +69,13 @@ export default {
       reviewRate: this.reviewData.re_rate || 0,
       starsSet: this.reviewData.re_rate || 0,
       starsHover: 0,
+      reimgData:{},
     };
   },
+  mounted(){
+    // this.getreimg();
+  },
+
   methods: {
     setReviewRate(rate) {
       this.reviewRate = rate;
@@ -85,6 +90,7 @@ export default {
       this.starsSet = index + 1;
       this.setReviewRate(this.starsSet);
     },
+    //리뷰 버튼 누르면 보내기
     async submitReview() {
       const review = {
         ...this.reviewData,
@@ -94,9 +100,14 @@ export default {
       };
       try {
         let response;
-        if (review.re_no) {
+        if (review.re_no && review.re_img) {
+          response = await axios.post('http://localhost:3000/user/updatere2', review);
+          console.log("수정된리뷰넘버",review.re_no);
+        }else if(review.re_no){
           response = await axios.post('http://localhost:3000/user/updatere', review);
-        } else {
+        }else if(review.re_img) {
+          response = await axios.post('http://localhost:3000/user/makereview2', review);
+        } else{
           response = await axios.post('http://localhost:3000/user/makereview', review);
         }
         console.log("review", response.data);
@@ -116,45 +127,63 @@ export default {
       this.starsSet = 0;
       this.re_img = "";  // 이미지도 초기화
     },
+    //리뷰 사진 업로드
     async uploadFile(file, type) {
-    let name = "";
-    if (file) {
-        name = file[0].name;
-        console.log("name", name);
-    } else {
-        return; // 파일 미선택 시 반환
-    }
-
-    const formData = new FormData();
-    formData.append('img', file[0]); // 파일 자체를 전송
-
-    console.log(formData);
-    this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
-
-    for (let key of formData.keys()) {
-        console.log(key, ":", formData.get(key));
-    }
-
-    try {
-        const res = await axios({
-            url: 'http://localhost:3000/user/upload_img',
-            method: 'POST',
-            headers: { 'Content-Type': 'multipart/form-data' },
-            data: formData
-        });
-
-        if (res.data.message == 'success') {
-            if (type == 0) {
-                this.re_img = res.data.filename; // 서버가 반환한 파일명으로 수정
-                console.log("0", this.re_img);
-            }
+        let name = "";
+        if (file) {
+            name = file[0].name;
+            console.log("name", name);
         } else {
-            this.$swal("DB 에러");
+            return; // 파일 미선택 시 반환
         }
-    } catch (e) {
-        console.log(e);
-    }
-}
+
+        const formData = new FormData();
+        formData.append('img', file[0]); // 파일 자체를 전송
+
+        console.log(formData);
+        this.fileName = file ? file[0].name : '이미지를 업로드 하세요';
+
+        for (let key of formData.keys()) {
+            console.log(key, ":", formData.get(key));
+        }
+
+        try {
+            const res = await axios({
+                url: 'http://localhost:3000/user/upload_img',
+                method: 'POST',
+                headers: { 'Content-Type': 'multipart/form-data' },
+                data: formData
+            });
+
+            if (res.data.message == 'success') {
+                if (type == 0) {
+                    this.re_img = res.data.filename; // 서버가 반환한 파일명으로 수정
+                    console.log("0", this.re_img);
+                }
+            } else {
+                this.$swal("DB 에러");
+            }
+        } catch (e) {
+            console.log(e);
+        }
+      },
+      //업로드한 리뷰 이미지 미리보기
+      async getreimg(){
+        const re_no =this.review.re_no;
+        console.log("re_no",re_no);
+        try{
+                const response = await axios.post(`http://localhost:3000/user/getreimg`,{re_no:re_no});
+                const data = response.data
+                this.reimgData = data;
+                console.log("reimgData",this.reimgData.img_path);
+                // this.$router.go(0);
+            } catch(error){
+                console.error('이미지 데이터 불러오는 중 에러 발생', error);
+                this.reimgData = '';
+            }
+
+      }
+
   }
 };
 </script>
