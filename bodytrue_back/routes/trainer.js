@@ -7,29 +7,18 @@ const multer = require('multer');
 const path = require("path");
 //승호작성
 
-const generateUniqueIdentifier = () => {
-    return `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-};
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.resolve(__dirname, '../uploads/'));
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = generateUniqueIdentifier();
-        cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
-    }
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, cb) {
+            cb(null, path.join(__dirname, '..', 'uploads'));
+        },
+        filename(req, file, cb) {
+            console.log('Uploaded File:', file.originalname); // 업로드된 파일 이름 확인
+            cb(null, file.originalname);
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
 });
-
-const upload = multer({ storage });
-router.post('/upload_img', upload.single('img'), (request, response) => {
-    setTimeout(() => {
-        return response.status(200).json({
-            message: 'success'
-        });
-    }, 0);
-});
-
 
 router.post('/upload_img', upload.single('img'), (request, response) => {
     setTimeout(() => {
@@ -55,25 +44,10 @@ router.post('/createprogram/:tr_no', function (req, res) {
         pro_imgprice: req.body.pro_imgprice
     };
 
-    // 디버그: 원본 파일명 확인
-    console.log('Original Filenames:');
-    console.log('pro_img:', data.pro_img);
-    console.log('pro_img1:', data.pro_img1);
-    console.log('pro_img2:', data.pro_img2);
-    console.log('pro_imgprice:', data.pro_imgprice);
-
-    // 파일명 변환
-    data.pro_img = Buffer.from(data.pro_img, 'latin1').toString('utf8').trim();
-    data.pro_img1 = Buffer.from(data.pro_img1, 'latin1').toString('utf8').trim();
-    data.pro_img2 = Buffer.from(data.pro_img2, 'latin1').toString('utf8').trim();
-    data.pro_imgprice = Buffer.from(data.pro_imgprice, 'latin1').toString('utf8').trim();
-
-    // 디버그: 변환된 파일명 확인
-    console.log('Converted Filenames:');
-    console.log('pro_img:', data.pro_img);
-    console.log('pro_img1:', data.pro_img1);
-    console.log('pro_img2:', data.pro_img2);
-    console.log('pro_imgprice:', data.pro_imgprice);
+    console.log(data);
+    console.log('Dirname-------------------');
+    console.log(__dirname);
+    console.log('-------------------');
 
     try {
         // 이미지를 제외한 프로그램 정보 먼저 입력
@@ -92,7 +66,12 @@ router.post('/createprogram/:tr_no', function (req, res) {
                     const pastDir2 = path.resolve(__dirname, '../uploads', data.pro_img2);
                     const pastDir3 = path.resolve(__dirname, '../uploads', data.pro_imgprice);
 
-                    console.log('PastDirs:', pastDir0, pastDir1, pastDir2, pastDir3);
+                    console.log('pastDir-------------------');
+                    console.log(pastDir0);
+                    console.log(pastDir1);
+                    console.log(pastDir2);
+                    console.log(pastDir3);
+                    console.log('-------------------');
 
                     const newDir = path.resolve(__dirname, '../uploads/program');
                     if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
@@ -102,7 +81,12 @@ router.post('/createprogram/:tr_no', function (req, res) {
                     const extension2 = path.extname(data.pro_img2);
                     const extension3 = path.extname(data.pro_imgprice);
 
-                    console.log('Extensions:', extension, extension1, extension2, extension3);
+                    console.log('Extension-------------------');
+                    console.log(extension);
+                    console.log(extension1);
+                    console.log(extension2);
+                    console.log(extension3);
+                    console.log('-------------------');
 
                     // 등록 상품의 번호 불러오기
                     db.query("select pro_no from program where pro_name = ?", [data.pro_name], function (error, results, fields) {
@@ -113,56 +97,62 @@ router.post('/createprogram/:tr_no', function (req, res) {
                         }
 
                         const filename = results[0].pro_no;
-                        console.log('Filename:', filename);
+                        console.log('filename-------------------');
+                        console.log(filename);
+                        console.log('-------------------');
 
-                        const renameFileSync = (oldPath, newPath) => {
+                        const renameFile = (oldPath, newPath, callback) => {
                             if (fs.existsSync(oldPath)) {
-                                try {
-                                    fs.renameSync(oldPath, newPath);
-                                    console.log(`File moved from ${oldPath} to ${newPath}`);
-                                } catch (err) {
-                                    console.error(`Failed to move file from ${oldPath} to ${newPath}`, err);
-                                    throw err;
-                                }
+                                fs.rename(oldPath, newPath, (err) => {
+                                    if (err) {
+                                        console.error(err);
+                                        callback(err);
+                                    } else {
+                                        console.log(`File moved from ${oldPath} to ${newPath}`);
+                                        callback(null);
+                                    }
+                                });
                             } else {
                                 console.error(`File not found: ${oldPath}`);
-                                throw new Error(`File not found: ${oldPath}`);
+                                callback(`File not found: ${oldPath}`);
                             }
                         };
 
-                        try {
-                            // 이미지 폴더 및 이름(상품번호-타입) 변경
-                            renameFileSync(pastDir0, path.join(newDir, `${filename}-0${extension}`));
-                            renameFileSync(pastDir1, path.join(newDir, `${filename}-1${extension1}`));
-                            renameFileSync(pastDir2, path.join(newDir, `${filename}-2${extension2}`));
-                            renameFileSync(pastDir3, path.join(newDir, `${filename}-3${extension3}`));
+                        // 이미지 폴더 및 이름(상품번호-타입) 변경
+                        renameFile(pastDir0, path.join(newDir, `${filename}-0${extension}`), (err) => {
+                            if (err) {
+                                console.error(err);
+                                return res.status(500).json({
+                                    message: 'Failed to move image file'
+                                });
+                            }
 
-                            // 모든 파일 변경 성공 시 DB에 데이터 입력
-                            db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [0, `${filename}-0${extension}`, filename], function (error, results, fields) {
-                                if (error) {
-                                    console.error(error);
+                            renameFile(pastDir1, path.join(newDir, `${filename}-1${extension1}`), (err) => {
+                                if (err) {
+                                    console.error(err);
                                     return res.status(500).json({
-                                        message: 'DB insertion failed'
+                                        message: 'Failed to move image file'
                                     });
                                 }
 
-                                db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [1, `${filename}-1${extension1}`, filename], function (error, results, fields) {
-                                    if (error) {
-                                        console.error(error);
+                                renameFile(pastDir2, path.join(newDir, `${filename}-2${extension2}`), (err) => {
+                                    if (err) {
+                                        console.error(err);
                                         return res.status(500).json({
-                                            message: 'DB insertion failed'
+                                            message: 'Failed to move image file'
                                         });
                                     }
 
-                                    db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [2, `${filename}-2${extension2}`, filename], function (error, results, fields) {
-                                        if (error) {
-                                            console.error(error);
+                                    renameFile(pastDir3, path.join(newDir, `${filename}-3${extension3}`), (err) => {
+                                        if (err) {
+                                            console.error(err);
                                             return res.status(500).json({
-                                                message: 'DB insertion failed'
+                                                message: 'Failed to move image file'
                                             });
                                         }
 
-                                        db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [3, `${filename}-3${extension3}`, filename], function (error, results, fields) {
+                                        // 모든 파일 변경 성공 시 DB에 데이터 입력
+                                        db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [0, `${filename}-0${extension}`, filename], function (error, results, fields) {
                                             if (error) {
                                                 console.error(error);
                                                 return res.status(500).json({
@@ -170,38 +160,61 @@ router.post('/createprogram/:tr_no', function (req, res) {
                                                 });
                                             }
 
-                                            // 모든 DB 삽입 작업이 완료되면 성공을 클라이언트에 응답
-                                            res.status(200).json({
-                                                message: 'success'
+                                            db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [1, `${filename}-1${extension1}`, filename], function (error, results, fields) {
+                                                if (error) {
+                                                    console.error(error);
+                                                    return res.status(500).json({
+                                                        message: 'DB insertion failed'
+                                                    });
+                                                }
+
+                                                db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [2, `${filename}-2${extension2}`, filename], function (error, results, fields) {
+                                                    if (error) {
+                                                        console.error(error);
+                                                        return res.status(500).json({
+                                                            message: 'DB insertion failed'
+                                                        });
+                                                    }
+
+                                                    db.query(`insert into img (img_type, img_path, img_pro_no) values (?, ?, ?)`, [3, `${filename}-3${extension3}`, filename], function (error, results, fields) {
+                                                        if (error) {
+                                                            console.error(error);
+                                                            return res.status(500).json({
+                                                                message: 'DB insertion failed'
+                                                            });
+                                                        }
+
+                                                        // 모든 DB 삽입 작업이 완료되면 성공을 클라이언트에 응답
+                                                        res.status(200).json({
+                                                            message: 'success'
+                                                        });
+                                                    });
+                                                });
                                             });
                                         });
                                     });
                                 });
                             });
-                        } catch (err) {
-                            console.error(err);
-                            res.status(500).json({
-                                message: 'File rename or DB operation failed'
-                            });
-                        }
+                        });
                     });
+
                 } catch (err) {
                     console.log(err);
                 }
             });
-    } catch (err) {
+    } catch {
         return res.status(200).json({
             message: 'DB_error'
         });
     }
 });
-
+//프로필사진 업로드용
 //프로필사진 업로드용
 router.post('/upload_Timg', upload.single('img'), (req, res) => {
     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
 
     const tr_no = req.body.tr_no;
-    const img = Buffer.from(req.file.filename, 'latin1').toString('utf8');
+    const img = req.file.filename;
     console.log("tr_no : ", tr_no);
     console.log("img : ", img);
 
@@ -226,8 +239,8 @@ router.post('/upload_Timg', upload.single('img'), (req, res) => {
         console.log('-------------------');
 
         // 이미지 폴더 및 이름(상품번호-타입) 변경
+        // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
         const newFilePath = path.join(newDir, `${tr_no}-0${extension}`);
-        
         fs.rename(pastDir, newFilePath, (err) => {
             if (err) {
                 throw err;
@@ -268,6 +281,83 @@ router.post('/upload_Timg', upload.single('img'), (req, res) => {
         img  // 업로드된 파일명 반환
     });
 });
+// router.post('/upload_Timg', upload.single('img'), (req, res) => {
+//     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
+
+//     const tr_no = req.body.tr_no;
+//     const img = req.file.filename;
+//     console.log("tr_no : ",tr_no);
+//     console.log("img : ",img);
+
+//     try {
+//         const pastDir = `${__dirname}` + `../../uploads/` + img
+
+//         console.log('pastDir-------------------');
+//         console.log(pastDir);
+//         console.log('-------------------');
+
+//         const newDir = `${__dirname}` + `../../uploads/trainer/`;
+//         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
+
+//         const extension =img.substring(img.lastIndexOf('.'))
+
+//         console.log('Extenstion-------------------');
+//         console.log(extension);
+//         console.log('-------------------');
+
+
+//         console.log('newDir-------------------');
+//         console.log(newDir);
+//         console.log('-------------------');
+
+//         // 이미지 폴더 및 이름(상품번호-타입) 변경
+//         // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
+//         fs.rename(pastDir, newDir + tr_no + '-0' + extension, (err) => {
+//             if (err) {
+//                 throw err;
+//             }
+//         });
+//         try{
+//             db.query(`select count(*) as num from img where img_tr_no = ? and img_type = 0;`,
+//             [tr_no],
+//             function (error, results, fields){
+
+//                 // console.log("results[0] : ",results[0]);
+//                 // console.log("results[0].num === 0 : ",results[0].num === 0);
+
+//                 if(results[0].num === 0){
+//                         db.query(`insert into img (img_type,img_path,img_tr_no) values(0,?,?);`,
+//                         [tr_no+'-0'+extension,tr_no],
+//                         function (error, results, fields){
+//                             if(error){
+//                                 throw error;
+//                             }
+//                         })
+//                 }else{
+//                     db.query(`update img set img_path = ? where img_tr_no = ? and img_type = 0;`,
+//                         [tr_no+'-0'+extension,tr_no],
+//                         function (error, results, fields){
+//                             if(error){
+//                                 throw error;
+//                             }
+                        
+//                         })
+//                 }
+//         }
+//     )}
+//     catch(err){
+//         console.log(err);
+
+//     }       
+//         }catch(err){
+//              console.log(err);
+//         }
+   
+//     return res.status(200).json({
+//         message: 'success',
+//         img  // 업로드된 파일명 반환
+//     });
+// });
 
 //내프로그램 리스트
 
