@@ -227,7 +227,7 @@ export default {
           alert('회원 정보가 삭제 되었습니다.');
           this.setUser({ user_email: '', user_no: '', user_auth: '' });
           localStorage.clear(); // 로컬 스토리지 비우기
-          this.$router.push('/');  // 메인 화면으로 리디렉션
+          this.$router.push(`/mypage/:${user_no}`);  // 메인 화면으로 리디렉션
         } catch(error){
           console.error("회원 정보 삭제 도중 에러 발생", error);
         }
@@ -321,14 +321,14 @@ export default {
         // // 서버에 회원정보 데이터를 전송
         console.log("회원 정보 수정 성공",response.data);
         alert('회원 정보가 수정되었습니다.');
-        this.$router.push('/');  // 메인 화면으로 리디렉션
+        this.$router.push(`/mypage/:${user_no}`);  // 메인 화면으로 리디렉션
       } catch (error) {
         console.error("회원 정보 수정 도중 에러 발생",error);
         alert('회원 정보 수정 중 오류가 발생했습니다.');
       }
     },
     exit(){
-            this.$router.push({path: "/"})
+            this.$router.push(`/mypage/:${this.userData.user_no}`)
     }
 
     }

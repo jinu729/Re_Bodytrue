@@ -13,6 +13,7 @@
                     <input type="file" id="image-upload" accept="image/*" ref="img" @change="uploadFile($event.target.files, 0)">
                     <label for="image-upload" class="file-upload-label" style="padding-left: 50px;">썸네일이미지 선택</label><br>   
                     <span>사이즈(256 * 256)이내</span>
+                    
                 </div>
             </div>
             <div class="content_right">
@@ -21,18 +22,21 @@
                         <span>프로그램 명</span>
                     </div>
                     <input type="text" id="prcn_text" v-model="program.prcn_text" placeholder="프로그램 명">
+                    <div v-if="errors.prcn_text" hidden>{{ errors.prcn_text }}</div>                    
                 </div>
                 <div class="prc_name">
                     <div class="prcn_title">
                         <span>전화번호</span>
                     </div>
                     <input type="text" id="phn_text" v-model="program.phn_text" placeholder="010-1111-1111">
+                    <div v-if="errors.phn_text" hidden>{{ errors.phn_text }}</div>
                 </div>
                 <div class="prc_name">
                     <div class="prcn_title">
                         <span>주소</span>
                     </div>
                     <input type="text" id="address_text" v-model="program.address_text" value="주소">
+                    <div v-if="errors.address_text" hidden>{{ errors.address_text }}</div>
                 </div>
                 <div class="prc_name">
                     <div class="prc_date">
@@ -40,12 +44,14 @@
                             <span>시작일</span>
                         </div>
                         <input type="date" id="start_date" v-model="program.start_date" value="달력">
+                        <div v-if="errors.start_date" hidden>{{ errors.start_date }}</div>
                     </div>
                     <div class="prc_date">
                         <div class="prcn_title">
                             <span>마감일</span>
                         </div>
                         <input type="date" id="end_date"  v-model="program.end_date" value="달력">
+                        <div v-if="errors.end_date" hidden>{{ errors.end_date }}</div>
                     </div>
                 </div>
                 <div class="prc_detail prc_tag">
@@ -68,16 +74,19 @@
                                 <input type="radio" id=" hometraining" name="tag" v-model="program.tags" value=4><span>홈트</span>
                             </label>
                         </div>
+                        <div v-if="errors.tags" hidden>{{ errors.tags }}</div>
                     </div>
                     <div class="img_upload">
                         <div class="img_content">
-                            <span>상세 이미지 - 1</span>
+                            <span>메인 이미지 - 1</span>
                         </div>
                         <input type="file" class="prcimg_upload" id="file-input1" accept="image/png, image/jpeg" ref="img" @change="uploadFile2($event.target.files, 1)">                        
+                        
                     </div>
                     <div class="preview-container" id="preview-container"></div>
                     <div class="img_textarea">
                         <textarea name="img_textarea" id="img_textarea1" v-model="program.img_textarea1" placeholder="상세 이미지 설명"></textarea>
+                        <div v-if="errors.img_textarea1" hidden>{{ errors.img_textarea1 }}</div>
                     </div>
                 </div>
                 <div class="prc_detail">
@@ -86,10 +95,12 @@
                             <span>상세 이미지 - 2</span>
                         </div>
                         <input type="file" class="prcimg_upload" id="file-input2" accept="image/png, image/jpeg" ref="img" @change="uploadFile3($event.target.files, 2)">
+                        
                     </div>
                     <div class="preview-container" id="preview-container2"></div>
                     <div class="img_textarea">
                         <textarea name="img_textarea" id="img_textarea2"  v-model="program.img_textarea2" placeholder="상세 이미지 설명"></textarea>
+                        <div v-if="errors.img_textarea2" hidden>{{ errors.img_textarea2 }}</div>
                     </div>
                 </div>
                 <div class="prc_price">
@@ -101,6 +112,7 @@
                             <span>가격</span>
                         </div>
                         <input type="file" class="prcimg_upload" id="file-input3" accept="image/png, image/jpeg" ref="img" @change="uploadFile4($event.target.files, 3)">
+                        
                     </div>
                     <div class="preview-container" id="preview-container3"></div>
                 </div>
@@ -109,7 +121,7 @@
         </div>
         <div class="prc_btn">
             <button type="submit" name="create" id="prc_create" @click="ProInsert">등록</button>
-            <button type="button" name="cancle" id="prc_cancel">취소</button>
+            <button type="button" name="cancle" id="prc_cancel" @click="exit">취소</button>
         </div>
     </div>    
 </template>
@@ -120,6 +132,7 @@ import axios from 'axios';
 export default {
     data(){
         return {
+            errors:{},
             fileName:"",
             fileName2:"",
             fileName3:"",
@@ -140,6 +153,7 @@ export default {
                 tr_no: '',
             },
             tr_no : localStorage.tr_no,
+            
         }
     },
      computed: {
@@ -147,7 +161,51 @@ export default {
         return this.$store.state.trainer;
       },
      },
+     mounted(){
+        console.log("마운트됨");
+        this.myImg();
+    },
     methods:{
+        validateForm() {
+            this.errors = {};
+
+            if (!this.program.prcn_text) {
+                this.errors.prcn_text = "프로그램 명을 입력하세요.";
+                alert(this.errors.prcn_text);
+                return false;
+            }
+            if (!this.program.phn_text) {
+                this.errors.phn_text = "전화번호를 입력하세요.";
+                alert(this.errors.phn_text);
+                return false;
+            }
+            if (!this.program.address_text) {
+                this.errors.address_text = "주소를 입력하세요.";
+                alert(this.errors.address_text);
+                return false;
+            }
+            if (!this.program.start_date) {
+                this.errors.start_date = "시작일을 선택하세요.";
+                alert(this.errors.start_date);
+                return false;
+            }
+            if (!this.program.end_date) {
+                this.errors.end_date = "마감일을 선택하세요.";
+                alert(this.errors.end_date);
+                return false;
+            }
+            if (!this.program.tags) {
+                this.errors.tags = "태그를 선택하세요.";
+                alert(this.errors.tags);
+                return false;
+            }
+            // if (Object.keys(this.errors).length > 0) {
+            //     alert('모든 필드를 올바르게 채워주세요.');
+            //     return false;
+            // }
+
+            return Object.keys(this.errors).length === 0;
+        },
         async uploadFile(file, type) {
             let name = "";
             if (file) {
@@ -362,6 +420,10 @@ export default {
             }
         },
         ProInsert() {
+            if (!this.validateForm()) {
+                return;
+            }
+
             console.log("program",this.program);
             const tr_no = this.$route.params.tr_no;
                 axios({
@@ -385,24 +447,10 @@ export default {
                 })
                     
                     .then((res) => {
-                        if (res.data.message == 'add_complete') {
-                            this.$swal({
-                                position: 'top',
-                                icon: 'success',
-                                title: '상품 등록 성공!',
-                                showConfirmButton: false,
-                                timer: 1000
-                            })
-                            
-                                .then(() => {
-                                    window.location.href = "http://localhost:8081/admin/goodsList";
-                                })
-                        console.log("data",this.prcn_text);        
-                        } else if (res.data.message == 'already_exist_goods') {
-                            this.$swal("이미 등록된 상품입니다.");
-                        }
-                        else if (res.data.message == '파일 변경 실패') {
-                            this.$swal("파일 변경 실패");
+                        if (res.status === 200) {
+                            alert("상품 등록 성공");
+                            this.$router.push({ path: "/trainer" });
+                        console.log("data",this.prcn_text);       
                         }
                         else {
                             this.$swal("상품 등록 실패");
@@ -412,80 +460,36 @@ export default {
                     .catch(() => {
                         this.$swal("오류 발생")
                     })
+            },
+            exit(){
+            if (Object.values(this.$data).some(field => field)) {
+                if (confirm("프로그램 등록을 취소하시겠습니까?")) {
+                    this.$router.push({ path: "/trainer" });
+                }
+            } else {
+                this.$router.push({ path: "/trainer" });
             }
+        },
+        async myImg(){
+            const user_no = this.$route.params.user_no;
+            try{
+                const response = await axios.post(`http://localhost:3000/user/getimg`,{user_no:user_no});
+                const data = response.data
+                this.imgData = data;
+                console.log("imgData",this.imgData.img_path);
+                // this.$router.go(0);
+            } catch(error){
+                console.error('이미지 데이터 불러오는 중 에러 발생', error);
+                this.imgData = '';
+            }
+        },
         },
           
     
 }
 </script>
 <style scoped>
-*{
-    margin: 0;
-    padding: 0;
-}
-ul{list-style: none;}
-a:link, a:visited{
-    text-decoration: none;
-    color: #333;
-}
-html, body{
-    width: 100%;
-    /* height: 100%; */
-}
-body{
-    background-color: #fff;
-    min-width: 1280px;
-    line-height: 1.5;
-}   
-/* header */
-header{
-    width: 100%;
-    height: 80px;
-    /* background-color: gray; */
-    position: relative;
-    border-bottom: 1.5px solid black;
-}
-header .wrap{
-    width: 80%;
-    height: 80px;
-    margin: auto;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-header .nav_left{
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    z-index: 7;
-}
-header .nav_left h1{
-    width: 180px;
-    height: 55px;
-}
-header .logo img{
-    height: 60px;
-    line-height: 60px;
-}
-header .nav_right{
-    display: flex;
-    align-items: end;
-    justify-content: flex-start;
-    z-index: 7;
-}
-.nav_right .icon_list{
-    width: 90px;
-}
-.icon_list .item{
-    line-height: 35px;
-    font-size: 18px;
-    font-weight: bold;
-}
-.item .icon img{
-    width: 18px;
-    height: 18px;
-    /* padding-top: 1px; */
-}
+
 /* prc_main */
 .prc_main{
     width: 80%;
@@ -497,6 +501,7 @@ header .nav_right{
 .prc_main .prc_title{
     width: 100%;
     height: 50px;
+    border-radius: 10px;
     background-color: #00C7AE;
 }
 .prc_title p{
@@ -509,7 +514,9 @@ header .nav_right{
     width: 100%;
     margin-top: 20px;
     background-color: white;
-    border: 1px solid black;
+    border-radius: 10px;
+    border-left: 1px solid #ccc;
+    border-top: 1px solid #ccc;
     display: flex;
     flex-wrap: wrap;
     box-shadow: 4px 4px 5px rgba(0, 199, 174, 0.5);
@@ -551,13 +558,14 @@ header .nav_right{
     padding-right: 20px;
 }
 .content_right .prc_name{
-    width: 100%;
+    width: 950px;
     /* border: 1px solid #ccc;     */
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     display: flex;
     flex-wrap: wrap;
     margin-top: 15px;
     border-radius: 5px;
+    margin-left: 50px;
 }
 .prc_name .prcn_title{
     width: 150px;
@@ -631,13 +639,14 @@ header .nav_right{
 }
 .content_right .prc_detail{
     padding-top: 20px;
-    margin-left: 10px;
+    margin-left: 50px;
 }
 .prc_detail .detail_title span{
     font-size: 22px;
 }
 /* tag */
 .prc_tag .detail_tag{
+    width: 950px;
     display: flex;
     justify-content: space-between;
 }
@@ -659,7 +668,7 @@ header .nav_right{
 /* img upload */
 .content_right .prc_detail ,.prc_price{
     padding-top: 20px;
-    margin-left: 10px;
+    margin-left: 50px;
 }
 .prc_price .img_title span{
     font-size: 22px;
@@ -737,8 +746,20 @@ header .nav_right{
 .img_upload .prcimg_upload{
     line-height: 40px;
     width: 700px;
+    height: 40px;
 }
-#img_textarea{
+#img_textarea1{
+    width: 940px;
+    height: 150px;
+    font-size: 18px;    
+    margin-top: 15px;
+    padding-left: 10px;
+    padding-top: 10px;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+#img_textarea2{
     width: 940px;
     height: 150px;
     font-size: 18px;    

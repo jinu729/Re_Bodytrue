@@ -230,7 +230,7 @@ router.post('/proimg',function(request, response, next){
 router.post('/priceimg', function(request, response, next){
     const pro_no = request.body.pro_no;
 
-    db.query(`select img_path from img where img_pro_no = ? and img_type = 2`,[pro_no], function(error, result){
+    db.query(`select img_path from img where img_pro_no = ? and img_type = 3`,[pro_no], function(error, result){
         if(error){
             console.error(error);
             return response.status(500).json({ error: '가격 이미지 에러'});

@@ -93,6 +93,9 @@ export default {
             user() {
                 return this.$store.state.user; // user 정보가 바뀔 때마다 자동으로 user() 갱신
             },
+            trainer() {
+                return this.$store.state.trainer; // user 정보가 바뀔 때마다 자동으로 trainer() 갱신
+            },
             isLoggedIn() {
                 return !!this.$store.state.user.user_email || !!this.$store.state.trainer.tr_email;
             },
@@ -102,7 +105,8 @@ export default {
                 },  
                 set(value) {
                     this.$store.dispatch('updateUserEmail', value);
-                }
+                    // this.$store.dispatch('updateTrEmail', value);
+                },
     }
         }, 
         created() {

@@ -1,6 +1,6 @@
 <template>
     <div class="admin_faq_main">
-        <div class="admin_faq">FAQ 관리</div>
+        <div class="admin_faq123">FAQ 관리</div>
         <div class="admin_container">
             <div class="admin_faq_ans">
                 <div class="admin_faq_question">
@@ -139,7 +139,7 @@ export default {
     width: 100%;
 }
 
-.admin_faq {
+.admin_faq123 {
     text-align: left;
     font-size: 35px;
     border: 1px;

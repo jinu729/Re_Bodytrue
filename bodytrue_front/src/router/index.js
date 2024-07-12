@@ -77,7 +77,7 @@ const routes = [
     component: AdminTrainer
   },
   {
-    path: '/adminfaq',
+    path: '/admin/adminfaq',
     name: 'AdminFaq',
     component: AdminFaq
   },
