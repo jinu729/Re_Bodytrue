@@ -8,87 +8,96 @@ const path = require("path");
 
 //승호작성
 
-const generateUniqueIdentifier = () => {
-    return `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-};
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.resolve(__dirname, '../uploads/'));
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = generateUniqueIdentifier();
-        cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
-    }
-});
-
-const upload = multer({ storage });
-router.post('/upload_img', upload.single('img'), (request, response) => {
-    setTimeout(() => {
-        return response.status(200).json({
-            message: 'success'
-        });
-    }, 0);
-});
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, cb) {
+            cb(null, 'uploads/');
+        },
+        filename(req, file, cb) {
+            cb(null, file.originalname);
+            
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
+  });
+  
 
 router.post('/upload_Uimg', upload.single('img'), (req, res) => {
     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
 
     const user_no = req.body.user_no;
-    const originalFilename = req.file.originalname;
-    const uniqueFilename = req.file.filename;
-
-    console.log("user_no:", user_no);
-    console.log("originalFilename:", originalFilename);
-    console.log("uniqueFilename:", uniqueFilename);
+    const img = req.file.filename;
+    console.log("user_no : ",user_no);
+    console.log("img : ",img);
 
     try {
-        const pastDir = path.resolve(__dirname, '../uploads', uniqueFilename);
-        const newDir = path.resolve(__dirname, '../uploads/user');
+        const pastDir = `${__dirname}` + `../../uploads/` + img
+
+        console.log('pastDir-------------------');
+        console.log(pastDir);
+        console.log('-------------------');
+
+        const newDir = `${__dirname}` + `../../uploads/user/`;
         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
 
-        const extension = path.extname(originalFilename);
+        const extension =img.substring(img.lastIndexOf('.'))
 
-        const newFilePath = path.join(newDir, `${user_no}-0${extension}`);
+        console.log('Extenstion-------------------');
+        console.log(extension);
+        console.log('-------------------');
 
-        fs.rename(pastDir, newFilePath, (err) => {
+
+        console.log('newDir-------------------');
+        console.log(newDir);
+        console.log('-------------------');
+
+        // 이미지 폴더 및 이름(상품번호-타입) 변경
+        // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
+        fs.rename(pastDir, newDir + user_no + '-0' + extension, (err) => {
             if (err) {
                 throw err;
             }
         });
-
-        try {
+        try{
             db.query(`select count(*) as num from img where img_user_no = ? and img_type = 0;`,
-                [user_no],
-                function (error, results, fields) {
-                    if (results[0].num === 0) {
-                        db.query(`insert into img (img_type, img_path, img_user_no) values (0, ?, ?);`,
-                            [`${user_no}-0${extension}`, user_no],
-                            function (error, results, fields) {
-                                if (error) {
-                                    throw error;
-                                }
-                            });
-                    } else {
-                        db.query(`update img set img_path = ? where img_user_no = ? and img_type = 0;`,
-                            [`${user_no}-0${extension}`, user_no],
-                            function (error, results, fields) {
-                                if (error) {
-                                    throw error;
-                                }
-                            });
-                    }
-                });
-        } catch (err) {
-            console.log(err);
-        }
-    } catch (err) {
-        console.log(err);
-    }
+            [user_no],
+            function (error, results, fields){
 
+                // console.log("results[0] : ",results[0]);
+                // console.log("results[0].num === 0 : ",results[0].num === 0);
+
+                if(results[0].num === 0){
+                        db.query(`insert into img (img_type,img_path,img_user_no) values(0,?,?);`,
+                        [user_no+'-0'+extension,user_no],
+                        function (error, results, fields){
+                            if(error){
+                                throw error;
+                            }
+                        })
+                }else{
+                    db.query(`update img set img_path = ? where img_user_no = ? and img_type = 0;`,
+                        [user_no+'-0'+extension,user_no],
+                        function (error, results, fields){
+                            if(error){
+                                throw error;
+                            }
+                        
+                        })
+                }
+        }
+        
+    )}
+    catch(err){
+        console.log(err);
+
+    }       
+        }catch(err){
+             console.log(err);
+        }
+   
     return res.status(200).json({
         message: 'success',
-        img: originalFilename // 업로드된 파일명 반환
+        img // 업로드된 파일명 반환
     });
 });
 
