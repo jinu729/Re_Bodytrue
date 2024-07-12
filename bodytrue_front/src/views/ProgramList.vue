@@ -27,7 +27,7 @@
               <!-- 트레이너 이름 표시 -->
               <p class="trainer_name">{{ program.PRO_TRAINER }}</p>
               <!-- 평점 표시 -->
-              <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG }}</span></p>
+              <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG || 0}}</span></p>
             </div>
             </router-link>
           </div>
@@ -178,17 +178,17 @@
 
 /* 프로그램 목록 메인 컨테이너 */
 .prolist_main {
-    width: 80%; /* 전체 너비의 80%로 설정 */
-    margin-left: auto ;
-    margin-right: auto;
+    width: 100%; /* 전체 너비의 80%로 설정 */
 }
 
 /* 프로그램 목록 리스트 스타일 */
 .prolist_list {
+    width: 80%;
     display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-start; /* 전체 이미지 그리드를 왼쪽 정렬로 설정 */
-            padding: 20px;
+    flex-wrap: wrap;
+    justify-content: flex-start; /* 전체 이미지 그리드를 왼쪽 정렬로 설정 */
+    padding: 20px;
+    margin: 0 auto;
 
 }
 
@@ -212,16 +212,17 @@
 }
 /* 프로그램 썸네일 이미지 스타일 */
 .program_image img {
-  max-width: 200px; /* 이미지의 최대 너비 설정 */
-  max-height: 200px; /* 이미지의 최대 높이 설정 */
-  min-width: 200px; /* 이미지의 최소 너비 설정 */
-  min-height: 200px; /* 이미지의 최소 높이 설정 */
+  max-width: 220px; /* 이미지의 최대 너비 설정 */
+  max-height: 220px; /* 이미지의 최대 높이 설정 */
+  min-width: 220px; /* 이미지의 최소 너비 설정 */
+  min-height: 220px; /* 이미지의 최소 높이 설정 */
   overflow: hidden; /* 넘치는 부분을 숨기기 위해 설정 */
   padding: auto; /* 패딩을 자동으로 설정 */
-  border-radius: 15%; /* 이미지의 모서리를 둥글게 만드는 정도 설정 */
+  border-radius: 10px; /* 이미지의 모서리를 둥글게 만드는 정도 설정 */
   background-color: #eeeeee; /* 이미지가 로드되기 전에 보여질 배경색 설정 */
   height: auto; /* 이미지의 높이를 자동으로 조정하여 원본 비율 유지 */
   display: block; /* 이미지가 inline 요소로 표시되는 것을 방지하여 블록 요소로 변경 */
+  object-fit: cover;
 }
 .program_details {
   display: flex;
@@ -233,7 +234,7 @@
 
 .program_details p {
   margin: 0; /* 문단의 기본 마진을 제거하여 줄 간격을 없앱니다. */
-  width: 100%; /* 부모 요소인 .program_details 너비에 맞춤 */
+  width: 80%; /* 부모 요소인 .program_details 너비에 맞춤 */
 }
 
 .star-rating {
@@ -251,6 +252,7 @@
         margin: 0 auto;
         text-align: center;
         padding-top: 10px;
+        margin-bottom: 20px;
     }
     .pagination .number_box{
         display: flex;

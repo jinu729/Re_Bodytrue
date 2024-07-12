@@ -78,7 +78,7 @@
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/admin/adminfaq"><img src="../image/faq2icon.png" alt="adminfaq">FAQ관리</router-link>
+                        <router-link class="icon" to="/adminfaq"><img src="../image/faq2icon.png" alt="adminfaq">FAQ관리</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">
@@ -152,6 +152,7 @@ export default {
         async goToList(pro_tag) {
             try {
                 window.location.href = `http://localhost:8081/prolist/${pro_tag}`;
+                // this.$router.push({ path : `/prolist/${pro_tag}`})
 
             } catch (error) {
                 console.error('전송 실패:', error);

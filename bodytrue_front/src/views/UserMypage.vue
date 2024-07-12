@@ -6,7 +6,7 @@
                     <div class="upload_img">
                         <div class="file-input">
                             <img :src="imgData.img_path ? require(`../../../bodytrue_back/uploads/user/${imgData.img_path}`) : '/goodsempty2.jpg'" alt="Profile Picture">
-                            <input type="file" id="image-upload" accept="image/*" @change="uploadFile($event.target.files, 0)">
+                            <input type="file" id="image-upload" accept="image/*" @change="uploadFile($event.target.files, 0)" style="margin-top: 20px">
                             <label for="image-upload" class="file-upload-label" style="font-size: 16px;"></label>   
                                 <span style="font-size: 13px;">사이즈(256 * 256)이내</span>
                         </div>
@@ -131,14 +131,14 @@
             <div class="plike_table">
     <!-- 찜내역 있을 경우 -->
     <div v-if="combinedData.length > 0">
-        <div class="section5_list" v-for="item in displayedData" :key="item.img_pro_no">
-            <div class="plike_left">
+        <div class="section5_list" v-for="item in displayedData" :key="item.img_pro_no"  @click="goToProdetail(item.pro_no)">
+            <div class="plike_left" >
                 <img :src="require(`../../../bodytrue_back/uploads/program/${item.img_path}`)">
             </div>
             <div class="plike_right">
                 <ul class="table_list">
                     <li>
-                        <div @click="goToProdetail(item.pro_no)" class="plike_proname">{{ item.pro_name }} 
+                        <div class="plike_proname">{{ item.pro_name }} 
                             <img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span style="font-size:22px;">{{ item.rate_avg || 0}}</span>
                         </div>
                         <div class="plike_trainer">{{ item.tr_name }}</div>
@@ -603,8 +603,8 @@ export default {
 
             const startdate = new Date(year, month, day, hour);
             
-            console.log('오늘 날짜:', currentDate);
-            console.log('예약 날짜:', startdate);
+            // console.log('오늘 날짜:', currentDate);
+            // console.log('예약 날짜:', startdate);
             // console.log('비교:', currentDate > startdate);
             //오늘 날짜 > 예약날짜 일 경우에만 리뷰버튼 오픈
             return currentDate > startdate;
@@ -660,6 +660,7 @@ export default {
                 const response = await axios.post(`http://localhost:3000/user/deletere`, {re_no: re_no});
                 console.log("리뷰 삭제 성공", response.data);
                 alert('리뷰 목록에서 삭제 되었습니다.');
+                window.location.reload();
             } catch(error){
                 console.error("리뷰 삭제 도중 에러 발생",error);
             }
@@ -668,7 +669,9 @@ export default {
         //리뷰 수정하기
         async updatere(re_no){
             const review = this.reData.find(r => r.re_no === re_no);
+            console.log("수정데이터리뷰넘버",review);
             this.openReviewModal(review);
+            
         },
 
     }
@@ -710,6 +713,8 @@ export default {
     .section1 .pro_left img{
         width: 200px;
         height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
     }
     .section1 .pro_left .upload_img{
         width: 70%;
@@ -830,13 +835,13 @@ export default {
         color:rgb(255, 255, 255);
         border:solid 1px;
         border-radius: 5px;
-        background: #ff751f;
+        background: #7ED2FF;
     }
     .table_list .re_btn:hover{
         font-size: 16px;
         width: 120px;
         height: 25px;
-        color: #ff751f;
+        color: #7ED2FF;
         border:solid 1px;
         border-radius: 5px;
         background: rgb(255, 255, 255);
@@ -848,13 +853,14 @@ export default {
         color:rgb(255, 255, 255);
         border:solid 1px;
         border-radius: 5px;
-        background:  #ff2b2b;
+        background:  #FF6C6C;
+        /* background:  #7ED2FF; */
     }
     .table_list .cal_btn:hover{
         font-size: 16px;
         width: 120px;
         height: 25px;
-        color:#ff2b2b;
+        color:#FF6C6C;
         border:solid 1px;
         border-radius: 5px;
         background:  rgb(255, 255, 255);
@@ -927,21 +933,21 @@ export default {
     .table_list .reupdate_btn{
         font-size: 16px;
         width: 60px;
-        margin: 10px auto;
+        /* margin: 10px auto; */
         border:none;
         color: white;
         background-color: #777777;
-        border-radius: 20px;
+        border-radius: 5px;
         cursor: pointer;
     }
     .table_list .reupdate_btn:hover{
         font-size: 16px;
         width: 60px;
-        margin: 10px auto;
+        /* margin: 10px auto; */
         border:none;
         color: #777777;
         background-color: rgb(193, 192, 192);
-        border-radius: 20px;
+        border-radius: 5px;
         cursor: pointer;
     }
     .table_list .redelete_btn{
@@ -950,16 +956,17 @@ export default {
         height: 25px;
         color:rgb(255, 255, 255);
         border:solid 1px;
-        border-radius: 20px;
-        background:  #ff2b2b;
+        border-radius: 5px;
+        background:  #FF6C6C;
+        margin-left: 10px;
     }
     .table_list .redelete_btn:hover{
         font-size: 16px;
         width: 60px;
         height: 25px;
-        color:#ff2b2b;
+        color:#FF6C6C;
         border:solid 1px;
-        border-radius: 20px;
+        border-radius: 5px;
         background:  rgb(255, 255, 255);
     }
     /* section5 = plike */
@@ -988,6 +995,16 @@ export default {
         flex-wrap: wrap;
         margin-top: 20px;
         margin-bottom: 20px;
+        cursor: pointer;
+    }
+    .plike_table .section5_list:nth-child(1){
+        width: 100%;
+        height: 220px;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 0px;
+        margin-bottom: 20px;
+        cursor: pointer;
     }
     .section5_list .plike_left{
         width: 220px;
@@ -995,6 +1012,7 @@ export default {
     .section5_list .plike_left img{
         width: 220px;
         height: 220px;
+        border-radius: 10px;
         object-fit: cover;
     }
     .section5_list .plike_right{
