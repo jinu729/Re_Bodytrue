@@ -64,6 +64,7 @@ export default {
                 console.log('Response:', response.data);
                 if (Array.isArray(response.data)) {
                     this.reviewList = response.data;
+                    console.log("this.reviewL",this.reviewList);
                 } else {
                     console.error('Expected an array but got:', response.data);
                 }
@@ -76,8 +77,16 @@ export default {
             this.currentPage = page;
         },
         reviewdetail(re_no) {
-            this.$router.push(`/reviewdetail/${re_no}`);
-        },
+            const review = this.reviewList.find(item => item.re_no === re_no);
+            
+            if (review && review.img_path) {
+                console.log("Review image path:", review.img_path);
+                // 이미지 경로가 있는 경우에만 리뷰 디테일 페이지로 이동합니다.
+                this.$router.push(`/reviewdetail/${re_no}`);    
+                } else {
+                    this.$router.push(`/reviewdetail2/${re_no}`); 
+                }
+        }
     },
     mounted() {
         console.log('Component mounted.');

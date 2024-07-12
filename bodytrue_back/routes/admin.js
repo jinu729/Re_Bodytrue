@@ -6,13 +6,14 @@ const fs = require('fs');
 const multer = require('multer');
 const path = require("path");
 const { error } = require('console');
+const { log } = require('util');
 
 //승호작성
 
 //회원리스트 불러오기
 
 router.get("/userlist",async(req,res)=>{
-    db.query("select user_no,user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user",(err,results)=>{
+    db.query("select user_no,user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2,user_ban from user",(err,results)=>{
         if (err) {
             res.send({
               // 에러 발생 시
@@ -53,22 +54,25 @@ router.get("/searchname",async(req,res)=>{
 
 //회원 정지하기
 
-router.post('/deleteuser', (req, res, next) => {
-  const { user_no} = req.body;
+router.post('/toggleuserban', (req, res) => {
+  const { user_no, user_ban } = req.body;
 
-  // console.log('Received request to delete trainer:', tr_name, tr_email); // 로그 추가
+  // 현재 USER_BAN 값에 따라 반대값으로 업데이트
+  const newBanStatus = user_ban === 0 ? 1 : 0;
+  const sql = 'UPDATE USER SET USER_BAN = ? WHERE USER_NO = ?';
 
-  const sql = 'UPDATE USER SET USER_BAN = 1 WHERE USER_NO=?';
-
-  db.query(sql, [user_no], function(err, results, fields) {
+  db.query(sql, [newBanStatus, user_no], function(err, results, fields) {
     if (err) {
-      // console.error('Database error:', err); // 오류 로그 추가
-
+      console.error('Database error:', err);
       return res.status(500).json({ error: '회원 정지 에러' });
     }
-    return res.status(200).json({ message: '회원 정지' });
+
+    const message = newBanStatus === 1 ? '회원 정지' : '회원 정지 해제';
+    return res.status(200).json({ message });
   });
 });
+
+
 
 //트레이너리스트 불러오기
 
@@ -178,11 +182,12 @@ router.post('/trban', (req, res, next) => {
 //리뷰리스트 불러오기
 
 router.get("/adminreview", async (req, res) => {
-  db.query(`SELECT re_no, DATE_FORMAT(re_date, "%y-%m-%d") AS re_date, pro_name, user_name, tr_name 
+  db.query(`SELECT re_no, DATE_FORMAT(re_date, "%y-%m-%d") AS re_date, pro_name, user_name, tr_name,img_path
             FROM review r 
             JOIN program p ON r.re_pro_no = p.pro_no 
-            JOIN user u ON r.re_user_no = u.user_no 
-            JOIN trainer t ON r.re_tr_no = t.tr_no;`, (err, results) => {
+            JOIN user u ON r.re_user_no = u.user_no
+            JOIN trainer t ON r.re_tr_no = t.tr_no
+            left join img i on r.re_no = i.img_re_no;`, (err, results) => {
       if (err) {
           res.send({
               code: 400,
@@ -490,7 +495,7 @@ router.post('/delfaq', function(request, response, next) {
 
 //회창작성
 
-//리뷰 상세 데이터 불러오기
+//이미지가 있는 리뷰 상세 데이터 불러오기
 
 router.get('/review/:re_no', (req, res) => {
   const re_no = req.params.re_no;
@@ -511,16 +516,40 @@ router.get('/review/:re_no', (req, res) => {
       }
 
       const review = reviewResult[0];
+      // console.log("===================================");
+      // console.log("review",review);
+      // console.log("===================================");
       db.query(imagesQuery, [re_no], (err, imagesResult) => {
           if (err) {
             console.error('Error fetching images:', err);
               res.status(500).json({ error: 'Failed to fetch images' });
               return;
           }
+            
 
-          review.images = imagesResult.map(image => image.img_re_no);
+          review.images = imagesResult.map(image => image.img_path);
           res.json(review);
+          console.log("===================================");
+            console.log("reviewimg",review.images);
+            console.log("===================================");
       });
+  });
+});
+
+//이미지가 없는 리뷰 상세 데이터 불러오기
+
+router.get('/review2/:re_no', (req, res) => {
+  const re_no = req.params.re_no;
+  
+  const reviewQuery = `SELECT re_no, re_comment, date_format(re_date,'%Y-%m-%d') as re_date, user_name, pro_name, tr_name, re_rate FROM review r join user u on r.re_user_no = u.user_no join trainer t on r.re_tr_no = t.tr_no join program p on r.re_pro_no = p.pro_no where re_no = ?`;
+
+  db.query(reviewQuery, [re_no],(err, reviewResult) => {
+      if (err) {
+          console.error('Error fetching review:', err);
+          res.status(500).json({ error: 'Failed to fetch review' });
+          return;
+      }res.json(reviewResult);
+
   });
 });
 

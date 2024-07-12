@@ -31,15 +31,6 @@
                 <span>내 용</span>
             </div>
                 <textarea class="naeyong" v-model="review.re_comment" readonly></textarea>
-            <div v-if="review" class="prc_images">
-                <div class="font_title1">사 진</div></div>
-                    <!-- <div class="prci_image" v-for="(image, i) in review.images" :key="i"> -->
-                        <img style="width: 800px; object-fit: cover;" :src="review.images ? require(`../../../bodytrue_back/uploads/review/${review.images}`) : '/goodsempty2.jpg'" alt="Profile Picture">
-            <!-- </div> -->
-        
-        <div v-if="error" class="error-message">
-            {{ error }}
-        </div>
         <div class="button_container">
             <button class="re_back" @click="goBack">뒤로가기</button>
             <button class="re_delete" @click="deletereview(review.re_no)">삭제</button>
@@ -63,10 +54,10 @@ export default {
         getReviewData() {
             const re_no = this.$route.params.re_no;
 
-            axios.get(`http://localhost:3000/admin/review/${re_no}`)
+            axios.get(`http://localhost:3000/admin/review2/${re_no}`)
             .then(response => {
                 if (response.data) {
-                    this.review = response.data;
+                    this.review = response.data[0];
                     console.log("review :", this.review);
 
                     console.log("reviewimg :",this.review.images);
