@@ -39,21 +39,27 @@
               <td>{{ trainer.tr_add1 }}</td>
               <td>{{ trainer.tr_add2 }}</td>
               <td>
-                <button @click="updateAdmit(trainer, true)" :disabled="trainer.tr_admit === 1">✔</button>
-                <button @click="updateAdmit(trainer, false)" :disabled="trainer.tr_admit === 0">❌</button>
+                <div class="qwe">
+                  <button class="button2" @click="updateAdmit(trainer, true)" :disabled="trainer.tr_admit === 1">✔</button>
+                  <button class="button2" @click="updateAdmit(trainer, false)" :disabled="trainer.tr_admit === 0">❌</button>
+                </div>
               </td>
               <td>
-                <button @click="Trban(trainer, true)" :disabled="trainer.tr_ban === 1">✔</button>
-                <button @click="Trban(trainer, false)" :disabled="trainer.tr_ban === 0">❌</button>
+                <div class="qwe">
+                  <button class="button2" @click="Trban(trainer, true)" :disabled="trainer.tr_ban === 1">✔</button>
+                  <button class="button2" @click="Trban(trainer, false)" :disabled="trainer.tr_ban === 0">❌</button>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
-        <div class="admin_userlist-bodypaging">
-          <button v-for="page in totalPages" :key="page" @click="gotoPage(page)">
-            {{ page }}
-          </button>
-        </div>
+        <ul class="admin_page">
+                <li v-for="page in totalPages" :key="page">
+                    <a href="#" @click.prevent="gotoPage(page)" :class="{ active: page === currentPage }">
+                        {{ page }}
+                    </a>
+                </li>
+            </ul>
       </div>
     </main>
   </div>
@@ -248,7 +254,38 @@ export default {
 .admin_userlist-bodypaging{
     padding-top: 15px;
 }
-
+.admin_page {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 30px;
+    justify-content: center;
+}
+.admin_page li {
+    display: inline;
+}
+.admin_page a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #000;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.admin_page a.active {
+    background-color: #00bfa5;
+    color: white;
+}
+.admin_page a:hover {
+    background-color: #ddd;
+}
+.button2 {
+  background-color: white;
+  border: none;
+}
+.qwe {
+  
+}
 
 /* admin_userlist main 스타일 끝 */
 

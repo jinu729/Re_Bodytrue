@@ -25,11 +25,11 @@
               <th>성별</th>
               <th>주소1</th>
               <th>주소2</th>
-              <th>정지</th>
+              <th>정지/해제</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, i) in userList" :key="i">
+            <tr v-for="(user, i) in paginatedUsers" :key="i">
               <td>{{ user.user_email }}</td>
               <td>{{ user.user_pwd }}</td>
               <td>{{ user.user_name }}</td>
@@ -37,15 +37,21 @@
               <td>{{ user.user_sex }}</td>
               <td>{{ user.user_add1 }}</td>
               <td>{{ user.user_add2 }}</td>
-              <td><button class="deleteuser" @click="deleteuser(user.user_no)">❌</button></td>
+              <td>
+                <button class="buttons" @click="  console.log(user.user_ban), toggleUserBan(user.user_no, user.user_ban);">
+                  {{ user.user_ban ? '✔️' : '❌' }}
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
-        <div class="admin_userlist-bodypaging">
-          <button class="page" v-for="page in totalPages" :key="page" @click="gotoPage(page)">
-            {{ page }}
-          </button>
-        </div>
+        <ul class="admin_page">
+                <li v-for="page in totalPages" :key="page">
+                    <a href="#" @click.prevent="gotoPage(page)" :class="{ active: page === currentPage }">
+                        {{ page }}
+                    </a>
+                </li>
+            </ul>
       </div>
     </main>
   </div>
@@ -60,18 +66,18 @@ export default {
       searchTerm: '',
       userList: [],
       currentPage: 1,
-      perPage: 10, //페이지 당 아이템 수
+      perPage: 10, // 페이지 당 아이템 수
     };
   },
   computed: {
-    //현재 페이지의 데이터 계산
+    // 현재 페이지의 데이터 계산
     paginatedUsers() {
       const start = (this.currentPage - 1) * this.perPage;
       const end = start + this.perPage;
       return this.userList.slice(start, end);
     },
     totalPages() {
-        return Math.ceil(this.userList.length / this.perPage);
+      return Math.ceil(this.userList.length / this.perPage);
     }
   },
   methods: {
@@ -79,6 +85,7 @@ export default {
       axios.get('http://localhost:3000/admin/userlist')
         .then(response => {
           this.userList = response.data;
+          console.log(this.userList);
         })
         .catch(error => {
           console.error('Error fetching user list:', error);
@@ -97,59 +104,41 @@ export default {
         console.error('Error searching users:', error);
       });
     },
-    deleteuser(user_no) {
-      console.log('user_no',user_no);
+    toggleUserBan(user_no, user_ban) {
+      console.log('user_no', user_no, 'current ban status:', user_ban);
       axios({
-        url: 'http://localhost:3000/admin/deleteuser',
+        url: 'http://localhost:3000/admin/toggleuserban',
         method: 'POST',
         data: {
-          user_no: user_no
+          user_no: user_no,
+          user_ban: user_ban
         }
       })
-      
-      .then(res => {
-        if (res.data.message === '회원 정지') {
+      .then(() => {
+        if (user_ban === 0) {
           alert('회원정지 되었습니다.');
-          this.getUserList(); //정지 후 목록 다시 불러오기
         } else {
-          console.warn('404:', res.data);
+          alert('회원정지가 해제되었습니다.');
         }
+        this.getUserList(); // 업데이트 후 목록 다시 불러오기
       })
       .catch(error => {
-        console.error('Error banning user:', error);
-        alert('Error banning user'); // 사용자에게 에러 피드백
-      }
-    )},
-      gotoPage(page) {
-        this.currentPage = page;
-      }
+        console.error('Error toggling user ban:', error);
+        alert('Error toggling user ban'); // 사용자에게 에러 피드백
+      });
     },
-    mounted() {
-      this.getUserList();
+    gotoPage(page) {
+      this.currentPage = page;
     }
+  },
+  mounted() {
+    this.getUserList();
+  }
 };
-
-//     banUser(userNo) {
-//       axios.post('http://localhost:3000/admin/userban', {
-//         user_no: userNo
-//       })
-//       .then(response => {
-//         console.log('User banned:', response.data);
-//         this.getUserList(); // 정지 후 목록 갱신
-//       })
-//       .catch(error => {
-//         console.error('Error banning user:', error);
-//       });
-//     },
-//     gotoPage(page) {
-//       this.currentPage = page;
-//     }
-//   },
-//   mounted() {
-//     this.getUserList();
-//   }
-// };
 </script>
+
+
+
 <style scoped>
 /* admin_userlist main 스타일 시작 */
 .admin_userlist-main {
@@ -224,8 +213,35 @@ export default {
 .admin_userlist-bodycontent td:nth-child(8){
     border: 1px solid #3b4746;
 }
-.admin_userlist-bodypaging{
-    padding-top: 15px;
+
+.admin_page {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 30px;
+    justify-content: center;
+}
+.admin_page li {
+    display: inline;
+}
+.admin_page a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #000;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.admin_page a.active {
+    background-color: #00bfa5;
+    color: white;
+}
+.admin_page a:hover {
+    background-color: #ddd;
+}
+.buttons {
+  background-color: white;
+  border: none;
 }
 .page{
   width: 20px;

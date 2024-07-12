@@ -40,6 +40,7 @@ import AdminTrainer from '../views/trainerlist.vue'
 import AdminFaq  from '../views/AdminFaq.vue'
 import AdminReview from '../views/AdminReview.vue'
 import ReviewDetail from '../views/ReviewDetail.vue'
+import ReviewDetail2 from '../views/ReviewDetail2.vue'
 //회창작성완
 
 const routes = [
@@ -91,24 +92,27 @@ const routes = [
     name: 'ReviewDetail',
     component: ReviewDetail
   },
+  {
+    path: '/reviewdetail2/:re_no',
+    name: 'ReviewDetail2',
+    component: ReviewDetail2
+  },
   //승호작성
   
   {
     path: '/test',
     name: 'test',
     component: test
-  }
-  ,
+  },
   {
     path: '/TrainerCreatePro/:tr_no',
     name: 'TrainerCreatePro',
     component: TrainerCreatePro
-  }
+  },
 //승호작성완
 
 
 //진우작성
-,
   {
     path: '/join',
     name: 'Join',
