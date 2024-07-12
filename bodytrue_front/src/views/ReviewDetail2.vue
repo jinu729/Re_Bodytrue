@@ -3,38 +3,40 @@
         <div class="prc_title">
             <p>리뷰 관리</p>
         </div>
-        <div class="qwer">
-            <div class="prc_date">
-                <span>작성일:&nbsp;&nbsp;</span>
-                <p>{{ review.re_date }}</p>
-            </div>
-            <div class="prc_name">
-                <span class="prcn_title">프로그램명</span>
-                <div class="prcn_text">
-                    <p>{{ review.pro_name }}</p>
+        <div class="as">
+            <div class="qwer">
+                <div class="prc_date">
+                    <span>작성일:&nbsp;</span>
+                    <p>{{ review.re_date }}</p>
                 </div>
-            </div>
-            <div class="prc_name">
-                <span class="prcn_title">트레이너명</span>
-                <div class="prcn_text">
-                    <p>{{ review.tr_name }}</p>
+                <div class="prc_name">
+                    <span class="prcn_title">프로그램명</span>
+                    <div class="prcn_text">
+                        <p>{{ review.pro_name }}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="prc_name">
-                <span class="prcn_title">작성자</span>
-                <div class="prcn_text">
-                    <p>{{ review.user_name }}</p>
+                <div class="prc_name">
+                    <span class="prcn_title">트레이너명</span>
+                    <div class="prcn_text">
+                        <p>{{ review.tr_name }}</p>
+                    </div>
                 </div>
-            </div>
+                <div class="prc_name">
+                    <span class="prcn_title">작성자</span>
+                    <div class="prcn_text">
+                        <p>{{ review.user_name }}</p>
+                    </div>
+                </div>
 
-            <div class="font_title">
-                <span>내 용</span>
+                <div class="font_title">
+                    <span>내 용</span>
+                </div>
+                    <textarea class="naeyong" v-model="review.re_comment" readonly></textarea>
+            <div class="button_container">
+                <button class="re_back" @click="goBack">뒤로가기</button>
+                <button class="re_delete" @click="deletereview(review.re_no)">삭제</button>
             </div>
-                <textarea class="naeyong" v-model="review.re_comment" readonly></textarea>
-        <div class="button_container">
-            <button class="re_back" @click="goBack">뒤로가기</button>
-            <button class="re_delete" @click="deletereview(review.re_no)">삭제</button>
-        </div>
+            </div>
         </div>
     </div>
 </template>
@@ -111,7 +113,10 @@ export default {
     flex-direction: column;
     padding-top: 10px;
 }
-
+.prc_title {
+    display: flex;
+    justify-content: center;
+}
 .prc_title p {
     background-color: #00C7AE; /* 배경색을 청록색으로 설정 */
     color: #fff; /* 텍스트 색상을 흰색으로 설정 */
@@ -120,6 +125,7 @@ export default {
     font-size: 26px; /* 폰트 크기를 24px로 설정 */
     border-radius: 10px 10px 10px 10px; /* 상단 좌우 모서리를 둥글게 설정 */
     text-align: left;
+    width: 80%;
 }
 
 .prc_info {
@@ -174,7 +180,8 @@ export default {
 
 .button_container {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 .re_back, .re_delete {
@@ -217,12 +224,11 @@ export default {
     /* border: 1px solid #ccc;     */
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     display: flex;
-    flex-wrap: wrap;
     margin-top: 15px;
     border-radius: 5px;
 }
 .qwer {
-    width: 70%;
+    width: 80%;
     margin: auto;
 }
 .prcn_text {
@@ -248,10 +254,9 @@ export default {
 }
 .naeyong {
     border: 1px solid rgb(194, 192, 192);
-    display: flex;
     margin-top: 80px;
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    width: 100%;
+    width: 90%;
     height: 250px;
 }
 .font_title1 {
@@ -269,8 +274,15 @@ export default {
     width: 20%;
     display: flex;
     padding-top: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
     height: 30px;
-    border-left: 0px;
+    flex-wrap: wrap;
+}
+.as {
+    width: 80%;
+    margin: auto;
+    box-shadow: 2px 2px 5px #00C7AE;
+    border-radius: 20px;
+    height: 100%;
 }
 </style>
