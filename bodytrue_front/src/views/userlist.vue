@@ -2,7 +2,7 @@
   <div class="adminuser">
     <main class="admin_userlist-main">
       <div class="admin_userlist-bodyheader">
-        &nbsp;&nbsp;회원 목록
+        회원 목록
       </div>
       <div class="admin_userlist-bodysearch">
         <input 
@@ -37,12 +37,12 @@
               <td>{{ user.user_sex }}</td>
               <td>{{ user.user_add1 }}</td>
               <td>{{ user.user_add2 }}</td>
-              <td><button @click="deleteuser(user.user_no)">❌</button></td>
+              <td><button class="deleteuser" @click="deleteuser(user.user_no)">❌</button></td>
             </tr>
           </tbody>
         </table>
         <div class="admin_userlist-bodypaging">
-          <button v-for="page in totalPages" :key="page" @click="gotoPage(page)">
+          <button class="page" v-for="page in totalPages" :key="page" @click="gotoPage(page)">
             {{ page }}
           </button>
         </div>
@@ -153,9 +153,10 @@ export default {
 <style scoped>
 /* admin_userlist main 스타일 시작 */
 .admin_userlist-main {
-    width: 100%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
-    margin: 2px 0; /* 위아래 여백을 10px로 설정 */
+    width: 80%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
+    margin: 0 auto;
     padding: 2px; /* 내부 패딩을 10px로 설정 */
+    margin-top: 20px;
 }
 /*헤더부분(=회원목록)*/
 .admin_userlist-bodyheader {
@@ -165,6 +166,7 @@ export default {
     font-weight: bold; /* 폰트를 굵게 설정 */
     font-size: 26px; /* 폰트 크기를 24px로 설정 */
     border-radius: 10px 10px 10px 10px; /* 상단 좌우 모서리를 둥글게 설정 */
+    padding-left:20px;
 }
 
 /*검색어 입력*/
@@ -205,9 +207,7 @@ export default {
     border-collapse: collapse;
     display: flex;
     flex-direction: column;
-
 }
-
 
 .admin_userlist-bodycontent table{
     border-collapse: collapse;
@@ -227,7 +227,40 @@ export default {
 .admin_userlist-bodypaging{
     padding-top: 15px;
 }
-
+.page{
+  width: 20px;
+  background-color: #4fced2;
+  border: 1px solid #4fced2;
+  border-radius: 5px;
+}
+.page:hover{
+  width: 20px;
+  background-color:transparent;
+  border: 1px solid #4fced2;
+  border-radius: 5px;
+}
+.deleteuser{
+    width: 25px;
+    height: 30px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color: transparent;
+    color: white;
+}
+.deleteuser:hover{
+    width: 25px;
+    height: 30px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color: #ffa4a4;
+    color: rgb(0, 0, 0);
+}
 /* admin_userlist main 스타일 끝 */
 
 /* 반응형 웹을 위한 미디어 쿼리 시작 */

@@ -78,7 +78,7 @@
                     </li>
                     <li class="line">|</li>
                     <li class="item">
-                        <router-link class="icon" to="/admin/adminfaq"><img src="../image/faq2icon.png" alt="adminfaq">FAQ관리</router-link>
+                        <router-link class="icon" to="/adminfaq"><img src="../image/faq2icon.png" alt="adminfaq">FAQ관리</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">

@@ -209,30 +209,30 @@ router.post('/createprogram/:tr_no', function (req, res) {
     }
 });
 //프로필사진 업로드용
+//프로필사진 업로드용
 router.post('/upload_Timg', upload.single('img'), (req, res) => {
     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
 
     const tr_no = req.body.tr_no;
     const img = req.file.filename;
-    console.log("tr_no : ",tr_no);
-    console.log("img : ",img);
+    console.log("tr_no : ", tr_no);
+    console.log("img : ", img);
 
     try {
-        const pastDir = `${__dirname}` + `../../uploads/` + img
+        const pastDir = path.resolve(__dirname, '../uploads', img);
 
         console.log('pastDir-------------------');
         console.log(pastDir);
         console.log('-------------------');
 
-        const newDir = `${__dirname}` + `../../uploads/trainer/`;
+        const newDir = path.resolve(__dirname, '../uploads/trainer');
         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
 
-        const extension =img.substring(img.lastIndexOf('.'))
+        const extension = path.extname(img);
 
-        console.log('Extenstion-------------------');
+        console.log('Extension-------------------');
         console.log(extension);
         console.log('-------------------');
-
 
         console.log('newDir-------------------');
         console.log(newDir);
@@ -240,52 +240,124 @@ router.post('/upload_Timg', upload.single('img'), (req, res) => {
 
         // 이미지 폴더 및 이름(상품번호-타입) 변경
         // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
-        fs.rename(pastDir, newDir + tr_no + '-0' + extension, (err) => {
+        const newFilePath = path.join(newDir, `${tr_no}-0${extension}`);
+        fs.rename(pastDir, newFilePath, (err) => {
             if (err) {
                 throw err;
             }
         });
-        try{
+
+        try {
             db.query(`select count(*) as num from img where img_tr_no = ? and img_type = 0;`,
-            [tr_no],
-            function (error, results, fields){
-
-                // console.log("results[0] : ",results[0]);
-                // console.log("results[0].num === 0 : ",results[0].num === 0);
-
-                if(results[0].num === 0){
-                        db.query(`insert into img (img_type,img_path,img_tr_no) values(0,?,?);`,
-                        [tr_no+'-0'+extension,tr_no],
-                        function (error, results, fields){
-                            if(error){
-                                throw error;
-                            }
-                        })
-                }else{
-                    db.query(`update img set img_path = ? where img_tr_no = ? and img_type = 0;`,
-                        [tr_no+'-0'+extension,tr_no],
-                        function (error, results, fields){
-                            if(error){
-                                throw error;
-                            }
-                        
-                        })
-                }
+                [tr_no],
+                function (error, results, fields) {
+                    if (results[0].num === 0) {
+                        db.query(`insert into img (img_type, img_path, img_tr_no) values (0, ?, ?);`,
+                            [`${tr_no}-0${extension}`, tr_no],
+                            function (error, results, fields) {
+                                if (error) {
+                                    throw error;
+                                }
+                            });
+                    } else {
+                        db.query(`update img set img_path = ? where img_tr_no = ? and img_type = 0;`,
+                            [`${tr_no}-0${extension}`, tr_no],
+                            function (error, results, fields) {
+                                if (error) {
+                                    throw error;
+                                }
+                            });
+                    }
+                });
+        } catch (err) {
+            console.log(err);
         }
-    )}
-    catch(err){
+    } catch (err) {
         console.log(err);
+    }
 
-    }       
-        }catch(err){
-             console.log(err);
-        }
-   
     return res.status(200).json({
         message: 'success',
         img  // 업로드된 파일명 반환
     });
 });
+// router.post('/upload_Timg', upload.single('img'), (req, res) => {
+//     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
+
+//     const tr_no = req.body.tr_no;
+//     const img = req.file.filename;
+//     console.log("tr_no : ",tr_no);
+//     console.log("img : ",img);
+
+//     try {
+//         const pastDir = `${__dirname}` + `../../uploads/` + img
+
+//         console.log('pastDir-------------------');
+//         console.log(pastDir);
+//         console.log('-------------------');
+
+//         const newDir = `${__dirname}` + `../../uploads/trainer/`;
+//         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
+
+//         const extension =img.substring(img.lastIndexOf('.'))
+
+//         console.log('Extenstion-------------------');
+//         console.log(extension);
+//         console.log('-------------------');
+
+
+//         console.log('newDir-------------------');
+//         console.log(newDir);
+//         console.log('-------------------');
+
+//         // 이미지 폴더 및 이름(상품번호-타입) 변경
+//         // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
+//         fs.rename(pastDir, newDir + tr_no + '-0' + extension, (err) => {
+//             if (err) {
+//                 throw err;
+//             }
+//         });
+//         try{
+//             db.query(`select count(*) as num from img where img_tr_no = ? and img_type = 0;`,
+//             [tr_no],
+//             function (error, results, fields){
+
+//                 // console.log("results[0] : ",results[0]);
+//                 // console.log("results[0].num === 0 : ",results[0].num === 0);
+
+//                 if(results[0].num === 0){
+//                         db.query(`insert into img (img_type,img_path,img_tr_no) values(0,?,?);`,
+//                         [tr_no+'-0'+extension,tr_no],
+//                         function (error, results, fields){
+//                             if(error){
+//                                 throw error;
+//                             }
+//                         })
+//                 }else{
+//                     db.query(`update img set img_path = ? where img_tr_no = ? and img_type = 0;`,
+//                         [tr_no+'-0'+extension,tr_no],
+//                         function (error, results, fields){
+//                             if(error){
+//                                 throw error;
+//                             }
+                        
+//                         })
+//                 }
+//         }
+//     )}
+//     catch(err){
+//         console.log(err);
+
+//     }       
+//         }catch(err){
+//              console.log(err);
+//         }
+   
+//     return res.status(200).json({
+//         message: 'success',
+//         img  // 업로드된 파일명 반환
+//     });
+// });
 
 //내프로그램 리스트
 
