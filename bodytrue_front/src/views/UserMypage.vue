@@ -603,8 +603,8 @@ export default {
 
             const startdate = new Date(year, month, day, hour);
             
-            console.log('오늘 날짜:', currentDate);
-            console.log('예약 날짜:', startdate);
+            // console.log('오늘 날짜:', currentDate);
+            // console.log('예약 날짜:', startdate);
             // console.log('비교:', currentDate > startdate);
             //오늘 날짜 > 예약날짜 일 경우에만 리뷰버튼 오픈
             return currentDate > startdate;
@@ -660,6 +660,7 @@ export default {
                 const response = await axios.post(`http://localhost:3000/user/deletere`, {re_no: re_no});
                 console.log("리뷰 삭제 성공", response.data);
                 alert('리뷰 목록에서 삭제 되었습니다.');
+                window.location.reload();
             } catch(error){
                 console.error("리뷰 삭제 도중 에러 발생",error);
             }
@@ -668,7 +669,9 @@ export default {
         //리뷰 수정하기
         async updatere(re_no){
             const review = this.reData.find(r => r.re_no === re_no);
+            console.log("수정데이터리뷰넘버",review);
             this.openReviewModal(review);
+            
         },
 
     }

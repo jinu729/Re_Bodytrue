@@ -50,6 +50,8 @@
       <div class="price-info" id="review1">
         <h2>리뷰</h2>
         <div v-for="reviewItem in review" :key="reviewItem.re_no">
+          <p v-if="reviewItem.img_path"><img style="width:200px" :src="require(`../../../bodytrue_back/uploads/review/${reviewItem.img_path}`)"></p>
+          <p v-else><img src="../../public/nullimg.png"></p>
           <p>{{ naming(reviewItem.user_name) }} 님 : {{ reviewItem.re_comment }} <img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ reviewItem.re_rate }} | 작성 날짜: {{ reviewItem.re_date }}</p>
         </div>
       </div>     
@@ -59,7 +61,8 @@
       <h4 v-if="tagname">#{{ tagname }}</h4>
       <h2><p>{{ programdetail.pro_name }}</p></h2>
       <h3><p>{{ programdetail.tr_name }}</p></h3>
-      <h4><p v-if="formattedEndDate">프로그램 종료 날짜&nbsp;:&nbsp;{{ formattedEndDate }}</p></h4>
+      <h5><p v-if="formattedstartDate">프로그램 시작 날짜&nbsp;:&nbsp;{{ formattedstartDate }}</p></h5>
+      <h5><p v-if="formattedEndDate">프로그램 종료 날짜&nbsp;:&nbsp;{{ formattedEndDate }}</p></h5>
       <p><img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ programdetail.rate_avg || 0}}</p>
       <div class="calendar">
         <div class="controls">
@@ -160,7 +163,20 @@
           }).replace('. ', '-').replace('. ', '-').replace('.', ''); // 'YYYY. MM. DD.' 형식을 'YYYY-MM-DD'로 변경
        }
         return '';
+      },
+      formattedstartDate() {
+      // pro_enddate가 존재할 때만 포맷을 변경
+      if (this.programdetail.pro_startdate) {
+        const date = new Date(this.programdetail.pro_startdate);
+        return date.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+          }).replace('. ', '-').replace('. ', '-').replace('.', ''); // 'YYYY. MM. DD.' 형식을 'YYYY-MM-DD'로 변경
+       }
+        return '';
       }
+
     },
 
     created() {
@@ -237,6 +253,7 @@
       // 날짜를 선택하면 selectedDate에 저장
       selectDate(day) {
         this.selectedDate = day;
+        console.log("selectday",this.selectDate);
       },
       // 주어진 날짜가 선택된 날짜인지 확인
       isSelected(fullDate) {
@@ -246,9 +263,10 @@
       saveDate() {
         if(this.selectedDate && this.formattedEndDate){
           const selectedDateObj = new Date(this.selectedDate.year, this.selectedDate.month, this.selectedDate.date);
+          const startDateObj = new Date(this.formattedstartDate)
           const endDateObj = new Date(this.formattedEndDate)
-          if(selectedDateObj > endDateObj){
-            alert('선택된 날짜는 프로그램 종료 날짜를 넘어섰습니다. 다시 선택해주세요.');
+          if(selectedDateObj > endDateObj || selectedDateObj < startDateObj){
+            alert('선택된 날짜는 잘못된 날짜입니다. 다시 선택해주세요.');
             return false;
           } else{
               console.log('선택된 날짜:', this.selectedDate);
