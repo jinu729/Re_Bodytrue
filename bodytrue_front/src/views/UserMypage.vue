@@ -58,7 +58,7 @@
                             <td @click="goToProdetail(cal.pro_no)">{{ cal.tr_name }}</td>
                             <td>{{ cal.cal_startdate }}</td>
                             <td><button @click="deletecal(cal.pro_no, cal.cal_startdate)" class="cal_btn">예약 취소하기</button></td>
-                            <td><button @click="openReviewModal(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
+                            <td><button @click="checkedReview(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -209,6 +209,9 @@ export default {
             plikeimg:[],
             combinedData: [], // 결합된 데이터
             displayedData: [], // 표시할 데이터
+
+            //리뷰 유효성 검사용
+            checkreview:false,
             
         };
     },
@@ -246,7 +249,9 @@ export default {
         // imgsrc(){
         //     return this.imgData.length > 0 ? `http://localhost:3000/uploads/user/${this.imgData.img_path}` : '/goodsempty2.jpg';
         // },
-
+        disablereview(){
+            return this.checkreview;
+        },
         // //예약 현재 페이지 계산
         pagingData(){
             const start = (this.currentPage - 1 )* this.itemsPerPage;
@@ -562,6 +567,37 @@ export default {
         gotoupdate(user_no){
             this.$router.push(`/userupdate/${user_no}`);
         },
+
+        //리뷰 작성 전에 유효성 검사먼저하깅
+        async checkedReview(cal){
+            if(this.user.user_no) {
+                console.log("==========user_no",this.user.user_no);
+                const cal_user_no = this.$route.params.user_no;
+                // const re_user_no = this.$route.params.user_no;
+                const cal_pro_no = cal.pro_no;
+
+                try{
+                   const response = await axios.post('http://localhost:3000/user/checkreview',{
+                    cal_user_no : cal_user_no,
+                    // re_user_no : re_user_no,
+                    cal_pro_no : cal_pro_no
+
+                   });
+                   this.checkreview = response.data.checkreviews;
+                   console.log("=========checkreview",this.checkreview);
+                   if(!this.checkreview){ //false여야지 리뷰작성할수있음
+                    this.openReviewModal(cal);
+                   } else{
+                    alert('이미 작성한 리뷰입니다.')
+                    this.isReviewenabled(cal.cal_startdate);
+                   }
+
+                } catch(error){
+                    console.error('리뷰 유효성 검사도중 에러 발생', error);
+                }
+            }
+        },
+
         //리뷰작성하기 위해 모달창 오픈 
         openReviewModal(calOrre){
             console.log("calOrre.tr_no",calOrre.tr_no);
@@ -609,6 +645,8 @@ export default {
             //오늘 날짜 > 예약날짜 일 경우에만 리뷰버튼 오픈
             return currentDate > startdate;
         },
+        //checkreview값 true면 그냥 버튼창 닫깅
+        
 
         //예약 삭제하기
         async deletecal(cal_pro_no, cal_startdate){
@@ -846,6 +884,15 @@ export default {
         border:solid 1px;
         border-radius: 5px;
         background: rgb(255, 255, 255);
+    }
+    .table_list .re_btn:disabled{
+        font-size: 16px;
+        width: 120px;
+        height: 25px;
+        color: #ffffff;
+        border:solid 1px;
+        border-radius: 5px;
+        background: #777777;
     }
     .table_list .cal_btn{
         font-size: 16px;

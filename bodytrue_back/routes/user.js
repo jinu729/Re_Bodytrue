@@ -437,6 +437,37 @@ router.post('/myrecheck', function(request, response, next){
         });
 });
 
+//리뷰 작성 유효성 검사
+router.post('/checkreview', function(request, response,next){
+    // const re_user_no = request.body.re_user_no;
+    const cal_user_no = request.body.cal_user_no;
+    const cal_pro_no = request.body.cal_pro_no;
+
+    db.query(`SELECT p.pro_no FROM calendar c
+            JOIN program p ON p.pro_no = c.cal_pro_no
+            LEFT JOIN review r ON r.re_pro_no = p.pro_no AND r.re_user_no = c.cal_user_no
+            WHERE c.cal_user_no = ? AND p.pro_no = ? AND r.re_rate IS NULL`, 
+            [cal_user_no,cal_pro_no], function (error, result){
+                console.log("===========리뷰유효성=================",result.length);
+                console.log(`SELECT p.pro_no FROM calendar c
+                            JOIN program p ON p.pro_no = c.cal_pro_no
+                            LEFT JOIN review r ON r.re_pro_no = p.pro_no AND r.re_user_no = c.cal_user_no
+                            WHERE c.cal_user_no = ${cal_user_no} AND p.pro_no = ${cal_pro_no} AND r.re_rate IS NULL`);
+
+            if(error){
+                console.error(error);
+                return response.status(500).json({ error: '리뷰 유효성 에러'});
+            } 
+            else{
+                if(result.length === 0){
+                    return response.json({ checkreviews: true});
+                } else{
+                    return response.json({ checkreviews: false});
+                }
+            }
+        });
+});
+
 //내가 찜한 정보 확인
 
 router.post('/myplike', function(request, response, next){
