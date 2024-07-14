@@ -758,12 +758,14 @@ export default {
     font-size: 18px;
     border-radius: 5px;
     border: 0;
-    background-color: #00C7AE;
+    /* background-color: #00C7AE; */
+    background-color: rgba(0, 200, 200, 0.5);
     color: white;
     cursor: pointer;
     }
     .addview .addview_btn:hover{
-    background-color: #0056b3;
+    /* background-color: #0056b3; */
+    background-color: rgba(0, 86, 179, 0.5);
     }
     .noprogram{
     display: flex;
