@@ -82,6 +82,7 @@
   width: 1000px; /* 이미지 너비 고정 */
   height: 500px; /* 이미지 높이 설정 */
   object-fit: cover; /* 이미지 비율 유지 */
+  border-radius: 20px;
 }
   
   .prev, .next {

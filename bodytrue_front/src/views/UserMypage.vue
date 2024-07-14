@@ -55,7 +55,7 @@
                         <tr v-for="cal in pagingData" :key="cal.cal_startdate">
                             <!--이름 누를때마다 해당 프로그램으로 이동-->
                             <td @click="goToProdetail(cal.pro_no)">{{ cal.pro_name }}</td>
-                            <td>{{ cal.tr_name }}</td>
+                            <td @click="goToProdetail(cal.pro_no)">{{ cal.tr_name }}</td>
                             <td>{{ cal.cal_startdate }}</td>
                             <td><button @click="deletecal(cal.pro_no, cal.cal_startdate)" class="cal_btn">예약 취소하기</button></td>
                             <td><button @click="openReviewModal(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
@@ -754,7 +754,8 @@ export default {
         border-radius: 5px;
         cursor: pointer;
         border: 0;
-        background-color:#3fced3;
+        /* background-color:#3fced3; */
+        background-color: rgba(0, 200, 200, 0.5);
         color:white;
         border-radius: 5px;
         border: 1px solid;
@@ -885,8 +886,10 @@ export default {
     cursor: pointer;
     }
     .number_box li.active{
-    background-color: #00c8c8;
+    /* background-color: #00c8c8; */
+    background-color: rgba(0, 200, 200, 0.5);
     border-radius: 5px;
+    color: white;
     cursor: pointer;
     /* color: white; */
     }
@@ -1078,13 +1081,15 @@ export default {
         margin: 20px auto;
         padding: 10px 20px;
         font-size: 18px;
-        background-color: #00c8c8;
+        /* background-color: #00c8c8; */
+        background-color: rgba(0, 200, 200, 0.5);
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
     }
     .showmore_btn:hover{
-        background-color: #009e9e;
+        /* background-color: #009e9e; */
+        background-color: rgba(0, 200, 200, 0.5);
     }
     </style>
