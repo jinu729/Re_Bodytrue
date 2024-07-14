@@ -85,7 +85,7 @@
           <button @click="checklogin" class="reserve-btn">예약</button>
         </div>
       </div>
-      <button class="favorite-btn" @click="makePlike">♥</button>
+      <button class="favorite-btn" @click="checkIfLiked">♥</button>
     </div>
   </div>
   
@@ -119,7 +119,10 @@
         //디테일 이미지
         proimg:{},
         //가격 이미지
-        priceimg:{}
+        priceimg:{},
+        //찜하기전 유효성검사
+        checkplike:false,
+        //
       };
     },
 
@@ -250,7 +253,7 @@
           });
         }
       },
-      // 날짜를 선택하면 selectedDate에 저장
+            // 날짜를 선택하면 selectedDate에 저장
       selectDate(day) {
         this.selectedDate = day;
         console.log("selectday",this.selectDate);
@@ -265,15 +268,23 @@
           const selectedDateObj = new Date(this.selectedDate.year, this.selectedDate.month, this.selectedDate.date);
           const startDateObj = new Date(this.formattedstartDate)
           const endDateObj = new Date(this.formattedEndDate)
-          if(selectedDateObj > endDateObj || selectedDateObj < startDateObj){
-            alert('선택된 날짜는 잘못된 날짜입니다. 다시 선택해주세요.');
+          const currentDateObj = new Date();
+          if(selectedDateObj < startDateObj){
+            this.$swal('선택된 날짜는 예약 시작일보다 뒤에 있습니다. 다시 선택해주세요.');
             return false;
-          } else{
-              console.log('선택된 날짜:', this.selectedDate);
-              return true;
+          } else if(selectedDateObj < currentDateObj){
+            this.$swal('선택된 날짜는 현재 날짜보다 뒤에 있습니다. 다시 선택해주세요.');
+            return false;
+            } else if(selectedDateObj > endDateObj ){
+              this.$swal('선택된 날짜는 예약 종료일보다 앞서있습니다. 다시 선택해주세요.');
+              return false;
+            }
+            else{
+                console.log('선택된 날짜:', this.selectedDate);
+                return true;
           }
-        }
-        return false;
+       } 
+       return false;
       },
 
       // 이전 주로 이동
@@ -340,14 +351,14 @@
           console.log("cal_enddate", cal_enddate);
 
           // 데이터 확인 로그 추가
-    console.log("예약 요청 데이터:", {
-      pro_no: cal_pro_no,
-      user_no: cal_user_no,
-      tr_no: cal_tr_no,
-      startdate: cal_startdate,
-      enddate: cal_enddate,
-    });
-
+          console.log("예약 요청 데이터:", {
+            pro_no: cal_pro_no,
+            user_no: cal_user_no,
+            tr_no: cal_tr_no,
+            startdate: cal_startdate,
+            enddate: cal_enddate,
+          });
+        
           //서버로 요청 보내기
           const response = await axios.post('http://localhost:3000/user/calendarin', {
             pro_no: cal_pro_no,
@@ -363,7 +374,7 @@
         } catch(error){
           //에러처리
           console.error('예약 실패:', error);
-          alert('예약 중 오류가 발생했습니다.');
+          alert('해당 시간엔 이미 예약이 존재합니다.');
         }
       },
       
@@ -400,30 +411,56 @@
       //       });
       // },
 
-      //찜하기
-      async makePlike(){
-        if(this.user.user_no==''){
-          alert('로그인 해주세요.');
-          this.$router.push({ path: '/login'});
-        } else{
-          //로그인 되어있으면 찜하기 진행
+      //찜하기 전 유효성 검사
+      async checkIfLiked() {
+        if (this.user.user_no) {
           const plike_pro_no = this.pro_no;
-          console.log("plike_pro_no",plike_pro_no);
           const plike_user_no = this.user.user_no;
-          console.log("plike_user_no", plike_user_no);
-
-          try{
-            const response = await axios.post('http://localhost:3000/user/makeplike', {
+          // console.log("plike_pro_no",plike_pro_no);
+          // console.log("plike_user_no",plike_user_no);
+          try {
+            const response = await axios.post('http://localhost:3000/user/checkplike', {
+              plike_user_no: plike_user_no,
+              plike_pro_no: plike_pro_no,
+            });
+            this.checkplike = response.data.checkpliked;
+            console.log("this.checkplike",this.checkplike);
+            if(!this.checkplike){ //유효성 검사해서 없으면 makePlike
+              this.makePlike();
+            } else{ //있으면 찜 삭제하기위해서 deletePlike
+              this.deletePlike();
+            }
+          } catch (error) {
+            console.error('찜 확인 도중 오류 발생', error);
+          }
+        }
+      },
+    //
+      async makePlike() {
+        if (this.user.user_no == '') {
+          alert('로그인 해주세요.');
+          this.$router.push({ path: '/login' });
+        } else {
+          const plike_pro_no = this.pro_no;
+          const plike_user_no = this.user.user_no;
+          const response = await axios.post('http://localhost:3000/user/makeplike', {
             plike_user_no: plike_user_no,
             plike_pro_no: plike_pro_no,
-            });
-          console.log('찜하기 성공',response.data);
-          alert('찜목록에 추가되었습니다.');
-        }catch(error){
-          console.error('찜하는 도중 오류 발생', error);
+          });
+            console.log('찜하기 성공', response.data);
+            alert('찜목록에 추가되었습니다.');
         }
-      }
-     },
+      },
+      async deletePlike(){
+        const plike_pro_no = this.pro_no;
+        const plike_user_no = this.user.user_no;
+        const response = await axios.post('http://localhost:3000/user/delplike', {
+          plike_user_no: plike_user_no,
+          plike_pro_no: plike_pro_no,
+          });
+          console.log('찜 삭제 성공', response.data);
+          alert('찜목록에서 삭제되었습니다.');
+      },
       //times 메소드
       selectTime(time){
         this.selectedTime = time;

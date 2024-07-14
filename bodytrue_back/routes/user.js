@@ -257,23 +257,59 @@ router.post('/calendarin', function(request, response, next) {
     const cal_startdate = request.body.startdate;
     const cal_enddate = request.body.enddate;
 
-        // 데이터 수신 로그 추가
-        console.log("수신된 예약 데이터:", {
-            pro_no: cal_pro_no,
-            user_no: cal_user_no,
-            tr_no: cal_tr_no,
-            startdate: cal_startdate,
-            enddate: cal_enddate,
-          });
+    // 데이터 수신 로그 추가
+    console.log("수신된 예약 데이터:", {
+        pro_no: cal_pro_no,
+        user_no: cal_user_no,
+        tr_no: cal_tr_no,
+        startdate: cal_startdate,
+        enddate: cal_enddate,
+    });
 
-    db.query(`insert into calendar (cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate) values (?, ?, ?, ?, ?)`, 
-        [cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate], function(error, result, field){
-
-            if(error){
-                console.error(error);
-                return response.status(500).json({ error : '예약에러' });
+    // 예약 하기 전 체크
+        db.query(`SELECT * FROM calendar WHERE cal_pro_no = ? AND cal_startdate = ? AND cal_enddate = ?`, [cal_pro_no, cal_startdate, cal_enddate], (error, existcal) => {
+            if (error) {
+                console.error('예약 도중 에러 발생:', error);
+                return response.status(500).json({ error: '예약 도중 에러 발생' });
             }
-            response.json(result);
+            
+            if (existcal.length > 0) {
+                return response.status(400).json({ error: '해당 시간에 이미 예약이 존재합니다' });
+            }
+
+        // 예약 추가
+        db.query(`INSERT INTO calendar (cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate) VALUES (?, ?, ?, ?, ?)`, [cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate], (error, result) => {
+            if (error) {
+                console.error('예약 도중 에러 발생:', error);
+                return response.status(500).json({ error: '예약 도중 에러 발생' });
+            }
+            response.json({ success: true, message: '예약이 성공적으로 완료되었습니다.' });
+        });
+    });
+});
+
+
+//찜하기 전 유효성 검사
+router.post('/checkplike', function(request, response, next){
+    const plike_user_no = request.body.plike_user_no;
+    const plike_pro_no = request.body.plike_pro_no;
+    
+    db.query(`SELECT p.pro_no FROM program p WHERE p.pro_no 
+IN (SELECT plike_pro_no FROM plike WHERE plike_user_no = ? and plike_pro_no = ?)`, [plike_user_no,plike_pro_no], function(error, result, field){
+    // console.log("===========찜=================",result.length);
+    // console.log(`SELECT p.pro_no FROM program p WHERE p.pro_no IN (SELECT plike_pro_no FROM plike WHERE plike_user_no = ${plike_user_no} and plike_pro_no = ${plike_pro_no})`);
+    
+    if(error){
+        console.error(error);
+            return response.status(500).json({ error : '찜 유효성 에러'});
+        }
+        else {
+            if(result.length>0){
+                return response.json({ checkpliked: true});
+            } else{
+                return response.json({ checkpliked: false});
+            }
+        }
     });
 });
 
@@ -291,6 +327,21 @@ router.post('/makeplike', function(request, response, next) {
         response.json(result);
         console.log(result);
     });
+});
+
+//찜 유효성 검사후 내역 삭제
+router.post('/delplike', function(request, response, next){
+    const plike_user_no = request.body.plike_user_no;
+    const plike_pro_no = request.body.plike_pro_no;
+
+    db.query(`delete from plike where plike_user_no = ? and plike_pro_no = ?`,[plike_user_no, plike_pro_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '찜삭제 오류' });
+        }
+        response.json(result);
+        console.log(result);
+    })
 });
 /* 상품 디테일 끝 */
 
@@ -311,7 +362,7 @@ router.post('/makeplike', function(request, response, next) {
 //             }
 //         )
 //     });
-
+//내 이미지 가져오기
 router.post('/getimg',function(request,response,next){
     const user_no = request.body.user_no;
 
