@@ -8,7 +8,7 @@
                     </div>
                 </form>
             <h2>아이디 찾기</h2>
-            <form @submit.prevent="submitFindid">
+            <form @submit.prevent="checkEmail">
                 <div class="form_right">
                     <label for="user">
                         <input type="radio" id="user" name="auth" v-model="user_auth" value="1"> 회원 &nbsp;&nbsp;

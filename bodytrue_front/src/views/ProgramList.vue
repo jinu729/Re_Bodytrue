@@ -174,6 +174,7 @@
     float: right; /* 우측 정렬 */
     font-size: 20px; /* 글자 크기 */
     width: 120px; /* 너비 설정 */
+    border-radius: 5px;
 }
 
 /* 프로그램 목록 메인 컨테이너 */
@@ -266,9 +267,10 @@
         width: 20px;
     }
     .number_box li.active{
-        background-color: #00c8c8;
+        /* background-color: #00c8c8; */
+        background-color: rgba(0, 200, 200, 0.5);
         border-radius: 5px;
-        /* color: white; */
+        color: white;
         cursor: pointer;
     }
     .number_box img{

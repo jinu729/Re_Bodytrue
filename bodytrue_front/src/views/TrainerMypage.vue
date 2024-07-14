@@ -541,7 +541,8 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     border: 0;
-    background-color: #00C7AE ;
+    /* background-color: #00C7AE ; */
+    background-color: rgba(0, 200, 200, 0.5);
     color: white;
     margin-right: 10px;
     }
@@ -621,8 +622,10 @@ export default {
     cursor: pointer;
     }
     .number_box li.active{
-    background-color: #00c8c8;
+    /* background-color: #00c8c8; */
+    background-color: rgba(0, 200, 200, 0.5);
     border-radius: 5px;
+    color: white;
     cursor: pointer;
     /* color: white; */
     }
