@@ -16,7 +16,7 @@
                 </div>                        
             <form @submit.prevent="login">
                 <div class="form-group">
-                    <label for="email">아이디</label>
+                    <label for="email">이메일 주소</label>
                     <div class="input-with-icon">
                         <input type="text" id="email" name="email" v-model="email" placeholder="이메일 주소">
                     </div>
@@ -378,6 +378,7 @@ export default {
 body {
     font-family: Arial, sans-serif; /* 전체 페이지의 폰트 설정 */
     background-color: #f5f5f5; /* 배경색 설정 */
+    padding-bottom: 30px;
     
 }
 .close {

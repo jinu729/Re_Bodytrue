@@ -490,6 +490,7 @@ export default {
     .section1 .pro_left img{
         width: 200px;
         height: 200px;
+        object-fit: cover;
     }
     .section1 .pro_left .upload_img{
         width: 70%;

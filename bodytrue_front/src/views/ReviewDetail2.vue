@@ -3,7 +3,6 @@
         <div class="prc_title">
             <p>리뷰 관리</p>
         </div>
-        <div class="as">
             <div class="qwer">
                 <div class="prc_date">
                     <span>작성일:&nbsp;</span>
@@ -35,7 +34,6 @@
             <div class="button_container">
                 <button class="re_back" @click="goBack">뒤로가기</button>
                 <button class="re_delete" @click="deletereview(review.re_no)">삭제</button>
-            </div>
             </div>
         </div>
     </div>
@@ -75,7 +73,8 @@ export default {
             console.log('re_no', re_no);
             axios.post('http://localhost:3000/admin/deletereview', { re_no: re_no })
             .then(response => {
-                if (response.data.success) {
+                if (response.status == 200) {
+                    confirm("삭제하시겠습니까?")
                     // 이전 페이지로 이동
                     this.$router.go(-1);
                 } else {
@@ -104,7 +103,7 @@ export default {
     /* background-color: #97cfcb; */
     color: #111111;
     /* border: 2px solid #3b4746; */
-    width: 100%;
+    width: 80%;
     font-size: 18px;
     text-align: center;
     margin: auto;
@@ -113,10 +112,7 @@ export default {
     flex-direction: column;
     padding-top: 10px;
 }
-.prc_title {
-    display: flex;
-    justify-content: center;
-}
+
 .prc_title p {
     background-color: #00C7AE; /* 배경색을 청록색으로 설정 */
     color: #fff; /* 텍스트 색상을 흰색으로 설정 */
@@ -125,7 +121,6 @@ export default {
     font-size: 26px; /* 폰트 크기를 24px로 설정 */
     border-radius: 10px 10px 10px 10px; /* 상단 좌우 모서리를 둥글게 설정 */
     text-align: left;
-    width: 80%;
 }
 
 .prc_info {
@@ -143,11 +138,15 @@ export default {
 }
 
 .prcn_title{
-    width: 150px;
+    width: 100px;
     height: 30px;
+    line-height: 35px;
     text-align: left;
     margin: 5px;
     margin-left: 10px;
+}
+.prcn_title p {
+    text-align: center;
 }
 
 .prc_content {
@@ -189,7 +188,6 @@ export default {
     width: 100px;
     height: 40px;
     margin: 0 10px;
-    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
@@ -199,19 +197,27 @@ export default {
     line-height: 40px;
 }
 
+.re_back{
+    background-color: #7ED2FF;
+}
+
 .re_back:hover {
-    background-color: #0056b3;
+    background: white;
+    color: #7ED2FF;
+    border: 1px solid;
 }
 
 .re_delete {
-    background-color: red;
+    background-color: #FF6C6C;
 }
 
 .re_delete:hover {
-    background-color: darkred;
+    background: white;
+    color: #FF6C6C;
+    border: 1px solid;
 }
 .prc_program {
-    width: 70%;
+    width: 80%;
     /* border: 1px solid #ccc; */
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     display: flex;
@@ -220,69 +226,71 @@ export default {
     border-radius: 5px;
 }
 .prc_name {
-    width: 100%;
+    width: 90%;
     /* border: 1px solid #ccc;     */
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     display: flex;
+    margin: auto;
     margin-top: 15px;
     border-radius: 5px;
 }
 .qwer {
-    width: 80%;
+    width: 90%;
     margin: auto;
+    margin-bottom: 50px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px #00C7AE;
+
 }
 .prcn_text {
     width: 750px;
     height: 35px;
+    line-height: 35px;
     margin: 5px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     text-align: center;
     font-size: 20px;
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
     border-radius: 5px;
 }
 .font_title {
-    font-size: 30px;
-    float: left;
+    font-size: 26px;
+    /* float: left; */
     width: 8%;
     /* border: 1px solid #ccc;     */
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 15px;
+    /* box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5); */
+    /* display: flex; */
+    /* flex-wrap: wrap; */
+    margin-top: 30px;
+    margin-left: 45px;
     border-radius: 5px;
 }
 .naeyong {
     border: 1px solid rgb(194, 192, 192);
-    margin-top: 80px;
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
+    margin: auto;
+    margin-top: 20px;
+    /* box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5); */
     width: 90%;
     height: 250px;
+    resize: none;
+    border-radius: 10px;
+    padding: 10px;
 }
-.font_title1 {
-    font-size: 30px;
-    float: left;
-    width: 8%;
-    /* border: 1px solid #ccc;     */
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    margin-top: 15px;
-    border-radius: 5px;
-}
+
 .prc_date {
     float: right;
     font-size: 20px;
-    width: 20%;
+    width: 200px;
     display: flex;
     padding-top: 10px;
-    margin-bottom: 50px;
-    height: 30px;
-    flex-wrap: wrap;
+    border-left: 0px;
+    margin-right: 40px;
 }
-.as {
+/* .as {
     width: 80%;
     margin: auto;
     box-shadow: 2px 2px 5px #00C7AE;
     border-radius: 20px;
-    height: 100%;
-}
+    height: 100%; */
+/* } */
 </style>
