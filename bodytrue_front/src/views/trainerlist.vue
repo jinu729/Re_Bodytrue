@@ -204,16 +204,16 @@ export default {
 }
 .search-input {
     width: 200px; /* 입력 필드의 너비를 200px로 설정 */
-    padding: 10px; /* 내부 패딩을 10px로 설정 */
+    padding: 9px; /* 내부 패딩을 10px로 설정 */
     border: 2px solid #00C7AE; /* 테두리를 청록색으로 설정하고 두께를 2px로 설정 */
-    border: 20px 0 0 20px; /* 왼쪽 모서리를 둥글게 설정 */
+    border-radius: 10px 0 0 10px; /* 왼쪽 모서리를 둥글게 설정 */
     outline: none; /* 포커스 시 나타나는 기본 외곽선을 제거 */
 }
 .search-button {
     padding: 10px; /* 내부 패딩을 10px로 설정 */
     border: 1px solid #00C7AE; /* 테두리를 청록색으로 설정하고 두께를 1px로 설정 */
     border-left: none; /* 왼쪽 테두리를 제거 */
-    border: 0 20px 20px 0; /* 오른쪽 모서리를 둥글게 설정 */
+    border-radius: 0 10px 10px 0; /* 오른쪽 모서리를 둥글게 설정 */
     background-color: #00C7AE; /* 배경색을 청록색으로 설정 */
     color: #fff; /* 텍스트 색상을 흰색으로 설정 */
     cursor: pointer; /* 마우스 커서를 포인터로 변경 */
@@ -240,7 +240,9 @@ export default {
 }
 
 .admin_userlist-bodycontent tr{
-    border: 1px solid #3b4746;
+    /* border: 1px solid #3b4746; */
+    border: 1px solid rgba(59, 71, 70, 0.5);
+    border-radius: 5px;
 }
 
 .admin_userlist-bodycontent th:nth-child(8), th:nth-child(9){
@@ -249,6 +251,10 @@ export default {
 
 .admin_userlist-bodycontent td:nth-child(8), td:nth-child(9){
     border: 1px solid #3b4746;
+}
+
+.admin_userlist-bodycontent th{
+  background-color: rgba(218, 218, 218, 0.5);
 }
 
 .admin_userlist-bodypaging{
