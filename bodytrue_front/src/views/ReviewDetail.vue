@@ -32,9 +32,9 @@
             </div>
                 <textarea class="naeyong" v-model="review.re_comment" readonly></textarea>
             <div v-if="review" class="prc_images">
-                <div class="font_title1">사 진</div></div>
+                <div class="font_title1">리 뷰 사 진</div></div>
                     <!-- <div class="prci_image" v-for="(image, i) in review.images" :key="i"> -->
-                        <img style="width: 800px; object-fit: cover;" :src="review.images ? require(`../../../bodytrue_back/uploads/review/${review.images}`) : '/goodsempty2.jpg'" alt="Profile Picture">
+                        <img style="width: 900px; margin-top: 20px; border-radius: 10px; object-fit: cover;" :src="review.images ? require(`../../../bodytrue_back/uploads/review/${review.images}`) : '/goodsempty2.jpg'" alt="Profile Picture">
             <!-- </div> -->
         
         <div v-if="error" class="error-message">
@@ -111,7 +111,7 @@ export default {
     /* background-color: #97cfcb; */
     color: #111111;
     /* border: 2px solid #3b4746; */
-    width: 100%;
+    width: 80%;
     font-size: 18px;
     text-align: center;
     margin: auto;
@@ -146,8 +146,9 @@ export default {
 }
 
 .prcn_title{
-    width: 150px;
+    width: 100px;
     height: 30px;
+    line-height: 35px;
     text-align: left;
     margin: 5px;
     margin-left: 10px;
@@ -184,6 +185,7 @@ export default {
 .button_container {
     text-align: center;
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .re_back, .re_delete {
@@ -191,9 +193,9 @@ export default {
     width: 100px;
     height: 40px;
     margin: 0 10px;
-    background-color: #007bff;
+    
     color: white;
-    border: none;
+    border: 1px solid;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
@@ -201,19 +203,27 @@ export default {
     line-height: 40px;
 }
 
+.re_back{
+    background-color: #7ED2FF;
+}
+
 .re_back:hover {
-    background-color: #0056b3;
+    background: white;
+    color: #7ED2FF;
+    border: 1px solid;
 }
 
 .re_delete {
-    background-color: red;
+    background-color: #FF6C6C;
 }
 
 .re_delete:hover {
-    background-color: darkred;
+    background: white;
+    color: #FF6C6C;
+    border: 1px solid;
 }
 .prc_program {
-    width: 70%;
+    width: 80%;
     /* border: 1px solid #ccc; */
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     display: flex;
@@ -222,65 +232,77 @@ export default {
     border-radius: 5px;
 }
 .prc_name {
-    width: 100%;
+    width: 90%;
     /* border: 1px solid #ccc;     */
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     display: flex;
     flex-wrap: wrap;
+    margin: auto;
     margin-top: 15px;
     border-radius: 5px;
 }
 .qwer {
-    width: 80%;
+    width: 90%;
     margin: auto;
+    margin-bottom: 50px;
+    border-radius: 10px;
     box-shadow: 2px 2px 5px #00C7AE;
 }
 .prcn_text {
     width: 750px;
     height: 35px;
+    line-height: 35px;
     margin: 5px;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     text-align: center;
     font-size: 20px;
-    border: 1px solid #ccc;
+    /* border: 1px solid #ccc; */
     border-radius: 5px;
 }
 .font_title {
-    font-size: 30px;
-    float: left;
+    font-size: 26px;
+    /* float: left; */
     width: 8%;
     /* border: 1px solid #ccc;     */
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 15px;
+    /* box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5); */
+    /* display: flex;
+    flex-wrap: wrap; */
+    margin-top: 30px;
+    margin-left: 45px;
     border-radius: 5px;
 }
+.font_title span{
+    text-align: center;
+}
 .naeyong {
-    border: 1px solid rgb(194, 192, 192);
+    border: 1px solid rgba(194, 192, 192, 0.5);
     display: flex;
-    margin-top: 80px;
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    width: 100%;
+    margin: auto;
+    margin-top: 20px;
+    /* box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5); */
+    width: 90%;
     height: 250px;
+    resize: none;
+    border-radius: 10px;
+    padding: 10px;
 }
 .font_title1 {
-    font-size: 30px;
-    float: left;
-    width: 8%;
+    font-size: 26px;
+    /* float: left; */
+    /* width: 8%; */
     /* border: 1px solid #ccc;     */
-    box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
-    margin-top: 15px;
+    /* box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5); */
+    margin-top: 20px;
+    margin-left: 45px;
     border-radius: 5px;
 }
 .prc_date {
     float: right;
     font-size: 20px;
-    width: 20%;
+    width: 200px;
     display: flex;
     padding-top: 10px;
-    margin-bottom: 30px;
-    height: 30px;
     border-left: 0px;
+    margin-right: 40px;
 }
 </style>

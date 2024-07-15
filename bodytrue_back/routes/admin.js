@@ -570,7 +570,7 @@ router.post('/deletereview', function(request, response, next) {
     }
 
     // 삭제 성공
-    response.json({ success: true });
+    response.status(200).json({ success: true });
     console.log('Deleted review:', result);
   });
 });
