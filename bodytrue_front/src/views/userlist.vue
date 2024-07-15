@@ -177,7 +177,7 @@ export default {
     padding: 10px; /* 내부 패딩을 10px로 설정 */
     border: 1px solid #00C7AE; /* 테두리를 청록색으로 설정하고 두께를 1px로 설정 */
     border-left: none; /* 왼쪽 테두리를 제거 */
-    border: 0 20px 20px 0; /* 오른쪽 모서리를 둥글게 설정 */
+    border-radius: 0 10px 10px 0; /* 오른쪽 모서리를 둥글게 설정 */
     background-color: #00C7AE; /* 배경색을 청록색으로 설정 */
     color: #fff; /* 텍스트 색상을 흰색으로 설정 */
     cursor: pointer; /* 마우스 커서를 포인터로 변경 */
@@ -207,12 +207,24 @@ export default {
     border: 1px solid #3b4746;
 }
 
+/* .admin_userlist-bodycontent th:nth-child(7){
+  padding-right: 8px;
+}
+
+.admin_userlist-bodycontent td:nth-child(7){
+  padding-right: 8px;
+} */
+
 .admin_userlist-bodycontent th:nth-child(8){
     border: 1px solid #3b4746;
 }
 
 .admin_userlist-bodycontent td:nth-child(8){
     border: 1px solid #3b4746;
+}
+
+.admin_userlist-bodycontent th{
+  background-color: rgba(218, 218, 218, 0.5);
 }
 
 .admin_page {

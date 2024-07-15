@@ -153,7 +153,7 @@ export default {
     padding-left:20px;
 }
 .admin_container {
-    width: 50%;
+    width: 80%;
     padding-top: 30px;
     margin: 0 auto;
 }

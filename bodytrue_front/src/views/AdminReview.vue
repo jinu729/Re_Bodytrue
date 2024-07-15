@@ -143,6 +143,10 @@ export default {
     background-color: #aaaaaad2;
 }
 
+.admin_userlist-bodycontent th{
+  background-color: rgba(218, 218, 218, 0.5);
+}
+
 .admin_userlist-bodypaging{
     padding-top: 15px;
 }
