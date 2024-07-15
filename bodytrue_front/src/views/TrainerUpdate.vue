@@ -160,13 +160,13 @@
               // 비밀번호 유효성 검사
               if (!this.trData.tr_pwd) {
                   this.errors.password1 = '비밀번호를 입력해 주세요.';
-                  alert(this.errors.password1);
+                  this.$swal(this.errors.password1);
                   return false;
               } else {
                   const password = this.trData.tr_pwd;
                   if (password.length < 8 || password.length > 20) {
                       this.errors.password1 = '비밀번호는 8~20자 사이여야 합니다.';
-                      alert(this.errors.password1);
+                      this.$swal(this.errors.password1);
                       return false;
                   }
                   const hasUpperCase = /[A-Z]/.test(password);
@@ -176,7 +176,7 @@
                   const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
                   if (typesCount < 3) {
                       this.errors.password1 = '비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.';
-                      alert(this.errors.password1);
+                      this.$swal(this.errors.password1);
                       return false;
                   }
               }
@@ -184,21 +184,21 @@
                  // 비밀번호 확인 유효성 검사
         if (this.trData.tr_pwd !== this.password2) {
           this.errors.password2 = '비밀번호가 일치하지 않습니다.';
-          alert(this.errors.password2);
+          this.$swal(this.errors.password2);
           return false;
         }
   
         // 주소 유효성 검사
         if (!this.trData.tr_addno || !this.trData.tr_add1) {
           this.errors.address = '주소를 입력해 주세요.';
-          alert(this.errors.address);
+          this.$swal(this.errors.address);
           return false;
         }
   
         // 전화번호 유효성 검사
         if (!this.trData.tr_tel2 || !this.trData.tr_tel3) {
           this.errors.phone = '휴대전화번호를 입력해 주세요.';
-          alert(this.errors.phone);
+          this.$swal(this.errors.phone);
           return false;
         }
   
@@ -224,13 +224,13 @@
   
               // Check if passwords match
               if (password !== passwordConfirm) {
-                  alert('비밀번호가 일치하지 않습니다.');
+                  this.$swal('비밀번호가 일치하지 않습니다.');
                   return;
               }
   
               // Check length of password
               if (password.length < 8 || password.length > 20) {
-                  alert('비밀번호는 8~20자 사이여야 합니다.');
+                  this.$swal('비밀번호는 8~20자 사이여야 합니다.');
                   return;
               }
   
@@ -243,11 +243,11 @@
               const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
   
               if (typesCount < 3) {
-                  alert('비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.');
+                  this.$swal('비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.');
                   return;
               }
   
-              alert('비밀번호가 일치합니다.');
+              this.$swal('비밀번호가 일치합니다.');
           },
           zipload() {
               // 주소 검색 로직
@@ -302,11 +302,11 @@
             const response = await axios.post(`http://localhost:3000/trainer/updatetrainer`, tr);
           // // 서버에 트레이너정보 데이터를 전송
           console.log("트레이너 정보 수정 성공",response.data);
-          alert('트레이너 정보가 수정되었습니다.');
+          this.$swal('트레이너 정보가 수정되었습니다.');
           this.$router.push('/');  // 메인 화면으로 리디렉션
         } catch (error) {
           console.error("트레이너 정보 수정 도중 에러 발생",error);
-          alert('트레이너 정보 수정 중 오류가 발생했습니다.');
+          this.$swal('트레이너 정보 수정 중 오류가 발생했습니다.');
         }
       },
       exit(){

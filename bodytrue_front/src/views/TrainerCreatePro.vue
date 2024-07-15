@@ -171,36 +171,36 @@ export default {
 
             if (!this.program.prcn_text) {
                 this.errors.prcn_text = "프로그램 명을 입력하세요.";
-                alert(this.errors.prcn_text);
+                this.$swal(this.errors.prcn_text);
                 return false;
             }
             if (!this.program.phn_text) {
                 this.errors.phn_text = "전화번호를 입력하세요.";
-                alert(this.errors.phn_text);
+                this.$swal(this.errors.phn_text);
                 return false;
             }
             if (!this.program.address_text) {
                 this.errors.address_text = "주소를 입력하세요.";
-                alert(this.errors.address_text);
+                this.$swal(this.errors.address_text);
                 return false;
             }
             if (!this.program.start_date) {
                 this.errors.start_date = "시작일을 선택하세요.";
-                alert(this.errors.start_date);
+                this.$swal(this.errors.start_date);
                 return false;
             }
             if (!this.program.end_date) {
                 this.errors.end_date = "마감일을 선택하세요.";
-                alert(this.errors.end_date);
+                this.$swal(this.errors.end_date);
                 return false;
             }
             if (!this.program.tags) {
                 this.errors.tags = "태그를 선택하세요.";
-                alert(this.errors.tags);
+                this.$swal(this.errors.tags);
                 return false;
             }
             // if (Object.keys(this.errors).length > 0) {
-            //     alert('모든 필드를 올바르게 채워주세요.');
+            //     this.$swal('모든 필드를 올바르게 채워주세요.');
             //     return false;
             // }
 
@@ -448,7 +448,7 @@ export default {
                     
                     .then((res) => {
                         if (res.status === 200) {
-                            alert("상품 등록 성공");
+                            this.$swal("상품 등록 성공");
                             this.$router.push({ path: "/trainer" });
                         console.log("data",this.prcn_text);       
                         }

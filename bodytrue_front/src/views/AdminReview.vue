@@ -1,38 +1,41 @@
 <template>
     <div>
         <div class="admin_userlist-main">
-        <div class="admin_userlist-bodyheader">
-            리뷰 관리
+            <div class="admin_userlist-bodyheader">
+                리뷰 관리
+            </div>
+            <div class="admin_userlist-bodycontent">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>글번호</th>
+                            <th>작성일</th>
+                            <th>제목</th>
+                            <th>작성자</th>
+                            <th>트레이너명</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(review, index) in paginatedReviews" :key="review.re_no">
+                            <td>{{ (currentPage - 1) * perPage + index + 1 }}</td>
+                            <td>{{ review.re_date }}</td>
+                            <td>
+                                <button class="pro_name" @click="reviewdetail(review.re_no)">{{ review.pro_name }}</button>
+                            </td>
+                            <td>{{ review.user_name }}</td>
+                            <td>{{ review.tr_name }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <ul class="admin_page">
+                    <li v-for="page in totalPages" :key="page">
+                        <a href="#" @click.prevent="gotoPage(page)" :class="{ active: page === currentPage }">
+                            {{ page }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-
-        <div class="admin_userlist-bodycontent">
-            <table>
-                <thead>
-                    <tr>
-                        <th>글번호</th>
-                        <th>작성일</th>
-                        <th>제목</th>
-                        <th>작성자</th>
-                        <th>트레이너명</th>
-                    </tr>
-                </thead>
-                <tr v-for="(review, i) in paginatedReviews" :key="i">
-                    <td>{{ review.re_no }}</td>
-                    <td>{{ review.re_date }}</td>
-                    <button class="pro_name" @click="reviewdetail(review.re_no)">{{ review.pro_name }}</button>
-                    <td>{{ review.user_name }}</td>
-                    <td>{{ review.tr_name }}</td>
-                </tr>
-            </table>
-            <ul class="admin_page">
-                <li v-for="page in totalPages" :key="page">
-                    <a href="#" @click.prevent="gotoPage(page)" :class="{ active: page === currentPage }">
-                        {{ page }}
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
     </div>
 </template>
 
@@ -84,9 +87,9 @@ export default {
                 console.log("Review image path:", review.img_path);
                 // 이미지 경로가 있는 경우에만 리뷰 디테일 페이지로 이동합니다.
                 this.$router.push(`/reviewdetail/${re_no}`);    
-                } else {
-                    this.$router.push(`/reviewdetail2/${re_no}`); 
-                }
+            } else {
+                this.$router.push(`/reviewdetail2/${re_no}`); 
+            }
         }
     },
     mounted() {

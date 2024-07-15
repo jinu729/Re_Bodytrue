@@ -34,9 +34,10 @@ router.get("/searchname",async(req,res)=>{
 
     // const name = req.body.name;
     const name = req.query.name;
+    searchname = '%' + name + '%';
 
-    db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user where user_name = ?",
-        name,
+    db.query("select user_email,user_pwd,user_name,user_tel,user_sex,user_add1,user_add2 from user where user_name LIKE ?",
+      searchname,
         (err,results)=>{
         if (err) {
             res.send({
@@ -98,8 +99,10 @@ router.get("/search_tr_name",async(req,res)=>{
   // const name = req.body.name;
   const name = req.query.name;
 
-  db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer where tr_name = ?",
-      name,
+  searchname = '%' + name + '%';
+
+  db.query("select tr_email,tr_pwd,tr_name,tr_tel,tr_sex,tr_add1,tr_add2 from trainer where tr_name LIKE ?",
+      searchname,
         (err,results)=>{
         if (err) {
             res.send({
@@ -187,7 +190,8 @@ router.get("/adminreview", async (req, res) => {
             JOIN program p ON r.re_pro_no = p.pro_no 
             JOIN user u ON r.re_user_no = u.user_no
             JOIN trainer t ON r.re_tr_no = t.tr_no
-            left join img i on r.re_no = i.img_re_no;`, (err, results) => {
+            left join img i on r.re_no = i.img_re_no
+            order by re_no`, (err, results) => {
       if (err) {
           res.send({
               code: 400,
@@ -557,21 +561,30 @@ router.get('/review2/:re_no', (req, res) => {
 
 router.post('/deletereview', function(request, response, next) {
   const re_no = request.body.re_no;
-
-  db.query("DELETE FROM review WHERE re_no = ?", [re_no], function(error, result) {
+  
+  // 먼저 img 테이블에서 데이터 삭제
+  db.query("DELETE FROM img WHERE img_re_no = ?", [re_no], (error, result) => {
     if (error) {
-      console.error('Error deleting review:', error);
-      return response.status(500).json({ error: '리뷰 삭제 중 오류' });
+      console.error('Error deleting from img:', error);
+      return response.status(500).json({ error: '이미지 삭제 중 오류' });
     }
 
-    if (result.affectedRows === 0) {
-      // 해당 re_no를 가진 리뷰가 없을 경우
-      return response.status(404).json({ error: 'Review not found' });
-    }
+    db.query("DELETE FROM review WHERE re_no = ?", [re_no], function(error, result) {
+      if (error) {
+        console.error('Error deleting review:', error);
+        return response.status(500).json({ error: '리뷰 삭제 중 오류' });
+      }
 
-    // 삭제 성공
-    response.json({ success: true });
-    console.log('Deleted review:', result);
+      if (result.affectedRows === 0) {
+        // 해당 re_no를 가진 리뷰가 없을 경우
+        return response.status(404).json({ error: 'Review not found' });
+      }
+
+
+      // 삭제 성공
+      response.status(200).json({ success: true });
+      console.log('Deleted review:', result);
+    });
   });
 });
 

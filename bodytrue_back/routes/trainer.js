@@ -13,7 +13,9 @@ const upload = multer({
             cb(null, path.join(__dirname, '..', 'uploads'));
         },
         filename(req, file, cb) {
-            console.log('Uploaded File:', file.originalname); // 업로드된 파일 이름 확인
+            // console.log('Uploaded File:', file.originalname); // 업로드된 파일 이름 확인
+            file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8') ;
+            console.log('Uploaded File:', file.originalname);
             cb(null, file.originalname);
         },
     }),

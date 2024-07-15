@@ -175,7 +175,7 @@ export default {
                                 } else {
                                     // tr_admit이 1이 아닐 때 처리
                                     console.log("트레이너 승인 대기 중");
-                                    alert("트레이너 승인이 필요합니다.");
+                                    this.$swal("트레이너 승인이 필요합니다.");
                                 }
                         } else {
                             //     const adminPayload = {
@@ -197,7 +197,7 @@ export default {
                                 console.log(user_auth);
                             } else{
                                 console.log("관리자가 아닙니다.");
-                                alert("관리자가 아닙니다.")
+                                this.$swal("관리자가 아닙니다.")
                             }
                         }
 
@@ -212,19 +212,19 @@ export default {
                         // window.location.href = "/";
                     } else if (res.data.code === 401) {
                         // 비밀번호 오류 시
-                        alert(res.data.message);
+                        this.$swal(res.data.message);
                         // window.location.href = "/login";
                     } else if (res.data.code === 404) {
                         // 존재하지 않는 이메일일 때
-                        alert(res.data.message);
+                        this.$swal(res.data.message);
                         // window.location.href = "/login";
                     } else if (res.data.code === 402) {
                         // 존재하지 않는 이메일일 때
-                        alert(res.data.message);
+                        this.$swal(res.data.message);
                         // window.location.href = "/login";
                     }
                 } catch (err) {
-                    alert(err);
+                    this.$swal(err);
                 }
             },
 
@@ -251,7 +251,7 @@ export default {
                     success: this.getKakaoProfile,
                     fail: err => {
                     console.error(err);
-                    alert('카카오 로그인에 실패했습니다.');
+                    this.$swal('카카오 로그인에 실패했습니다.');
                     }
                 });
             },
@@ -263,11 +263,11 @@ export default {
                     const kakao_account = res.kakao_account;
                     console.log(kakao_account);
                     this.loginWithKakao(kakao_account);
-                    alert("로그인 성공");
+                    this.$swal("로그인 성공");
                     },
                     fail: err => {
                     console.error(err);
-                    alert('카카오 프로필을 가져오는 데 실패했습니다.');
+                    this.$swal('카카오 프로필을 가져오는 데 실패했습니다.');
                     }
                 });
             },
@@ -292,7 +292,7 @@ export default {
                     window.location.href = "/";
                 } catch (error) {
                     console.error(error);
-                    alert('로그인에 실패했습니다.');
+                    this.$swal('로그인에 실패했습니다.');
                 }
             },
             loginNaver(){
@@ -345,7 +345,7 @@ export default {
                     const user_email = this.naverLogin.user.getEmail();
                     const user_name = this.naverLogin.user.getName();
                     if(user_email == undefined || user_email == null) {
-                        alert("이메일은 필수 정보입니다. 정보 제공을 동의해주세요");
+                        this.$swal("이메일은 필수 정보입니다. 정보 제공을 동의해주세요");
                         this.naverLogin.reprompt();
                         return;
                     }
@@ -364,7 +364,7 @@ export default {
                         window.location.href = '/';
                     } catch (error) {
                         console.error('서버로 네이버 로그인 데이터 전송 실패:', error);
-                        alert('로그인에 실패했습니다.');
+                        this.$swal('로그인에 실패했습니다.');
                     }
                 } else {
                     console.log("callback 처리에 실패하였습니다.");
