@@ -63,11 +63,11 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
         const newDir = path.resolve(__dirname, '../uploads/user');
         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
 
-        const extension = path.extname(img);
+        // const extension = path.extname(img);
 
-        console.log('Extenstion-------------------');
-        console.log(extension);
-        console.log('-------------------');
+        // console.log('Extenstion-------------------');
+        // console.log(extension);
+        // console.log('-------------------');
 
 
         console.log('newDir-------------------');
@@ -76,7 +76,17 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
 
         // 이미지 폴더 및 이름(상품번호-타입) 변경
         // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
-        const newFilePath = path.join(newDir, `${user_no}-0${extension}`);
+        const newFilePath = path.join(newDir, `${user_no}-0.jpg`);
+        console.log('newFilePath-------------------');
+        console.log(newFilePath);
+        console.log('-------------------');
+
+
+        const filepath = `${user_no}-0.jpg`;
+        console.log('filepath-------------------');
+        console.log(filepath);
+        console.log('-------------------');
+
         fs.rename(pastDir, newFilePath, (err) => {
             if (err) {
                 throw err;
@@ -92,7 +102,7 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
 
                 if(results[0].num === 0){
                         db.query(`insert into img (img_type,img_path,img_user_no) values(0,?,?);`,
-                            [`${user_no}-0${extension}`, user_no],
+                            [filepath, user_no],
                         function (error, results, fields){
                             if(error){
                                 throw error;
@@ -100,7 +110,7 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
                         })
                 }else{
                     db.query(`update img set img_path = ? where img_user_no = ? and img_type = 0;`,
-                        [`${user_no}-0${extension}`, user_no],
+                        [filepath, user_no],
                         function (error, results, fields){
                             if(error){
                                 throw error;
@@ -705,8 +715,8 @@ router.post('/makereview2', function(req, res) {
             const newDir = path.join(__dirname, '..', 'uploads', 'review');
             if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
 
-            const extension = path.extname(re_img);
-            const newFileName = `${re_no}-0${extension}`;
+            // const extension = path.extname(re_img);
+            const newFileName = `${re_no}-0.jpg`;
             const newFilePath = path.join(newDir, newFileName);
 
             console.log('newDir:', newDir);
@@ -850,8 +860,8 @@ router.post('/updatere2', function(request, response, next){
             const newDir = path.join(__dirname, '..', 'uploads', 'review');
             if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
 
-            const extension = path.extname(re_img);
-            const newFileName = `${re_no}-0${extension}`;
+            // const extension = path.extname(re_img);
+            const newFileName = `${re_no}-0.jpg`;
             const newFilePath = path.join(newDir, newFileName);
 
             console.log('newDir:', newDir);
