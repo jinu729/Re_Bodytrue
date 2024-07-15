@@ -1,25 +1,25 @@
 <template>
-    <div>
-      <div class="sort_right">
-        &nbsp;&nbsp;
-        <!-- 드롭다운 대신 select 요소 사용 -->
-        <select name="sort1" id="sort1" @change="handleSortChange">
-          <option value="default">기본 정렬</option>
-          <option value="마감순">마감순</option>
-          <option value="조회순">조회순</option>
-          <option value="평점순">평점순</option>
-        </select>
-      </div>
+  <div>
+    <div class="sort_right">
+      &nbsp;&nbsp;
+      <!-- 드롭다운 대신 select 요소 사용 -->
+      <select name="sort1" id="sort1" @change="handleSortChange">
+        <option value="default">기본 정렬</option>
+        <option value="마감순">마감순</option>
+        <option value="조회순">조회순</option>
+        <option value="평점순">평점순</option>
+      </select>
+    </div>
 
-      <main class="prolist_main">
-        <div class="prolist_list">
-          <!-- 프로그램 목록을 순회하며 표시 -->
-          <div v-for="(program, index) in pagedProgramList" :key="index" class="program_item">
-            <!-- 프로그램 상세 페이지로 이동하는 링크 -->
-            <router-link :to="`/prodetail/${program.PRO_NO}`" class="page-button">
+    <main class="prolist_main">
+      <div class="prolist_list">
+        <!-- 프로그램 목록을 순회하며 표시 -->
+        <div v-for="(program, index) in pagedProgramList" :key="index" class="program_item">
+          <!-- 프로그램 상세 페이지로 이동하는 링크 -->
+          <a :href="`/prodetail/${program.PRO_NO}`" @click="incrementCnt(program.PRO_NO)" class="page-button">
             <div class="program_image">
-                <!-- 이미지 표시 -->
-                <img :src="program.IMG_PATH ? require(`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`) : '/goodsempty2.jpg'" alt="상품 이미지">
+              <!-- 이미지 표시 -->
+              <img :src="program.IMG_PATH ? require(`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`) : '/goodsempty2.jpg'" alt="상품 이미지">
             </div>
             <div class="program_details">
               <!-- 프로그램 이름 표시 -->
@@ -29,11 +29,11 @@
               <!-- 평점 표시 -->
               <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG || 0}}</span></p>
             </div>
-            </router-link>
-          </div>
+          </a>
         </div>
-      </main>
-      <!-- 페이징 -->
+      </div>
+    </main>
+    <!-- 페이징 -->
     <div class="pagination">
       <ul class="number_box">
         <li @click="prevPageGroup" :class="{disabled: currentPageGroup === 1}">
@@ -47,27 +47,27 @@
         </li>
       </ul>
     </div>
-    </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  
-  export default {
-    name: 'ProgramList',
-    data() {
-      return {
+  </div>
+</template>
+
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'ProgramList',
+  data() {
+    return {
       programList: [], // 프로그램 목록 데이터
-      currentPage: parseInt(this.$route.query.page) || 1, // 현재 페이지, // 현재 페이지
+      currentPage: parseInt(this.$route.query.page) || 1, // 현재 페이지
       itemsPerPage: 12, // 페이지당 항목 수
       currentPageGroup: 1, // 현재 페이지 그룹
-      };
-    },
-    created() {
-      // 컴포넌트 생성 시 프로그램 목록을 가져옴
-      this.getProgramList();
-    },
-    computed: {
+    };
+  },
+  created() {
+    // 컴포넌트 생성 시 프로그램 목록을 가져옴
+    this.getProgramList();
+  },
+  computed: {
     totalPages() {
       return Math.ceil(this.programList.length / this.itemsPerPage);
     },
@@ -94,42 +94,42 @@
       return [];
     },
   },
-    methods: {
-      async getProgramList() {
-        // 현재 라우터의 쿼리 파라미터를 가져와 정렬 옵션을 설정
-        const sortOption = this.$route.query.sort || 'default'; // 기본값 설정
-        const pro_tag = this.$route.params.pro_tag;
+  methods: {
+    async getProgramList() {
+      // 현재 라우터의 쿼리 파라미터를 가져와 정렬 옵션을 설정
+      const sortOption = this.$route.query.sort || 'default'; // 기본값 설정
+      const pro_tag = this.$route.params.pro_tag;
 
-        let url = `http://localhost:3000/user/programlist/${pro_tag}`; // 기본 데이터 가져오기 URL
-  
-        // 정렬 옵션에 따라 URL 변경
-        switch (sortOption) {
-          case '마감순':
-            url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyenddate`;
-            break;
-          case '조회순':
-            url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyviews`;
-            break;
-          case '평점순':
-            url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyrating`;
-            break;
-          default:
-            break;
-        }
-  
-        try {
-          const response = await axios.get(url);
-          this.programList = response.data; // 데이터를 받아와 프로그램 목록에 설정
-          console.log("pro",this.programList);
-        } catch (error) {
-          console.error('데이터를 가져오는 중 오류 발생:', error);
-        }
-      },
-      handleSortChange(event) {
-        const selectedSortOption = event.target.value;
-        this.$router.push({ name: 'ProgramList', query: { sort: selectedSortOption } }); // 쿼리 파라미터 설정
-      },
-      changePage(page) {
+      let url = `http://localhost:3000/user/programlist/${pro_tag}`; // 기본 데이터 가져오기 URL
+
+      // 정렬 옵션에 따라 URL 변경
+      switch (sortOption) {
+        case '마감순':
+          url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyenddate`;
+          break;
+        case '조회순':
+          url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyviews`;
+          break;
+        case '평점순':
+          url = `http://localhost:3000/user/programlist/${pro_tag}/sortbyrating`;
+          break;
+        default:
+          break;
+      }
+
+      try {
+        const response = await axios.get(url);
+        this.programList = response.data; // 데이터를 받아와 프로그램 목록에 설정
+        console.log("pro", this.programList);
+      } catch (error) {
+        console.error('데이터를 가져오는 중 오류 발생:', error);
+      }
+    },
+    handleSortChange(event) {
+      const selectedSortOption = event.target.value;
+      this.$router.push({ name: 'ProgramList', query: { sort: selectedSortOption } }); // 쿼리 파라미터 설정
+    },
+    changePage(page) {
       if (page > 0 && page <= this.totalPages) {
         this.currentPage = page;
         this.$router.push({ name: 'ProgramList', query: { sort: this.$route.query.sort, page: this.currentPage } }); // URL에 페이지 번호 포함
@@ -147,15 +147,23 @@
         this.changePage(this.pageGroups[this.currentPageGroup - 1].start);
       }
     },
+    async incrementCnt(PRO_NO) {
+      try {
+        await axios.post(`http://localhost:3000/user/incrementcnt/${PRO_NO}`);
+        console.log(`프로그램 번호 ${PRO_NO}의 조회수가 증가했습니다.`);
+      } catch (error) {
+        console.error(`프로그램 번호 ${PRO_NO}의 조회수 증가 중 오류 발생:`, error);
+      }
     },
-    watch: {
-      '$route.query.sort': 'getProgramList', // 쿼리 파라미터가 변경될 때마다 목록을 다시 가져옴
-      '$route.query.page'(newPage) {
-        this.currentPage = parseInt(newPage) || 1;
-      },
-    }
-  };
-  </script>
+  },
+  watch: {
+    '$route.query.sort': 'getProgramList', // 쿼리 파라미터가 변경될 때마다 목록을 다시 가져옴
+    '$route.query.page'(newPage) {
+      this.currentPage = parseInt(newPage) || 1;
+    },
+  },
+};
+</script>
 
 <style scoped>
 

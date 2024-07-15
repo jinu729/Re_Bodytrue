@@ -29,7 +29,7 @@
                 </div>
                 <div class="form-group forgot-password">
                     <a @click="goEmailFind">아이디 찾기</a>
-                    <span>|</span>
+                    <span style="color: #2b2a2aa5">|</span>
                     <a @click="goPwdFind">비밀번호 찾기</a>
                 </div>
                 <div class="form-group save-id-checkbox">

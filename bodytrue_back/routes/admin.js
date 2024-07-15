@@ -191,7 +191,7 @@ router.get("/adminreview", async (req, res) => {
             JOIN user u ON r.re_user_no = u.user_no
             JOIN trainer t ON r.re_tr_no = t.tr_no
             left join img i on r.re_no = i.img_re_no
-            order by re_no;`, (err, results) => {
+            order by re_no`, (err, results) => {
       if (err) {
           res.send({
               code: 400,
@@ -579,6 +579,7 @@ router.post('/deletereview', function(request, response, next) {
         // 해당 re_no를 가진 리뷰가 없을 경우
         return response.status(404).json({ error: 'Review not found' });
       }
+
 
       // 삭제 성공
       response.status(200).json({ success: true });

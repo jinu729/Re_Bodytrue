@@ -70,11 +70,17 @@ export default {
             });
         },
         deletereview(re_no) {
+            // 삭제 의사 확인
+            const userConfirmed = confirm("삭제하시겠습니까?");
+            if (!userConfirmed) {
+                return; // 사용자가 취소를 선택하면 함수 종료
+            }
+
             console.log('re_no', re_no);
             axios.post('http://localhost:3000/admin/deletereview', { re_no: re_no })
             .then(response => {
                 if (response.status == 200) {
-                    confirm("삭제하시겠습니까?")
+                    alert('삭제되었습니다.'); // 성공 메시지 표시
                     // 이전 페이지로 이동
                     this.$router.go(-1);
                 } else {
