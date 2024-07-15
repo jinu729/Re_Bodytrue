@@ -77,7 +77,7 @@ export default {
         async delFAQ(faq_no) {
             try {
                 await axios.post('http://localhost:3000/admin/delfaq', { faq_no });
-                alert('FAQ 목록에서 삭제 되었습니다.');
+                this.$swal('FAQ 목록에서 삭제 되었습니다.');
                 this.getfaqList();
             } catch (error) {
                 console.error("FAQ 삭제 도중 에러 발생", error);
@@ -97,7 +97,7 @@ export default {
                         Q: faq.faq_q,
                         faq_no: faq.faq_no
                     });
-                    alert('질문이 성공적으로 수정되었습니다.');
+                    this.$swal('질문이 성공적으로 수정되었습니다.');
                     faq.isEditingQuestion = false;
                 } catch (error) {
                     console.error('Error updating question:', error);
@@ -113,7 +113,7 @@ export default {
                         A: faq.faq_a,
                         faq_no: faq.faq_no
                     });
-                    alert('답변이 성공적으로 수정되었습니다.');
+                    this.$swal('답변이 성공적으로 수정되었습니다.');
                     faq.isEditingAnswer = false;
                 } catch (error) {
                     console.error('Error updating answer:', error);

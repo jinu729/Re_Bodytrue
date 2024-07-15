@@ -93,6 +93,7 @@
   
   <script>
   import axios from 'axios';
+  import { mapMutations } from 'vuex';
 
   export default {
     data() {
@@ -309,19 +310,23 @@
         this.selectedTime = null;
         this.initWeek(); // 주를 다시 초기화
       },
-
+      
+      ...mapMutations(['setUser', 'setTrainer']),
       //로그인확인
       checklogin(){
         if(this.user.user_no==''){
-          alert('로그인 해주세요.');
+          this.$swal('로그인 해주세요.');
+          this.setUser({ user_email: '', user_no: '', user_auth: '' });
+          this.setTrainer({ tr_email: '', tr_no: '', tr_admit: '' });
+          localStorage.clear(); // 로컬 스토리지 비우기
           this.$router.push({ path: '/login'});
         } else{
           if(!this.selectedDate){
-            alert('날짜를 선택해주세요!');
+            this.$swal('날짜를 선택해주세요!');
             return;
           }
           if(!this.selectedTime){
-            alert('시간을 선택해주세요!');
+            this.$swal('시간을 선택해주세요!');
             return
           }
           //로그인 되어있으면 예약진행하기전 유효성 검사후 예약진행
@@ -370,11 +375,11 @@
 
           //성공시 처리
           console.log('예약 성공:', response.data);
-          alert('예약이 성공적으로 완료되었습니다.');
+          this.$swal('예약이 성공적으로 완료되었습니다.');
         } catch(error){
           //에러처리
           console.error('예약 실패:', error);
-          alert('해당 시간엔 이미 예약이 존재합니다.');
+          this.$swal('해당 시간엔 이미 예약이 존재합니다.');
         }
       },
       
@@ -438,7 +443,7 @@
     //
       async makePlike() {
         if (this.user.user_no == '') {
-          alert('로그인 해주세요.');
+          this.$swal('로그인 해주세요.');
           this.$router.push({ path: '/login' });
         } else {
           const plike_pro_no = this.pro_no;
@@ -448,7 +453,7 @@
             plike_pro_no: plike_pro_no,
           });
             console.log('찜하기 성공', response.data);
-            alert('찜목록에 추가되었습니다.');
+            this.$swal('찜목록에 추가되었습니다.');
         }
       },
       async deletePlike(){
@@ -459,7 +464,7 @@
           plike_pro_no: plike_pro_no,
           });
           console.log('찜 삭제 성공', response.data);
-          alert('찜목록에서 삭제되었습니다.');
+          this.$swal('찜목록에서 삭제되었습니다.');
       },
       //times 메소드
       selectTime(time){

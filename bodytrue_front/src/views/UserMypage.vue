@@ -551,7 +551,7 @@ export default {
                 pro_no: plike_pro_no
             });
                 console.log('찜삭제 성공',response.data);
-                alert('찜 목록에서 삭제되었습니다.');
+                this.$swal('찜 목록에서 삭제되었습니다.');
                 //삭제된 후 찜 목록 업데이트
                 this.plikeData = this.plikeData.filter(plike => plike.pro_no !== plike_pro_no);
                 //필터를 통해서 내가 삭제한 프로그램 번호랑 기존에 있는 찜 프로그램 번호 비교해서 true 값만 다시
@@ -588,7 +588,7 @@ export default {
                    if(!this.checkreview){ //false여야지 리뷰작성할수있음
                     this.openReviewModal(cal);
                    } else{
-                    alert('이미 작성한 리뷰입니다.')
+                    this.$swal('이미 작성한 리뷰입니다.')
                     this.isReviewenabled(cal.cal_startdate);
                    }
 
@@ -682,7 +682,7 @@ export default {
                 cal_startdate: formatcal_startdate.toISOString()
                 });
                 console.log("예약 삭제 성공", response.data);
-                alert('예약 목록에서 삭제 되었습니다.');
+                this.$swal('예약 목록에서 삭제 되었습니다.');
 
                 window.location.reload();
                 // this.calData = response.data;
@@ -697,7 +697,7 @@ export default {
             try{
                 const response = await axios.post(`http://localhost:3000/user/deletere`, {re_no: re_no});
                 console.log("리뷰 삭제 성공", response.data);
-                alert('리뷰 목록에서 삭제 되었습니다.');
+                this.$swal('리뷰 목록에서 삭제 되었습니다.');
                 window.location.reload();
             } catch(error){
                 console.error("리뷰 삭제 도중 에러 발생",error);

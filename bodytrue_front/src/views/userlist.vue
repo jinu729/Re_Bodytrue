@@ -116,15 +116,15 @@ export default {
       })
       .then(() => {
         if (user_ban === 0) {
-          alert('회원정지 되었습니다.');
+          this.$swal('회원정지 되었습니다.');
         } else {
-          alert('회원정지가 해제되었습니다.');
+          this.$swal('회원정지가 해제되었습니다.');
         }
         this.getUserList(); // 업데이트 후 목록 다시 불러오기
       })
       .catch(error => {
         console.error('Error toggling user ban:', error);
-        alert('Error toggling user ban'); // 사용자에게 에러 피드백
+        this.$swal('Error toggling user ban'); // 사용자에게 에러 피드백
       });
     },
     gotoPage(page) {

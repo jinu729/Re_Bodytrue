@@ -161,13 +161,13 @@ export default {
             // 비밀번호 유효성 검사
             if (!this.userData.user_pwd) {
                 this.errors.password1 = '비밀번호를 입력해 주세요.';
-                alert(this.errors.password1);
+                this.$swal(this.errors.password1);
                 return false;
             } else {
                 const password = this.userData.user_pwd;
                 if (password.length < 8 || password.length > 20) {
                     this.errors.password1 = '비밀번호는 8~20자 사이여야 합니다.';
-                    alert(this.errors.password1);
+                    this.$swal(this.errors.password1);
                     return false;
                 }
                 const hasUpperCase = /[A-Z]/.test(password);
@@ -177,7 +177,7 @@ export default {
                 const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
                 if (typesCount < 3) {
                     this.errors.password1 = '비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.';
-                    alert(this.errors.password1);
+                    this.$swal(this.errors.password1);
                     return false;
                 }
             }
@@ -185,21 +185,21 @@ export default {
                // 비밀번호 확인 유효성 검사
       if (this.userData.user_pwd !== this.password2) {
         this.errors.password2 = '비밀번호가 일치하지 않습니다.';
-        alert(this.errors.password2);
+        this.$swal(this.errors.password2);
         return false;
       }
 
       // 주소 유효성 검사
       if (!this.userData.user_addno || !this.userData.user_add1) {
         this.errors.address = '주소를 입력해 주세요.';
-        alert(this.errors.address);
+        this.$swal(this.errors.address);
         return false;
       }
 
       // 전화번호 유효성 검사
       if (!this.userData.user_tel2 || !this.userData.user_tel3) {
         this.errors.phone = '휴대전화번호를 입력해 주세요.';
-        alert(this.errors.phone);
+        this.$swal(this.errors.phone);
         return false;
       }
 
@@ -224,7 +224,7 @@ export default {
         try{
           const response = await axios.post(`http://localhost:3000/user/deleteuser`, { user_no: user_no });
           console.log("회원 정보 삭제 성공", response.data);
-          alert('회원 정보가 삭제 되었습니다.');
+          this.$swal('회원 정보가 삭제 되었습니다.');
           this.setUser({ user_email: '', user_no: '', user_auth: '' });
           localStorage.clear(); // 로컬 스토리지 비우기
           this.$router.push('/');  // 메인 화면으로 리디렉션
@@ -242,13 +242,13 @@ export default {
 
             // Check if passwords match
             if (password !== passwordConfirm) {
-                alert('비밀번호가 일치하지 않습니다.');
+                this.$swal('비밀번호가 일치하지 않습니다.');
                 return;
             }
 
             // Check length of password
             if (password.length < 8 || password.length > 20) {
-                alert('비밀번호는 8~20자 사이여야 합니다.');
+                this.$swal('비밀번호는 8~20자 사이여야 합니다.');
                 return;
             }
 
@@ -261,11 +261,11 @@ export default {
             const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
 
             if (typesCount < 3) {
-                alert('비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.');
+                this.$swal('비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.');
                 return;
             }
 
-            alert('비밀번호가 일치합니다.');
+            this.$swal('비밀번호가 일치합니다.');
         },
         zipload() {
             // 주소 검색 로직
@@ -320,11 +320,11 @@ export default {
           const response = await axios.post(`http://localhost:3000/user/updateuser`, user);
         // // 서버에 회원정보 데이터를 전송
         console.log("회원 정보 수정 성공",response.data);
-        alert('회원 정보가 수정되었습니다.');
+        this.$swal('회원 정보가 수정되었습니다.');
         this.$router.push('/');  // 메인 화면으로 리디렉션
       } catch (error) {
         console.error("회원 정보 수정 도중 에러 발생",error);
-        alert('회원 정보 수정 중 오류가 발생했습니다.');
+        this.$swal('회원 정보 수정 중 오류가 발생했습니다.');
       }
     },
     exit(){

@@ -158,24 +158,24 @@ export default {
             // 이메일 유효성 검사
             if (!this.user_email1) {
                 this.errors.email = '이메일을 입력해 주세요.';
-                alert(this.errors.email);
+                this.$swal(this.errors.email);
                 return false;
             } else if (this.user_email1.length < 3 || this.user_email1.length > 16) {
                 this.errors.email = '이메일은 3~16자 사이여야 합니다.';
-                alert(this.errors.email);
+                this.$swal(this.errors.email);
                 return false;
             }
 
             // 비밀번호 유효성 검사
             if (!this.password1) {
                 this.errors.password1 = '비밀번호를 입력해 주세요.';
-                alert(this.errors.password1);
+                this.$swal(this.errors.password1);
                 return false;
             } else {
                 const password = this.password1;
                 if (password.length < 8 || password.length > 20) {
                     this.errors.password1 = '비밀번호는 8~20자 사이여야 합니다.';
-                    alert(this.errors.password1);
+                    this.$swal(this.errors.password1);
                     return false;
                 }
                 const hasUpperCase = /[A-Z]/.test(password);
@@ -185,7 +185,7 @@ export default {
                 const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
                 if (typesCount < 3) {
                     this.errors.password1 = '비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.';
-                    alert(this.errors.password1);
+                    this.$swal(this.errors.password1);
                     return false;
                 }
             }
@@ -193,42 +193,42 @@ export default {
             // 비밀번호 확인 유효성 검사
             if (this.password1 !== this.password2) {
                 this.errors.password2 = '비밀번호가 일치하지 않습니다.';
-                alert(this.errors.password2);
+                this.$swal(this.errors.password2);
                 return false;
             }
 
             // 이름 유효성 검사
             if (!this.user_name) {
                 this.errors.user_name = '이름을 입력해 주세요.';
-                alert(this.errors.user_name);
+                this.$swal(this.errors.user_name);
                 return false;
             }
 
             // 가입자 유형 유효성 검사
             if (!this.user_auth) {
                 this.errors.user_auth = '가입자 유형을 선택해 주세요.';
-                alert(this.errors.user_auth);
+                this.$swal(this.errors.user_auth);
                 return false;
             }
 
             // 성별 유효성 검사
             if (!this.gender) {
                 this.errors.gender = '성별을 선택해 주세요.';
-                alert(this.errors.gender);
+                this.$swal(this.errors.gender);
                 return false;
             }
 
             // 주소 유효성 검사
             if (!this.zipcode || !this.address) {
                 this.errors.address = '주소를 입력해 주세요.';
-                alert(this.errors.address);
+                this.$swal(this.errors.address);
                 return false;
             }
 
             // 전화번호 유효성 검사
             if (!this.number2 || !this.number3) {
                 this.errors.phone = '휴대전화번호를 입력해 주세요.';
-                alert(this.errors.phone);
+                this.$swal(this.errors.phone);
                 return false;
             }
 
@@ -237,7 +237,7 @@ export default {
         async confirm_email() {
 
             if (this.user_email1.length < 3 || this.user_email1.length > 16) {
-                alert('이메일은 3~16자 사이여야 합니다.');
+                this.$swal('이메일은 3~16자 사이여야 합니다.');
                 return;
             }
            
@@ -247,14 +247,14 @@ export default {
                     console.log(`확인할 이메일: ${email}`);
                     // console.log(response.data);
                     if (response.data.exists) {
-                        alert('이미 존재하는 이메일입니다.');
+                        this.$swal('이미 존재하는 이메일입니다.');
                         // console.log(response.data.exists)
                     } else {
-                        alert('사용 가능한 이메일입니다.');
+                        this.$swal('사용 가능한 이메일입니다.');
                     }
                 } catch (error) {
                     console.error('이메일 확인 중 오류가 발생했습니다:', error);
-                    alert('이메일 확인 중 오류가 발생했습니다. 다시 시도해주세요.');
+                    this.$swal('이메일 확인 중 오류가 발생했습니다. 다시 시도해주세요.');
                 }
             
         },
@@ -264,13 +264,13 @@ export default {
 
             // Check if passwords match
             if (password !== passwordConfirm) {
-                alert('비밀번호가 일치하지 않습니다.');
+                this.$swal('비밀번호가 일치하지 않습니다.');
                 return;
             }
 
             // Check length of password
             if (password.length < 8 || password.length > 20) {
-                alert('비밀번호는 8~20자 사이여야 합니다.');
+                this.$swal('비밀번호는 8~20자 사이여야 합니다.');
                 return;
             }
 
@@ -283,11 +283,11 @@ export default {
             const typesCount = [hasUpperCase, hasLowerCase, hasNumbers, hasSpecial].filter(Boolean).length;
 
             if (typesCount < 3) {
-                alert('비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.');
+                this.$swal('비밀번호는 영문 대소문자, 숫자, 특수문자 중 세 가지 이상을 포함해야 합니다.');
                 return;
             }
 
-            alert('비밀번호가 일치합니다.');
+            this.$swal('비밀번호가 일치합니다.');
         },
         zipload() {
             // 주소 검색 로직
@@ -372,7 +372,7 @@ export default {
                 }
                 });
                 console.log('폼 제출 성공', response.data);
-                alert('회원 가입을 축하드립니다.');
+                this.$swal('회원 가입을 축하드립니다.');
                 this.$router.push({ path: '/login'});
             } catch (error) {
                 console.error('폼 제출 중 오류 발생', error);
