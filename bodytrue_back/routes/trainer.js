@@ -100,7 +100,7 @@ router.post('/createprogram/:tr_no', function (req, res) {
                         console.log('filename-------------------');
                         console.log(filename);
                         console.log('-------------------');
-
+                        
                         const renameFile = (oldPath, newPath, callback) => {
                             if (fs.existsSync(oldPath)) {
                                 fs.rename(oldPath, newPath, (err) => {
@@ -238,14 +238,22 @@ router.post('/upload_Timg', upload.single('img'), (req, res) => {
         console.log(newDir);
         console.log('-------------------');
 
+       
         // 이미지 폴더 및 이름(상품번호-타입) 변경
         // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
-        const newFilePath = path.join(newDir, `${tr_no}-0${extension}`);
+        const newFilePath = path.join(newDir, `${tr_no}-0.jpg`);
+        
+         const filepath = `${tr_no}-0.jpg`;
+        console.log('filepath-------------------');
+        console.log(filepath);
+        console.log('-------------------');
+
         fs.rename(pastDir, newFilePath, (err) => {
             if (err) {
                 throw err;
             }
         });
+
 
         try {
             db.query(`select count(*) as num from img where img_tr_no = ? and img_type = 0;`,
@@ -253,7 +261,7 @@ router.post('/upload_Timg', upload.single('img'), (req, res) => {
                 function (error, results, fields) {
                     if (results[0].num === 0) {
                         db.query(`insert into img (img_type, img_path, img_tr_no) values (0, ?, ?);`,
-                            [`${tr_no}-0${extension}`, tr_no],
+                            [filepath, tr_no],
                             function (error, results, fields) {
                                 if (error) {
                                     throw error;
@@ -261,7 +269,7 @@ router.post('/upload_Timg', upload.single('img'), (req, res) => {
                             });
                     } else {
                         db.query(`update img set img_path = ? where img_tr_no = ? and img_type = 0;`,
-                            [`${tr_no}-0${extension}`, tr_no],
+                            [filepath, tr_no],
                             function (error, results, fields) {
                                 if (error) {
                                     throw error;

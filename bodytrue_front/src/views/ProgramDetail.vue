@@ -49,10 +49,10 @@
       </div>
       <div class="price-info" id="review1">
         <h2>리뷰</h2>
-        <div v-for="reviewItem in review" :key="reviewItem.re_no">
+        <div class="review-info" v-for="reviewItem in review" :key="reviewItem.re_no">
           <p v-if="reviewItem.img_path"><img style="width:200px" :src="require(`../../../bodytrue_back/uploads/review/${reviewItem.img_path}`)"></p>
           <p v-else><img src="../../public/nullimg.png"></p>
-          <p>{{ naming(reviewItem.user_name) }} 님 : {{ reviewItem.re_comment }} <img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ reviewItem.re_rate }} | 작성 날짜: {{ reviewItem.re_date }}</p>
+          <p class="review-info-detail">{{ naming(reviewItem.user_name) }} 님 : {{ reviewItem.re_comment }} <img style="width:20px; padding-bottom:7px;" src="..\image\star.png" id="star">{{ reviewItem.re_rate }} | 작성 날짜: {{ reviewItem.re_date }}</p>
         </div>
       </div>     
     </div>
@@ -666,6 +666,14 @@
   }
   
   /*review*/
+  .review-info{
+    padding: 0 auto;
+    padding-top: 10px;
+  }
+  .review-info-detail{
+    margin-top:20px;
+    margin-bottom: 5px;
+  }
   .review-main {
       width: 60%;
       margin: 0 auto;

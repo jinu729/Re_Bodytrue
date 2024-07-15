@@ -167,11 +167,12 @@ export default {
     color: #000;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
+    margin-top:20px;
 }
 .admin_page a.active {
     background-color: #00bfa5;
     color: white;
-    margin: 30px;
+    /* margin: 30px; */
 }
 .admin_page a:hover {
     background-color: #ddd;
