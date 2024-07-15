@@ -110,7 +110,7 @@
             <div class="join_btn">
 
               <button type="submit" @click="updateuser(user.user_no)" id="clear">수정완료</button>
-              <button type="button" @click="exit" id="exit">수정취소</button>
+              <router-link type="button" id="exit" :to="`/mypage/${user.user_no}`">수정취소</router-link>
                 <button  type="button" @click="deleteuser(user.user_no)" id="del">회원탈퇴</button>
             </div>
           </div>
@@ -326,9 +326,6 @@ export default {
         console.error("회원 정보 수정 도중 에러 발생",error);
         alert('회원 정보 수정 중 오류가 발생했습니다.');
       }
-    },
-    exit(){
-            this.$router.push({path: "/"})
     }
 
     }
