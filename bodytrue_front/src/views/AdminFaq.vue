@@ -136,20 +136,24 @@ export default {
 
 <style scoped>
 .admin_faq_main {
-    width: 100%;
+    width: 80%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
+    margin: 0 auto;
+    padding: 2px; /* 내부 패딩을 10px로 설정 */
+    margin-top: 20px;
 }
 
+
 .admin_faq {
-    text-align: left;
-    font-size: 35px;
-    border: 1px;
-    background-color: #00C7AE ;
-    color: white;
-    padding-left: 3%;
-    height: 60px;
+    background-color: #00C7AE; /* 배경색을 청록색으로 설정 */
+    color: #fff; /* 텍스트 색상을 흰색으로 설정 */
+    padding: 10px 10px; /* 상하 패딩 10px, 좌우 패딩 20px 설정 */
+    font-weight: bold; /* 폰트를 굵게 설정 */
+    font-size: 26px; /* 폰트 크기를 24px로 설정 */
+    border-radius: 10px 10px 10px 10px; /* 상단 좌우 모서리를 둥글게 설정 */
+    padding-left:20px;
 }
 .admin_container {
-    width: 50%;
+    width: 80%;
     padding-top: 30px;
     margin: 0 auto;
 }

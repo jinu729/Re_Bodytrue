@@ -2,7 +2,7 @@
   <div class="adminuser">
     <main class="admin_userlist-main">
       <div class="admin_userlist-bodyheader">
-        &nbsp;&nbsp;트레이너 관리
+        트레이너 관리
       </div>
       <div class="admin_userlist-bodysearch">
         <input 
@@ -39,21 +39,27 @@
               <td>{{ trainer.tr_add1 }}</td>
               <td>{{ trainer.tr_add2 }}</td>
               <td>
-                <button @click="updateAdmit(trainer, true)" :disabled="trainer.tr_admit === 1">✔</button>
-                <button @click="updateAdmit(trainer, false)" :disabled="trainer.tr_admit === 0">❌</button>
+                <div class="qwe">
+                  <button class="button2" @click="updateAdmit(trainer, true)" :disabled="trainer.tr_admit === 1">✔</button>
+                  <button class="button2" @click="updateAdmit(trainer, false)" :disabled="trainer.tr_admit === 0">❌</button>
+                </div>
               </td>
               <td>
-                <button @click="Trban(trainer, true)" :disabled="trainer.tr_ban === 1">✔</button>
-                <button @click="Trban(trainer, false)" :disabled="trainer.tr_ban === 0">❌</button>
+                <div class="qwe">
+                  <button class="button2" @click="Trban(trainer, true)" :disabled="trainer.tr_ban === 1">✔</button>
+                  <button class="button2" @click="Trban(trainer, false)" :disabled="trainer.tr_ban === 0">❌</button>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
-        <div class="admin_userlist-bodypaging">
-          <button v-for="page in totalPages" :key="page" @click="gotoPage(page)">
-            {{ page }}
-          </button>
-        </div>
+        <ul class="admin_page">
+                <li v-for="page in totalPages" :key="page">
+                    <a href="#" @click.prevent="gotoPage(page)" :class="{ active: page === currentPage }">
+                        {{ page }}
+                    </a>
+                </li>
+            </ul>
       </div>
     </main>
   </div>
@@ -172,9 +178,10 @@ export default {
 <style scoped>
 /* admin_userlist main 스타일 시작 */
 .admin_userlist-main {
-    width: 100%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
-    margin: 2px 0; /* 위아래 여백을 10px로 설정 */
+    width: 80%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
+    margin: 0 auto;
     padding: 2px; /* 내부 패딩을 10px로 설정 */
+    margin-top: 20px;
 }
 /*헤더부분(=회원목록)*/
 .admin_userlist-bodyheader {
@@ -184,6 +191,7 @@ export default {
     font-weight: bold; /* 폰트를 굵게 설정 */
     font-size: 26px; /* 폰트 크기를 24px로 설정 */
     border-radius: 10px 10px 10px 10px; /* 상단 좌우 모서리를 둥글게 설정 */
+    padding-left:20px;
 }
 
 /*검색어 입력*/
@@ -196,16 +204,16 @@ export default {
 }
 .search-input {
     width: 200px; /* 입력 필드의 너비를 200px로 설정 */
-    padding: 10px; /* 내부 패딩을 10px로 설정 */
+    padding: 9px; /* 내부 패딩을 10px로 설정 */
     border: 2px solid #00C7AE; /* 테두리를 청록색으로 설정하고 두께를 2px로 설정 */
-    border: 20px 0 0 20px; /* 왼쪽 모서리를 둥글게 설정 */
+    border-radius: 10px 0 0 10px; /* 왼쪽 모서리를 둥글게 설정 */
     outline: none; /* 포커스 시 나타나는 기본 외곽선을 제거 */
 }
 .search-button {
     padding: 10px; /* 내부 패딩을 10px로 설정 */
     border: 1px solid #00C7AE; /* 테두리를 청록색으로 설정하고 두께를 1px로 설정 */
     border-left: none; /* 왼쪽 테두리를 제거 */
-    border: 0 20px 20px 0; /* 오른쪽 모서리를 둥글게 설정 */
+    border-radius: 0 10px 10px 0; /* 오른쪽 모서리를 둥글게 설정 */
     background-color: #00C7AE; /* 배경색을 청록색으로 설정 */
     color: #fff; /* 텍스트 색상을 흰색으로 설정 */
     cursor: pointer; /* 마우스 커서를 포인터로 변경 */
@@ -232,7 +240,9 @@ export default {
 }
 
 .admin_userlist-bodycontent tr{
-    border: 1px solid #3b4746;
+    /* border: 1px solid #3b4746; */
+    border: 1px solid rgba(59, 71, 70, 0.5);
+    border-radius: 5px;
 }
 
 .admin_userlist-bodycontent th:nth-child(8), th:nth-child(9){
@@ -243,10 +253,46 @@ export default {
     border: 1px solid #3b4746;
 }
 
+.admin_userlist-bodycontent th{
+  background-color: rgba(218, 218, 218, 0.5);
+}
+
 .admin_userlist-bodypaging{
     padding-top: 15px;
 }
-
+.admin_page {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 30px;
+    justify-content: center;
+}
+.admin_page li {
+    display: inline;
+}
+.admin_page a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #000;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.admin_page a.active {
+    background-color: #00bfa5;
+    color: white;
+}
+.admin_page a:hover {
+    background-color: #ddd;
+}
+.button2 {
+  background-color: white;
+  border: none;
+}
+.qwe {
+  display: flex;
+  justify-content: space-around;
+}
 
 /* admin_userlist main 스타일 끝 */
 

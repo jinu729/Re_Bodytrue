@@ -8,7 +8,7 @@
                     </div>
                 </form>
             <h2>비밀번호 찾기</h2>
-            <form action="">
+            <form @submit.prevent="checkPassword">
                 <div class="form_right">
                     <label for="user">
                         <input type="radio" id="user" name="auth" v-model="user_auth" value="1"> 회원 &nbsp;&nbsp;
@@ -129,6 +129,7 @@ export default {
             this.number2 = '';
             this.number3 = '';
             this.user_email = '';
+            this.tmp_pwd = ''; // 추가된 초기화
             this.error = '';
             this.tr_email = '';
         }

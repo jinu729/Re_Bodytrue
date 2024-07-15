@@ -6,7 +6,7 @@
                     <div class="upload_img">
                         <div class="file-input">
                             <img :src="imgData.img_path ? require(`../../../bodytrue_back/uploads/user/${imgData.img_path}`) : '/goodsempty2.jpg'" alt="Profile Picture">
-                            <input type="file" id="image-upload" accept="image/*" @change="uploadFile($event.target.files, 0)">
+                            <input type="file" id="image-upload" accept="image/*" @change="uploadFile($event.target.files, 0)" style="margin-top: 20px">
                             <label for="image-upload" class="file-upload-label" style="font-size: 16px;"></label>   
                                 <span style="font-size: 13px;">사이즈(256 * 256)이내</span>
                         </div>
@@ -55,10 +55,10 @@
                         <tr v-for="cal in pagingData" :key="cal.cal_startdate">
                             <!--이름 누를때마다 해당 프로그램으로 이동-->
                             <td @click="goToProdetail(cal.pro_no)">{{ cal.pro_name }}</td>
-                            <td>{{ cal.tr_name }}</td>
+                            <td @click="goToProdetail(cal.pro_no)">{{ cal.tr_name }}</td>
                             <td>{{ cal.cal_startdate }}</td>
                             <td><button @click="deletecal(cal.pro_no, cal.cal_startdate)" class="cal_btn">예약 취소하기</button></td>
-                            <td><button @click="openReviewModal(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
+                            <td><button @click="checkedReview(cal)" class="re_btn" :disabled="!isReviewenabled(cal.cal_startdate)">리뷰작성하기</button></td>
                         </tr>
                     </tbody>
                 </table>
@@ -131,14 +131,14 @@
             <div class="plike_table">
     <!-- 찜내역 있을 경우 -->
     <div v-if="combinedData.length > 0">
-        <div class="section5_list" v-for="item in displayedData" :key="item.img_pro_no">
-            <div class="plike_left">
+        <div class="section5_list" v-for="item in displayedData" :key="item.img_pro_no"  @click="goToProdetail(item.pro_no)">
+            <div class="plike_left" >
                 <img :src="require(`../../../bodytrue_back/uploads/program/${item.img_path}`)">
             </div>
             <div class="plike_right">
                 <ul class="table_list">
                     <li>
-                        <div @click="goToProdetail(item.pro_no)" class="plike_proname">{{ item.pro_name }} 
+                        <div class="plike_proname">{{ item.pro_name }} 
                             <img src="../image/free-icon-star-8539511.png" alt="">&nbsp;<span style="font-size:22px;">{{ item.rate_avg || 0}}</span>
                         </div>
                         <div class="plike_trainer">{{ item.tr_name }}</div>
@@ -209,6 +209,9 @@ export default {
             plikeimg:[],
             combinedData: [], // 결합된 데이터
             displayedData: [], // 표시할 데이터
+
+            //리뷰 유효성 검사용
+            checkreview:false,
             
         };
     },
@@ -246,7 +249,9 @@ export default {
         // imgsrc(){
         //     return this.imgData.length > 0 ? `http://localhost:3000/uploads/user/${this.imgData.img_path}` : '/goodsempty2.jpg';
         // },
-
+        disablereview(){
+            return this.checkreview;
+        },
         // //예약 현재 페이지 계산
         pagingData(){
             const start = (this.currentPage - 1 )* this.itemsPerPage;
@@ -562,6 +567,37 @@ export default {
         gotoupdate(user_no){
             this.$router.push(`/userupdate/${user_no}`);
         },
+
+        //리뷰 작성 전에 유효성 검사먼저하깅
+        async checkedReview(cal){
+            if(this.user.user_no) {
+                console.log("==========user_no",this.user.user_no);
+                const cal_user_no = this.$route.params.user_no;
+                // const re_user_no = this.$route.params.user_no;
+                const cal_pro_no = cal.pro_no;
+
+                try{
+                   const response = await axios.post('http://localhost:3000/user/checkreview',{
+                    cal_user_no : cal_user_no,
+                    // re_user_no : re_user_no,
+                    cal_pro_no : cal_pro_no
+
+                   });
+                   this.checkreview = response.data.checkreviews;
+                   console.log("=========checkreview",this.checkreview);
+                   if(!this.checkreview){ //false여야지 리뷰작성할수있음
+                    this.openReviewModal(cal);
+                   } else{
+                    alert('이미 작성한 리뷰입니다.')
+                    this.isReviewenabled(cal.cal_startdate);
+                   }
+
+                } catch(error){
+                    console.error('리뷰 유효성 검사도중 에러 발생', error);
+                }
+            }
+        },
+
         //리뷰작성하기 위해 모달창 오픈 
         openReviewModal(calOrre){
             console.log("calOrre.tr_no",calOrre.tr_no);
@@ -603,12 +639,14 @@ export default {
 
             const startdate = new Date(year, month, day, hour);
             
-            console.log('오늘 날짜:', currentDate);
-            console.log('예약 날짜:', startdate);
+            // console.log('오늘 날짜:', currentDate);
+            // console.log('예약 날짜:', startdate);
             // console.log('비교:', currentDate > startdate);
             //오늘 날짜 > 예약날짜 일 경우에만 리뷰버튼 오픈
             return currentDate > startdate;
         },
+        //checkreview값 true면 그냥 버튼창 닫깅
+        
 
         //예약 삭제하기
         async deletecal(cal_pro_no, cal_startdate){
@@ -660,6 +698,7 @@ export default {
                 const response = await axios.post(`http://localhost:3000/user/deletere`, {re_no: re_no});
                 console.log("리뷰 삭제 성공", response.data);
                 alert('리뷰 목록에서 삭제 되었습니다.');
+                window.location.reload();
             } catch(error){
                 console.error("리뷰 삭제 도중 에러 발생",error);
             }
@@ -668,7 +707,9 @@ export default {
         //리뷰 수정하기
         async updatere(re_no){
             const review = this.reData.find(r => r.re_no === re_no);
+            console.log("수정데이터리뷰넘버",review);
             this.openReviewModal(review);
+            
         },
 
     }
@@ -710,6 +751,8 @@ export default {
     .section1 .pro_left img{
         width: 200px;
         height: 200px;
+        object-fit: cover;
+        border-radius: 10px;
     }
     .section1 .pro_left .upload_img{
         width: 70%;
@@ -749,7 +792,8 @@ export default {
         border-radius: 5px;
         cursor: pointer;
         border: 0;
-        background-color:#3fced3;
+        /* background-color:#3fced3; */
+        background-color: rgba(0, 200, 200, 0.5);
         color:white;
         border-radius: 5px;
         border: 1px solid;
@@ -830,16 +874,25 @@ export default {
         color:rgb(255, 255, 255);
         border:solid 1px;
         border-radius: 5px;
-        background: #ff751f;
+        background: #7ED2FF;
     }
     .table_list .re_btn:hover{
         font-size: 16px;
         width: 120px;
         height: 25px;
-        color: #ff751f;
+        color: #7ED2FF;
         border:solid 1px;
         border-radius: 5px;
         background: rgb(255, 255, 255);
+    }
+    .table_list .re_btn:disabled{
+        font-size: 16px;
+        width: 120px;
+        height: 25px;
+        color: #ffffff;
+        border:solid 1px;
+        border-radius: 5px;
+        background: #777777;
     }
     .table_list .cal_btn{
         font-size: 16px;
@@ -848,13 +901,14 @@ export default {
         color:rgb(255, 255, 255);
         border:solid 1px;
         border-radius: 5px;
-        background:  #ff2b2b;
+        background:  #FF6C6C;
+        /* background:  #7ED2FF; */
     }
     .table_list .cal_btn:hover{
         font-size: 16px;
         width: 120px;
         height: 25px;
-        color:#ff2b2b;
+        color:#FF6C6C;
         border:solid 1px;
         border-radius: 5px;
         background:  rgb(255, 255, 255);
@@ -879,8 +933,10 @@ export default {
     cursor: pointer;
     }
     .number_box li.active{
-    background-color: #00c8c8;
+    /* background-color: #00c8c8; */
+    background-color: rgba(0, 200, 200, 0.5);
     border-radius: 5px;
+    color: white;
     cursor: pointer;
     /* color: white; */
     }
@@ -927,21 +983,21 @@ export default {
     .table_list .reupdate_btn{
         font-size: 16px;
         width: 60px;
-        margin: 10px auto;
+        /* margin: 10px auto; */
         border:none;
         color: white;
         background-color: #777777;
-        border-radius: 20px;
+        border-radius: 5px;
         cursor: pointer;
     }
     .table_list .reupdate_btn:hover{
         font-size: 16px;
         width: 60px;
-        margin: 10px auto;
+        /* margin: 10px auto; */
         border:none;
         color: #777777;
         background-color: rgb(193, 192, 192);
-        border-radius: 20px;
+        border-radius: 5px;
         cursor: pointer;
     }
     .table_list .redelete_btn{
@@ -950,16 +1006,17 @@ export default {
         height: 25px;
         color:rgb(255, 255, 255);
         border:solid 1px;
-        border-radius: 20px;
-        background:  #ff2b2b;
+        border-radius: 5px;
+        background:  #FF6C6C;
+        margin-left: 10px;
     }
     .table_list .redelete_btn:hover{
         font-size: 16px;
         width: 60px;
         height: 25px;
-        color:#ff2b2b;
+        color:#FF6C6C;
         border:solid 1px;
-        border-radius: 20px;
+        border-radius: 5px;
         background:  rgb(255, 255, 255);
     }
     /* section5 = plike */
@@ -988,6 +1045,16 @@ export default {
         flex-wrap: wrap;
         margin-top: 20px;
         margin-bottom: 20px;
+        cursor: pointer;
+    }
+    .plike_table .section5_list:nth-child(1){
+        width: 100%;
+        height: 220px;
+        display: flex;
+        flex-wrap: wrap;
+        margin-top: 0px;
+        margin-bottom: 20px;
+        cursor: pointer;
     }
     .section5_list .plike_left{
         width: 220px;
@@ -995,6 +1062,7 @@ export default {
     .section5_list .plike_left img{
         width: 220px;
         height: 220px;
+        border-radius: 10px;
         object-fit: cover;
     }
     .section5_list .plike_right{
@@ -1060,13 +1128,15 @@ export default {
         margin: 20px auto;
         padding: 10px 20px;
         font-size: 18px;
-        background-color: #00c8c8;
+        /* background-color: #00c8c8; */
+        background-color: rgba(0, 200, 200, 0.5);
         color: white;
         border: none;
         border-radius: 5px;
         cursor: pointer;
     }
     .showmore_btn:hover{
-        background-color: #009e9e;
+        /* background-color: #009e9e; */
+        background-color: rgba(0, 200, 200, 0.5);
     }
     </style>

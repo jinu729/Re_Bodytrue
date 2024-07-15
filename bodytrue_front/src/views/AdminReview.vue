@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="admin_userlist-main"></div>
+        <div class="admin_userlist-main">
         <div class="admin_userlist-bodyheader">
-            &nbsp;&nbsp;리뷰 관리
+            리뷰 관리
         </div>
 
         <div class="admin_userlist-bodycontent">
@@ -32,6 +32,7 @@
                 </li>
             </ul>
         </div>
+    </div>
     </div>
 </template>
 
@@ -64,6 +65,7 @@ export default {
                 console.log('Response:', response.data);
                 if (Array.isArray(response.data)) {
                     this.reviewList = response.data;
+                    console.log("this.reviewL",this.reviewList);
                 } else {
                     console.error('Expected an array but got:', response.data);
                 }
@@ -76,8 +78,16 @@ export default {
             this.currentPage = page;
         },
         reviewdetail(re_no) {
-            this.$router.push(`/reviewdetail/${re_no}`);
-        },
+            const review = this.reviewList.find(item => item.re_no === re_no);
+            
+            if (review && review.img_path) {
+                console.log("Review image path:", review.img_path);
+                // 이미지 경로가 있는 경우에만 리뷰 디테일 페이지로 이동합니다.
+                this.$router.push(`/reviewdetail/${re_no}`);    
+                } else {
+                    this.$router.push(`/reviewdetail2/${re_no}`); 
+                }
+        }
     },
     mounted() {
         console.log('Component mounted.');
@@ -88,9 +98,10 @@ export default {
 
 <style scoped>
 .admin_userlist-main {
-    width: 100%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
-    margin: 2px 0; /* 위아래 여백을 10px로 설정 */
+    width: 80%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
+    margin: 0 auto;
     padding: 2px; /* 내부 패딩을 10px로 설정 */
+    margin-top: 20px;
 }
 /*헤더부분(=회원목록)*/
 .admin_userlist-bodyheader {
@@ -100,6 +111,7 @@ export default {
     font-weight: bold; /* 폰트를 굵게 설정 */
     font-size: 26px; /* 폰트 크기를 24px로 설정 */
     border-radius: 10px 10px 10px 10px; /* 상단 좌우 모서리를 둥글게 설정 */
+    padding-left:20px;
 }
 
 /*회원목록테이블*/
@@ -131,6 +143,10 @@ export default {
     background-color: #aaaaaad2;
 }
 
+.admin_userlist-bodycontent th{
+  background-color: rgba(218, 218, 218, 0.5);
+}
+
 .admin_userlist-bodypaging{
     padding-top: 15px;
 }
@@ -151,11 +167,12 @@ export default {
     color: #000;
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
+    margin-top:20px;
 }
 .admin_page a.active {
     background-color: #00bfa5;
     color: white;
-    margin: 30px;
+    /* margin: 30px; */
 }
 .admin_page a:hover {
     background-color: #ddd;

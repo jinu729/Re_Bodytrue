@@ -11,7 +11,7 @@ const path = require("path");
 const upload = multer({
     storage: multer.diskStorage({
         destination(req, file, cb) {
-            cb(null, 'uploads/');
+            cb(null,  path.join(__dirname, '..', 'uploads'));
         },
         filename(req, file, cb) {
             cb(null, file.originalname);
@@ -20,7 +20,30 @@ const upload = multer({
     }),
     limits: { fileSize: 5 * 1024 * 1024 },
   });
-  
+
+// const generateUniqueIdentifier = () => {
+//     return `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
+// };
+
+
+//   const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, path.resolve(__dirname, '../uploads/'));
+//     },
+//     filename: (req, file, cb) => {
+//         const uniqueSuffix = generateUniqueIdentifier();
+//         cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
+//     }
+// });
+
+// const upload = multer({ storage });
+// router.post('/upload_img', upload.single('img'), (request, response) => {
+//     setTimeout(() => {
+//         return response.status(200).json({
+//             message: 'success'
+//         });
+//     }, 0);
+// });
 
 router.post('/upload_Uimg', upload.single('img'), (req, res) => {
     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
@@ -31,20 +54,20 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
     console.log("img : ",img);
 
     try {
-        const pastDir = `${__dirname}` + `../../uploads/` + img
+        const pastDir =  path.resolve(__dirname, '../uploads', img);
 
         console.log('pastDir-------------------');
         console.log(pastDir);
         console.log('-------------------');
 
-        const newDir = `${__dirname}` + `../../uploads/user/`;
+        const newDir = path.resolve(__dirname, '../uploads/user');
         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
 
-        const extension =img.substring(img.lastIndexOf('.'))
+        // const extension = path.extname(img);
 
-        console.log('Extenstion-------------------');
-        console.log(extension);
-        console.log('-------------------');
+        // console.log('Extenstion-------------------');
+        // console.log(extension);
+        // console.log('-------------------');
 
 
         console.log('newDir-------------------');
@@ -53,7 +76,18 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
 
         // 이미지 폴더 및 이름(상품번호-타입) 변경
         // 타입 0: 메인 이미지 1: 상세 이미지1 2: 상세 이미지2 3: 가격이미지
-        fs.rename(pastDir, newDir + user_no + '-0' + extension, (err) => {
+        const newFilePath = path.join(newDir, `${user_no}-0.jpg`);
+        console.log('newFilePath-------------------');
+        console.log(newFilePath);
+        console.log('-------------------');
+
+
+        const filepath = `${user_no}-0.jpg`;
+        console.log('filepath-------------------');
+        console.log(filepath);
+        console.log('-------------------');
+
+        fs.rename(pastDir, newFilePath, (err) => {
             if (err) {
                 throw err;
             }
@@ -68,7 +102,7 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
 
                 if(results[0].num === 0){
                         db.query(`insert into img (img_type,img_path,img_user_no) values(0,?,?);`,
-                        [user_no+'-0'+extension,user_no],
+                            [filepath, user_no],
                         function (error, results, fields){
                             if(error){
                                 throw error;
@@ -76,7 +110,7 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
                         })
                 }else{
                     db.query(`update img set img_path = ? where img_user_no = ? and img_type = 0;`,
-                        [user_no+'-0'+extension,user_no],
+                        [filepath, user_no],
                         function (error, results, fields){
                             if(error){
                                 throw error;
@@ -100,6 +134,67 @@ router.post('/upload_Uimg', upload.single('img'), (req, res) => {
         img // 업로드된 파일명 반환
     });
 });
+
+// router.post('/upload_Uimg', upload.single('img'), (req, res) => {
+//     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
+
+//     const user_no = req.body.user_no;
+//     const originalFilename = req.file.originalname;
+//     const uniqueFilename = req.file.filename;
+
+//     console.log("user_no:", user_no);
+//     console.log("originalFilename:", originalFilename);
+//     console.log("uniqueFilename:", uniqueFilename);
+
+//     try {
+//         const pastDir = path.resolve(__dirname, '../uploads', uniqueFilename);
+//         const newDir = path.resolve(__dirname, '../uploads/user');
+//         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
+
+//         const extension = path.extname(originalFilename);
+
+//         const newFilePath = path.join(newDir, `${user_no}-0${extension}`);
+
+//         fs.rename(pastDir, newFilePath, (err) => {
+//             if (err) {
+//                 throw err;
+//             }
+//         });
+
+//         try {
+//             db.query(`select count(*) as num from img where img_user_no = ? and img_type = 0;`,
+//                 [user_no],
+//                 function (error, results, fields) {
+//                     if (results[0].num === 0) {
+//                         db.query(`insert into img (img_type, img_path, img_user_no) values (0, ?, ?);`,
+//                             [`${user_no}-0${extension}`, user_no],
+//                             function (error, results, fields) {
+//                                 if (error) {
+//                                     throw error;
+//                                 }
+//                             });
+//                     } else {
+//                         db.query(`update img set img_path = ? where img_user_no = ? and img_type = 0;`,
+//                             [`${user_no}-0${extension}`, user_no],
+//                             function (error, results, fields) {
+//                                 if (error) {
+//                                     throw error;
+//                                 }
+//                             });
+//                     }
+//                 });
+//         } catch (err) {
+//             console.log(err);
+//         }
+//     } catch (err) {
+//         console.log(err);
+//     }
+
+//     return res.status(200).json({
+//         message: 'success',
+//         img: originalFilename // 업로드된 파일명 반환
+//     });
+// });
 
 router.get('/programlist1', (req, res) => {
     
@@ -150,10 +245,11 @@ router.get('/prodetail/:pro_no', function(request, response, next){
             }); 
             // 리뷰 정보 가져오기
             const reviews = await new Promise((resolve, reject) => {
-                db.query(`select user_name, pro_name, re_rate, re_comment, date_format(re_date,'%y-%m-%d') as re_date
+                db.query(`select user_name, pro_name, re_rate, re_comment, date_format(re_date,'%y-%m-%d') as re_date, i.img_path
                             from review r
                             join user u on r.re_user_no = u.user_no
                             join program p on r.re_pro_no = p.pro_no
+                            left join img i on r.re_no = i.IMG_RE_NO
                             where pro_no = ?`, [pro_no], (error, results) => {
                     if(error){
                         return reject(error);
@@ -167,7 +263,9 @@ router.get('/prodetail/:pro_no', function(request, response, next){
                 productDetails,
                 reviews
             });
-
+            console.log("========================================");
+            console.log("review",reviews);
+            console.log("========================================");
         } catch(error){
             console.error(error);
             response.status(500).json({ error: '서버에러'});
@@ -230,7 +328,7 @@ router.post('/proimg',function(request, response, next){
 router.post('/priceimg', function(request, response, next){
     const pro_no = request.body.pro_no;
 
-    db.query(`select img_path from img where img_pro_no = ? and img_type = 2`,[pro_no], function(error, result){
+    db.query(`select img_path from img where img_pro_no = ? and img_type = 3`,[pro_no], function(error, result){
         if(error){
             console.error(error);
             return response.status(500).json({ error: '가격 이미지 에러'});
@@ -239,6 +337,11 @@ router.post('/priceimg', function(request, response, next){
         console.log("priceimg : ",result);
     })
 })
+
+//프로그램 리뷰 이미지 불러오기
+// router.post('/proreimg', function(request, response, next){
+//     const 
+// })
 
 //예약하기
 router.post('/calendarin', function(request, response, next) {
@@ -249,23 +352,59 @@ router.post('/calendarin', function(request, response, next) {
     const cal_startdate = request.body.startdate;
     const cal_enddate = request.body.enddate;
 
-        // 데이터 수신 로그 추가
-        console.log("수신된 예약 데이터:", {
-            pro_no: cal_pro_no,
-            user_no: cal_user_no,
-            tr_no: cal_tr_no,
-            startdate: cal_startdate,
-            enddate: cal_enddate,
-          });
+    // 데이터 수신 로그 추가
+    console.log("수신된 예약 데이터:", {
+        pro_no: cal_pro_no,
+        user_no: cal_user_no,
+        tr_no: cal_tr_no,
+        startdate: cal_startdate,
+        enddate: cal_enddate,
+    });
 
-    db.query(`insert into calendar (cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate) values (?, ?, ?, ?, ?)`, 
-        [cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate], function(error, result, field){
-
-            if(error){
-                console.error(error);
-                return response.status(500).json({ error : '예약에러' });
+    // 예약 하기 전 체크
+        db.query(`SELECT * FROM calendar WHERE cal_pro_no = ? AND cal_startdate = ? AND cal_enddate = ?`, [cal_pro_no, cal_startdate, cal_enddate], (error, existcal) => {
+            if (error) {
+                console.error('예약 도중 에러 발생:', error);
+                return response.status(500).json({ error: '예약 도중 에러 발생' });
             }
-            response.json(result);
+            
+            if (existcal.length > 0) {
+                return response.status(400).json({ error: '해당 시간에 이미 예약이 존재합니다' });
+            }
+
+        // 예약 추가
+        db.query(`INSERT INTO calendar (cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate) VALUES (?, ?, ?, ?, ?)`, [cal_user_no, cal_pro_no, cal_tr_no, cal_startdate, cal_enddate], (error, result) => {
+            if (error) {
+                console.error('예약 도중 에러 발생:', error);
+                return response.status(500).json({ error: '예약 도중 에러 발생' });
+            }
+            response.json({ success: true, message: '예약이 성공적으로 완료되었습니다.' });
+        });
+    });
+});
+
+
+//찜하기 전 유효성 검사
+router.post('/checkplike', function(request, response, next){
+    const plike_user_no = request.body.plike_user_no;
+    const plike_pro_no = request.body.plike_pro_no;
+    
+    db.query(`SELECT p.pro_no FROM program p WHERE p.pro_no 
+IN (SELECT plike_pro_no FROM plike WHERE plike_user_no = ? and plike_pro_no = ?)`, [plike_user_no,plike_pro_no], function(error, result, field){
+    // console.log("===========찜=================",result.length);
+    // console.log(`SELECT p.pro_no FROM program p WHERE p.pro_no IN (SELECT plike_pro_no FROM plike WHERE plike_user_no = ${plike_user_no} and plike_pro_no = ${plike_pro_no})`);
+    
+    if(error){
+        console.error(error);
+            return response.status(500).json({ error : '찜 유효성 에러'});
+        }
+        else {
+            if(result.length>0){
+                return response.json({ checkpliked: true});
+            } else{
+                return response.json({ checkpliked: false});
+            }
+        }
     });
 });
 
@@ -283,6 +422,21 @@ router.post('/makeplike', function(request, response, next) {
         response.json(result);
         console.log(result);
     });
+});
+
+//찜 유효성 검사후 내역 삭제
+router.post('/delplike', function(request, response, next){
+    const plike_user_no = request.body.plike_user_no;
+    const plike_pro_no = request.body.plike_pro_no;
+
+    db.query(`delete from plike where plike_user_no = ? and plike_pro_no = ?`,[plike_user_no, plike_pro_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '찜삭제 오류' });
+        }
+        response.json(result);
+        console.log(result);
+    })
 });
 /* 상품 디테일 끝 */
 
@@ -303,7 +457,7 @@ router.post('/makeplike', function(request, response, next) {
 //             }
 //         )
 //     });
-
+//내 이미지 가져오기
 router.post('/getimg',function(request,response,next){
     const user_no = request.body.user_no;
 
@@ -375,6 +529,37 @@ router.post('/myrecheck', function(request, response, next){
         }
             response.json(result);
             console.log(result);
+        });
+});
+
+//리뷰 작성 유효성 검사
+router.post('/checkreview', function(request, response,next){
+    // const re_user_no = request.body.re_user_no;
+    const cal_user_no = request.body.cal_user_no;
+    const cal_pro_no = request.body.cal_pro_no;
+
+    db.query(`SELECT p.pro_no FROM calendar c
+            JOIN program p ON p.pro_no = c.cal_pro_no
+            LEFT JOIN review r ON r.re_pro_no = p.pro_no AND r.re_user_no = c.cal_user_no
+            WHERE c.cal_user_no = ? AND p.pro_no = ? AND r.re_rate IS NULL`, 
+            [cal_user_no,cal_pro_no], function (error, result){
+                console.log("===========리뷰유효성=================",result.length);
+                console.log(`SELECT p.pro_no FROM calendar c
+                            JOIN program p ON p.pro_no = c.cal_pro_no
+                            LEFT JOIN review r ON r.re_pro_no = p.pro_no AND r.re_user_no = c.cal_user_no
+                            WHERE c.cal_user_no = ${cal_user_no} AND p.pro_no = ${cal_pro_no} AND r.re_rate IS NULL`);
+
+            if(error){
+                console.error(error);
+                return response.status(500).json({ error: '리뷰 유효성 에러'});
+            } 
+            else{
+                if(result.length === 0){
+                    return response.json({ checkreviews: true});
+                } else{
+                    return response.json({ checkreviews: false});
+                }
+            }
         });
 });
 
@@ -513,7 +698,9 @@ router.post('/upload_img', upload2.single('img'), (req, res) => {
     });
 });
 
-router.post('/makereview', function(req, res) {
+//이미지 있는 리뷰 작성
+router.post('/makereview2', function(req, res) {
+    
     const { re_comment, re_user_no, re_pro_no, re_tr_no, re_rate, re_img } = req.body;
 
     db.query(`INSERT INTO review (re_comment, re_user_no, re_pro_no, re_tr_no, re_rate) VALUES (?, ?, ?, ?, ?)`,
@@ -531,8 +718,8 @@ router.post('/makereview', function(req, res) {
             const newDir = path.join(__dirname, '..', 'uploads', 'review');
             if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
 
-            const extension = path.extname(re_img);
-            const newFileName = `${re_no}-0${extension}`;
+            // const extension = path.extname(re_img);
+            const newFileName = `${re_no}-0.jpg`;
             const newFilePath = path.join(newDir, newFileName);
 
             console.log('newDir:', newDir);
@@ -563,6 +750,37 @@ router.post('/makereview', function(req, res) {
             });
         });
 });
+
+//이미지 없는 리뷰 작성
+router.post('/makereview', function(request, response, next){
+    const {re_comment, re_user_no, re_pro_no, re_tr_no, re_rate} = request.body;
+    db.query(`insert into review (re_comment, re_user_no, re_pro_no, re_tr_no, re_rate) values (?, ?, ?, ?, ?)`,
+        [re_comment, re_user_no, re_pro_no, re_tr_no, re_rate], function(error, result){
+            if(error){
+                console.error(error);
+                return response.status(500).json({ error: '리뷰 작성 오류' });
+            }
+            response.json(result);
+            console.log(result);
+        })
+});
+
+//리뷰 사진 미리보기용
+router.post('/getreimg', function(req,res,next){
+    const re_no = req.body.re_no;
+    console.log("=========================================");
+    console.log("re_no:",re_no);
+    console.log("=========================================");
+
+    db.query(`select img_path from img where img_re_no =? and img_type = 0`,[re_no],function(error,result){
+        if(error){
+            console.error(error);
+            res.status(500).json({ error: '리뷰이미지 불러오는 도중 오류'});
+        }
+        res.json(result);
+        console.log("getreimg:",result);
+    })
+})
   
 //예약 삭제하기
 router.post('/deletecal', function(request, response, next){
@@ -603,7 +821,7 @@ router.post('/deletere', function(request, response, next){
     })
 });
 
-//리뷰 수정하기
+//리뷰 수정하기 -이미지x
 router.post('/updatere', function(request, response, next){
     const re_no = request.body.re_no;
     const re_comment = request.body.re_comment;
@@ -619,6 +837,64 @@ router.post('/updatere', function(request, response, next){
     })
 });
 
+//리뷰 수정하기 -이미지o
+router.post('/updatere2', function(request, response, next){
+    const re_no = request.body.re_no;
+    // console.log("===========================================");
+    // console.log("업데이트리뷰정보:",re_no);
+    // console.log("===========================================");
+    const re_comment = request.body.re_comment;
+    const re_rate = request.body.re_rate;
+    const re_img = request.body.re_img;
+    
+    db.query(`update review set re_rate=?,re_comment = ? where re_no = ?`,[re_rate,re_comment, re_no], function(error, result){
+        if(error){
+            console.error(error);
+            return response.status(500).json({ error: '리뷰 수정 중 오류' });
+        }
+            // const re_no = result.affectedRows;
+            // console.log("===========================================");
+            // console.log("업데이트리뷰정보:",re_no);
+            // console.log("===========================================");
+            const pastDir0 = path.join(__dirname, '..','uploads', re_img);
+
+            console.log('pastDir:', pastDir0);
+
+            const newDir = path.join(__dirname, '..', 'uploads', 'review');
+            if (!fs.existsSync(newDir)) fs.mkdirSync(newDir, { recursive: true });
+
+            // const extension = path.extname(re_img);
+            const newFileName = `${re_no}-0.jpg`;
+            const newFilePath = path.join(newDir, newFileName);
+
+            console.log('newDir:', newDir);
+            console.log('newFilePath:', newFilePath);
+
+            fs.access(pastDir0, fs.constants.F_OK, (err) => {
+                if (err) {
+                    console.error('파일 존재하지 않음:', pastDir0);
+                    return response.status(500).json({ error: '파일 존재하지 않음' });
+                }
+
+                fs.rename(pastDir0, newFilePath, (err) => {
+                    if (err) {
+                        console.error('파일 이동 오류:', err);
+                        return response.status(500).json({ error: '파일 이동 오류' });
+                    }
+
+                    db.query(`update img set img_type=?, img_path=? where img_re_no=?`,
+                        [0, newFileName, re_no], function(error, result) {
+                            if (error) {
+                                console.error('이미지 저장 오류:', error);
+                                return response.status(500).json({ error: '이미지 저장 오류' });
+                            }
+
+                            response.json({ message: 'success' });
+                        });
+                });
+            });
+    })
+});
 // //리뷰 수정하기
 // router.post('/updatere',function(request, response, next){
 //     const re_no = request.body.re_no;

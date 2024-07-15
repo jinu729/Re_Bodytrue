@@ -3,47 +3,38 @@
         <div class="prc_title">
             <p>리뷰 관리</p>
         </div>
-        <div class="qwer">
-            <div class="prc_date">
-                <span>작성일:&nbsp;&nbsp;</span>
-                <p>{{ review.re_date }}</p>
-            </div>
-            <div class="prc_name">
-                <span class="prcn_title">프로그램명</span>
-                <div class="prcn_text">
-                    <p>{{ review.pro_name }}</p>
+            <div class="qwer">
+                <div class="prc_date">
+                    <span>작성일:&nbsp;</span>
+                    <p>{{ review.re_date }}</p>
                 </div>
-            </div>
-            <div class="prc_name">
-                <span class="prcn_title">트레이너명</span>
-                <div class="prcn_text">
-                    <p>{{ review.tr_name }}</p>
+                <div class="prc_name">
+                    <span class="prcn_title">프로그램명</span>
+                    <div class="prcn_text">
+                        <p>{{ review.pro_name }}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="prc_name">
-                <span class="prcn_title">작성자</span>
-                <div class="prcn_text">
-                    <p>{{ review.user_name }}</p>
+                <div class="prc_name">
+                    <span class="prcn_title">트레이너명</span>
+                    <div class="prcn_text">
+                        <p>{{ review.tr_name }}</p>
+                    </div>
                 </div>
-            </div>
+                <div class="prc_name">
+                    <span class="prcn_title">작성자</span>
+                    <div class="prcn_text">
+                        <p>{{ review.user_name }}</p>
+                    </div>
+                </div>
 
-            <div class="font_title">
-                <span>내 용</span>
+                <div class="font_title">
+                    <span>내 용</span>
+                </div>
+                    <textarea class="naeyong" v-model="review.re_comment" readonly></textarea>
+            <div class="button_container">
+                <button class="re_back" @click="goBack">뒤로가기</button>
+                <button class="re_delete" @click="deletereview(review.re_no)">삭제</button>
             </div>
-                <textarea class="naeyong" v-model="review.re_comment" readonly></textarea>
-            <div v-if="review" class="prc_images">
-                <div class="font_title1">리 뷰 사 진</div></div>
-                    <!-- <div class="prci_image" v-for="(image, i) in review.images" :key="i"> -->
-                        <img style="width: 900px; margin-top: 20px; border-radius: 10px; object-fit: cover;" :src="review.images ? require(`../../../bodytrue_back/uploads/review/${review.images}`) : '/goodsempty2.jpg'" alt="Profile Picture">
-            <!-- </div> -->
-        
-        <div v-if="error" class="error-message">
-            {{ error }}
-        </div>
-        <div class="button_container">
-            <button class="re_back" @click="goBack">뒤로가기</button>
-            <button class="re_delete" @click="deletereview(review.re_no)">삭제</button>
-        </div>
         </div>
     </div>
 </template>
@@ -63,10 +54,10 @@ export default {
         getReviewData() {
             const re_no = this.$route.params.re_no;
 
-            axios.get(`http://localhost:3000/admin/review/${re_no}`)
+            axios.get(`http://localhost:3000/admin/review2/${re_no}`)
             .then(response => {
                 if (response.data) {
-                    this.review = response.data;
+                    this.review = response.data[0];
                     console.log("review :", this.review);
 
                     console.log("reviewimg :",this.review.images);
@@ -82,7 +73,8 @@ export default {
             console.log('re_no', re_no);
             axios.post('http://localhost:3000/admin/deletereview', { re_no: re_no })
             .then(response => {
-                if (response.data.success) {
+                if (response.status == 200) {
+                    confirm("삭제하시겠습니까?")
                     // 이전 페이지로 이동
                     this.$router.go(-1);
                 } else {
@@ -153,6 +145,9 @@ export default {
     margin: 5px;
     margin-left: 10px;
 }
+.prcn_title p {
+    text-align: center;
+}
 
 .prc_content {
     margin-top: 50px;
@@ -184,7 +179,7 @@ export default {
 
 .button_container {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 20px;
 }
 
@@ -193,9 +188,8 @@ export default {
     width: 100px;
     height: 40px;
     margin: 0 10px;
-    
     color: white;
-    border: 1px solid;
+    border: none;
     border-radius: 5px;
     font-size: 16px;
     cursor: pointer;
@@ -236,7 +230,6 @@ export default {
     /* border: 1px solid #ccc;     */
     box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5);
     display: flex;
-    flex-wrap: wrap;
     margin: auto;
     margin-top: 15px;
     border-radius: 5px;
@@ -247,6 +240,7 @@ export default {
     margin-bottom: 50px;
     border-radius: 10px;
     box-shadow: 2px 2px 5px #00C7AE;
+
 }
 .prcn_text {
     width: 750px;
@@ -265,18 +259,14 @@ export default {
     width: 8%;
     /* border: 1px solid #ccc;     */
     /* box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5); */
-    /* display: flex;
-    flex-wrap: wrap; */
+    /* display: flex; */
+    /* flex-wrap: wrap; */
     margin-top: 30px;
     margin-left: 45px;
     border-radius: 5px;
 }
-.font_title span{
-    text-align: center;
-}
 .naeyong {
-    border: 1px solid rgba(194, 192, 192, 0.5);
-    display: flex;
+    border: 1px solid rgb(194, 192, 192);
     margin: auto;
     margin-top: 20px;
     /* box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5); */
@@ -286,16 +276,7 @@ export default {
     border-radius: 10px;
     padding: 10px;
 }
-.font_title1 {
-    font-size: 26px;
-    /* float: left; */
-    /* width: 8%; */
-    /* border: 1px solid #ccc;     */
-    /* box-shadow: 2px 2px 5px rgba(0, 199, 174, 0.5); */
-    margin-top: 20px;
-    margin-left: 45px;
-    border-radius: 5px;
-}
+
 .prc_date {
     float: right;
     font-size: 20px;
@@ -305,4 +286,11 @@ export default {
     border-left: 0px;
     margin-right: 40px;
 }
+/* .as {
+    width: 80%;
+    margin: auto;
+    box-shadow: 2px 2px 5px #00C7AE;
+    border-radius: 20px;
+    height: 100%; */
+/* } */
 </style>

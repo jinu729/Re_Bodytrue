@@ -2,7 +2,7 @@
   <div class="adminuser">
     <main class="admin_userlist-main">
       <div class="admin_userlist-bodyheader">
-        &nbsp;&nbsp;회원 목록
+        회원 목록
       </div>
       <div class="admin_userlist-bodysearch">
         <input 
@@ -15,7 +15,7 @@
         <button class="search-button" @click="searchUsers">🔍</button>
       </div>
       <div class="admin_userlist-bodycontent">
-        <table>
+        <table class="bingbing">
           <thead>
             <tr>
               <th>이메일</th>
@@ -25,11 +25,11 @@
               <th>성별</th>
               <th>주소1</th>
               <th>주소2</th>
-              <th>정지</th>
+              <th>정지/해제</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(user, i) in userList" :key="i">
+            <tr v-for="(user, i) in paginatedUsers" :key="i">
               <td>{{ user.user_email }}</td>
               <td>{{ user.user_pwd }}</td>
               <td>{{ user.user_name }}</td>
@@ -37,15 +37,21 @@
               <td>{{ user.user_sex }}</td>
               <td>{{ user.user_add1 }}</td>
               <td>{{ user.user_add2 }}</td>
-              <td><button @click="deleteuser(user.user_no)">❌</button></td>
+              <td>
+                <button class="buttons" @click="  console.log(user.user_ban), toggleUserBan(user.user_no, user.user_ban);">
+                  {{ user.user_ban ? '✔️' : '❌' }}
+                </button>
+              </td>
             </tr>
           </tbody>
         </table>
-        <div class="admin_userlist-bodypaging">
-          <button v-for="page in totalPages" :key="page" @click="gotoPage(page)">
-            {{ page }}
-          </button>
-        </div>
+        <ul class="admin_page">
+                <li v-for="page in totalPages" :key="page">
+                    <a href="#" @click.prevent="gotoPage(page)" :class="{ active: page === currentPage }">
+                        {{ page }}
+                    </a>
+                </li>
+            </ul>
       </div>
     </main>
   </div>
@@ -60,18 +66,18 @@ export default {
       searchTerm: '',
       userList: [],
       currentPage: 1,
-      perPage: 10, //페이지 당 아이템 수
+      perPage: 10, // 페이지 당 아이템 수
     };
   },
   computed: {
-    //현재 페이지의 데이터 계산
+    // 현재 페이지의 데이터 계산
     paginatedUsers() {
       const start = (this.currentPage - 1) * this.perPage;
       const end = start + this.perPage;
       return this.userList.slice(start, end);
     },
     totalPages() {
-        return Math.ceil(this.userList.length / this.perPage);
+      return Math.ceil(this.userList.length / this.perPage);
     }
   },
   methods: {
@@ -79,6 +85,7 @@ export default {
       axios.get('http://localhost:3000/admin/userlist')
         .then(response => {
           this.userList = response.data;
+          console.log(this.userList);
         })
         .catch(error => {
           console.error('Error fetching user list:', error);
@@ -97,65 +104,48 @@ export default {
         console.error('Error searching users:', error);
       });
     },
-    deleteuser(user_no) {
-      console.log('user_no',user_no);
+    toggleUserBan(user_no, user_ban) {
+      console.log('user_no', user_no, 'current ban status:', user_ban);
       axios({
-        url: 'http://localhost:3000/admin/deleteuser',
+        url: 'http://localhost:3000/admin/toggleuserban',
         method: 'POST',
         data: {
-          user_no: user_no
+          user_no: user_no,
+          user_ban: user_ban
         }
       })
-      
-      .then(res => {
-        if (res.data.message === '회원 정지') {
+      .then(() => {
+        if (user_ban === 0) {
           alert('회원정지 되었습니다.');
-          this.getUserList(); //정지 후 목록 다시 불러오기
         } else {
-          console.warn('404:', res.data);
+          alert('회원정지가 해제되었습니다.');
         }
+        this.getUserList(); // 업데이트 후 목록 다시 불러오기
       })
       .catch(error => {
-        console.error('Error banning user:', error);
-        alert('Error banning user'); // 사용자에게 에러 피드백
-      }
-    )},
-      gotoPage(page) {
-        this.currentPage = page;
-      }
+        console.error('Error toggling user ban:', error);
+        alert('Error toggling user ban'); // 사용자에게 에러 피드백
+      });
     },
-    mounted() {
-      this.getUserList();
+    gotoPage(page) {
+      this.currentPage = page;
     }
+  },
+  mounted() {
+    this.getUserList();
+  }
 };
-
-//     banUser(userNo) {
-//       axios.post('http://localhost:3000/admin/userban', {
-//         user_no: userNo
-//       })
-//       .then(response => {
-//         console.log('User banned:', response.data);
-//         this.getUserList(); // 정지 후 목록 갱신
-//       })
-//       .catch(error => {
-//         console.error('Error banning user:', error);
-//       });
-//     },
-//     gotoPage(page) {
-//       this.currentPage = page;
-//     }
-//   },
-//   mounted() {
-//     this.getUserList();
-//   }
-// };
 </script>
+
+
+
 <style scoped>
 /* admin_userlist main 스타일 시작 */
 .admin_userlist-main {
-    width: 100%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
-    margin: 2px 0; /* 위아래 여백을 10px로 설정 */
+    width: 80%; /* 부모 요소가 이미 중앙 정렬되므로 100% 너비 사용 */
+    margin: 0 auto;
     padding: 2px; /* 내부 패딩을 10px로 설정 */
+    margin-top: 20px;
 }
 /*헤더부분(=회원목록)*/
 .admin_userlist-bodyheader {
@@ -165,6 +155,7 @@ export default {
     font-weight: bold; /* 폰트를 굵게 설정 */
     font-size: 26px; /* 폰트 크기를 24px로 설정 */
     border-radius: 10px 10px 10px 10px; /* 상단 좌우 모서리를 둥글게 설정 */
+    padding-left:20px;
 }
 
 /*검색어 입력*/
@@ -177,16 +168,16 @@ export default {
 }
 .search-input {
     width: 200px; /* 입력 필드의 너비를 200px로 설정 */
-    padding: 10px; /* 내부 패딩을 10px로 설정 */
+    padding: 9px; /* 내부 패딩을 10px로 설정 */
     border: 2px solid #00C7AE; /* 테두리를 청록색으로 설정하고 두께를 2px로 설정 */
-    border: 20px 0 0 20px; /* 왼쪽 모서리를 둥글게 설정 */
+    border-radius: 10px 0 0 10px; /* 왼쪽 모서리를 둥글게 설정 */
     outline: none; /* 포커스 시 나타나는 기본 외곽선을 제거 */
 }
 .search-button {
     padding: 10px; /* 내부 패딩을 10px로 설정 */
     border: 1px solid #00C7AE; /* 테두리를 청록색으로 설정하고 두께를 1px로 설정 */
     border-left: none; /* 왼쪽 테두리를 제거 */
-    border: 0 20px 20px 0; /* 오른쪽 모서리를 둥글게 설정 */
+    border-radius: 0 10px 10px 0; /* 오른쪽 모서리를 둥글게 설정 */
     background-color: #00C7AE; /* 배경색을 청록색으로 설정 */
     color: #fff; /* 텍스트 색상을 흰색으로 설정 */
     cursor: pointer; /* 마우스 커서를 포인터로 변경 */
@@ -205,9 +196,8 @@ export default {
     border-collapse: collapse;
     display: flex;
     flex-direction: column;
-
+    border-radius: 5px;
 }
-
 
 .admin_userlist-bodycontent table{
     border-collapse: collapse;
@@ -217,6 +207,14 @@ export default {
     border: 1px solid #3b4746;
 }
 
+/* .admin_userlist-bodycontent th:nth-child(7){
+  padding-right: 8px;
+}
+
+.admin_userlist-bodycontent td:nth-child(7){
+  padding-right: 8px;
+} */
+
 .admin_userlist-bodycontent th:nth-child(8){
     border: 1px solid #3b4746;
 }
@@ -224,10 +222,77 @@ export default {
 .admin_userlist-bodycontent td:nth-child(8){
     border: 1px solid #3b4746;
 }
-.admin_userlist-bodypaging{
-    padding-top: 15px;
+
+.admin_userlist-bodycontent th{
+  background-color: rgba(218, 218, 218, 0.5);
 }
 
+.admin_page {
+    display: flex;
+    gap: 10px;
+    list-style: none;
+    padding: 30px;
+    justify-content: center;
+}
+.admin_page li {
+    display: inline;
+}
+.admin_page a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #000;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+.admin_page a.active {
+    background-color: #00bfa5;
+    color: white;
+}
+.admin_page a:hover {
+    background-color: #ddd;
+}
+.buttons {
+  background-color: white;
+  border: none;
+}
+.page{
+  width: 20px;
+  background-color: #4fced2;
+  border: 1px solid #4fced2;
+  border-radius: 5px;
+}
+.page:hover{
+  width: 20px;
+  background-color:transparent;
+  border: 1px solid #4fced2;
+  border-radius: 5px;
+}
+.deleteuser{
+    width: 25px;
+    height: 30px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color: transparent;
+    color: white;
+}
+.deleteuser:hover{
+    width: 25px;
+    height: 30px;
+    font-size: 18px;
+    margin: 0 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 0;
+    background-color: #ffa4a4;
+    color: rgb(0, 0, 0);
+}
+.bingbing {
+  border-radius: 5px;
+}
 /* admin_userlist main 스타일 끝 */
 
 /* 반응형 웹을 위한 미디어 쿼리 시작 */

@@ -36,7 +36,7 @@
     data() {
       return {
         currentIndex: 0,
-        slideWidth: 800,
+        slideWidth: 1000,
         slideInterval: 5000,
         images: ['main1.jpg', 'main3.jpg', '메인5.jpg', '메인6.jpg' ,'메인7.jpg'], // 이미지 파일명 배열
       };
@@ -58,7 +58,7 @@
 <style scoped>
   /* 전체 캐러셀 컨테이너 스타일 */
   .carousel {
-    width: 800px; /* 캐러셀 전체 너비 */
+    width: 1000px; /* 캐러셀 전체 너비 */
     margin: auto; /* 가운데 정렬을 위한 마진 설정 */
     margin-top: 50px;
     overflow: hidden; /* 넘치는 부분 숨김 처리 */
@@ -68,20 +68,21 @@
   .slides {
     display: flex;
     transition: transform 0.5s ease-in-out;  /*슬라이드 전환 속도 */
-    width: 2400px; /* 슬라이드 전체 너비: 800px * 3 */
+    width: 3000px; /* 슬라이드 전체 너비: 800px * 3 */
   }
   
  /* 각 슬라이드 요소 스타일 */
 .slide {
-  min-width: 800px; /* 최소 너비 지정 */
+  min-width: 1000px; /* 최소 너비 지정 */
   box-sizing: border-box; /* 박스 크기 포함 */
   }
   
 /* 슬라이드 이미지 스타일 */
 .slide img {
-  width: 800px; /* 이미지 너비 고정 */
-  height: 400px; /* 이미지 높이 설정 */
+  width: 1000px; /* 이미지 너비 고정 */
+  height: 500px; /* 이미지 높이 설정 */
   object-fit: cover; /* 이미지 비율 유지 */
+  border-radius: 20px;
 }
   
   .prev, .next {

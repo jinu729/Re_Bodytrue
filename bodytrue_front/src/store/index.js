@@ -25,12 +25,18 @@ const store = createStore({
         },
         setUserEmail(state, email) {
             state.user.user_email = email;
+        },
+        setTrEmail(state, email_tr) {
+            state.trainer.tr_email = email_tr;
         }
     },
     actions: {
         updateUserEmail({ commit }, email) {
             commit('setUserEmail', email);
-        }
+        },
+        updateTrEmail({ commit }, email_tr) {
+            commit('setTrEmail', email_tr);
+        },
     },
     getters: {
         userEmail: state => state.user.user_email

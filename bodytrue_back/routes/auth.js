@@ -135,90 +135,124 @@ router.post("/email_check", async (req, res) => {
 
 //유저 임시비밀번호 저장
 
-router.post("/findPw_user",async(req,res)=>{
-  console.log("req.body",req.body);
-    const data = {
-        tmp_pwd : Math.random().toString(36).slice(2),
-        user_name : req.body.user_name,
-        user_tel : req.body.user_tel,
-        user_email: req.body.user_email
-      };
-      console.log(data);
+router.post("/findPw_user", async (req, res) => {
+  console.log("Received request body:", req.body);
+  const data = {
+      tmp_pwd: Math.random().toString(36).slice(2),
+      user_name: req.body.user_name,
+      user_tel: req.body.user_tel,
+      user_email: req.body.user_email
+  };
+  console.log("Generated temporary password data:", data);
 
-    db.query('update user set user_pwd = ? where user_name = ? and user_tel = ? and user_email=?',
-        [data.tmp_pwd,data.user_name,data.user_tel,data.user_email],
-        function(err,results,fields){
-        if (err) {
-                res.send({
-                // 에러 발생 시
-                code: 400,
-                failed: "error occurred",
-                error: err,
-                });
-                console.log(err);
-            } else {
-              if (results.affectedRows > 0) {
-                res.send({
-                    // 쿼리 실행 성공시
-                    code: 200,
-                    message: "임시비밀번호 부여 성공",
-                    tmp_pwd: data.tmp_pwd,
-                });
-                console.log("임시 비밀번호:", data.tmp_pwd);
-              } else {
-                  res.send({
-                      // 일치하는 사용자가 없을 경우
-                      code: 404,
-                      message: "일치하는 사용자가 없습니다.",
-                  });
-              }
-            }
-    });
+  // 사용자 정보가 일치하는지 확인 후 비밀번호 업데이트 쿼리 실행
+  db.query(
+      'select * from user where user_name = ? and user_tel = ? and user_email = ?',
+      [data.user_name, data.user_tel, data.user_email],
+      function (err, results) {
+          if (err) {
+              // 쿼리 실행 중 에러 발생 시
+              res.status(400).send({
+                  code: 400,
+                  failed: "Error occurred",
+                  error: err,
+              });
+              console.log("Database error:", err);
+          } else if (results.length === 0) {
+              // 일치하는 사용자가 없는 경우
+              res.status(404).send({
+                  code: 404,
+                  message: "일치하는 사용자가 없습니다.",
+              });
+          } else {
+              // 일치하는 사용자가 있는 경우 비밀번호 업데이트
+              db.query(
+                  'UPDATE user SET user_pwd = ? WHERE user_name = ? AND user_tel = ? AND user_email = ?',
+                  [data.tmp_pwd, data.user_name, data.user_tel, data.user_email],
+                  function (err, updateResults) {
+                      if (err) {
+                          res.status(400).send({
+                              code: 400,
+                              failed: "Error occurred",
+                              error: err,
+                          });
+                          console.log("Database error:", err);
+                      } else {
+                          res.status(200).send({
+                              code: 200,
+                              message: "임시비밀번호 부여 성공",
+                              tmp_pwd: data.tmp_pwd,
+                          });
+                          console.log("임시 비밀번호:", data.tmp_pwd);
+                      }
+                  }
+              );
+          }
+      }
+  );
 });
+
 
 
 //트레이너 임시비밀번호 저장
 
-router.post("/findPw_tr",async(req,res)=>{
-  console.log("req.body",req.body);
-    const data = {
-        tmp_pwd : Math.random().toString(36).slice(2),
-        user_name : req.body.user_name,
-        user_tel : req.body.user_tel,
-        user_email: req.body.user_email
-      };
-      console.log(data);
+router.post("/findPw_tr", async (req, res) => {
+  console.log("Received request body:", req.body);
+  const data = {
+      tmp_pwd: Math.random().toString(36).slice(2),
+      user_name: req.body.user_name,
+      user_tel: req.body.user_tel,
+      user_email: req.body.user_email
+  };
+  console.log("Generated temporary password data:", data);
 
-    db.query('update trainer set tr_pwd = ? where tr_name = ? and tr_tel = ? and tr_email=?',
-        [data.tmp_pwd,data.user_name,data.user_tel,data.user_email],
-        function(err,results,fields){
-        if (err) {
-                res.send({
-                // 에러 발생 시
-                code: 400,
-                failed: "error occurred",
-                error: err,
-                });
-                console.log(err);
-            } else {
-              if (results.affectedRows > 0) {
-                res.send({
-                    // 쿼리 실행 성공시
-                    code: 200,
-                    message: "임시비밀번호 부여 성공",
-                    tmp_pwd: data.tmp_pwd,
-                });
-                console.log("임시 비밀번호:", data.tmp_pwd);
-              } else {
-                  res.send({
-                      // 일치하는 사용자가 없을 경우
-                      code: 404,
-                      message: "일치하는 사용자가 없습니다.",
-                  });
-              }
-            }
-    });
+  // 트레이너 정보가 일치하는지 확인 후 비밀번호 업데이트 쿼리 실행
+  db.query(
+      'SELECT * FROM trainer WHERE tr_name = ? AND tr_tel = ? AND tr_email = ?',
+      [data.user_name, data.user_tel, data.user_email],
+      function (err, results) {
+          if (err) {
+              // 쿼리 실행 중 에러 발생 시
+              res.status(400).send({
+                  code: 400,
+                  failed: "Error occurred",
+                  error: err,
+              });
+              console.log("Database error:", err);
+          } else if (results.length === 0) {
+              // 일치하는 트레이너가 없는 경우
+              res.status(404).send({
+                  code: 404,
+                  message: "일치하는 사용자가 없습니다.",
+              });
+          } else {
+              // 일치하는 트레이너가 있는 경우 비밀번호 업데이트
+              db.query(
+                  'UPDATE trainer SET tr_pwd = ? WHERE tr_name = ? AND tr_tel = ? AND tr_email = ?',
+                  [data.tmp_pwd, data.user_name, data.user_tel, data.user_email],
+                  function (err, updateResults) {
+                      if (err) {
+                          res.status(400).send({
+                              code: 400,
+                              failed: "Error occurred",
+                              error: err,
+                          });
+                          console.log("Database error:", err);
+                      } else {
+                          res.status(200).send({
+                              code: 200,
+                              message: "임시비밀번호 부여 성공",
+                              tmp_pwd: data.tmp_pwd,
+                          });
+                          console.log("임시 비밀번호:", data.tmp_pwd);
+                      }
+                  }
+              );
+          }
+      }
+  );
 });
+
 
 //회원 아이디찾기
 

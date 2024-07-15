@@ -490,6 +490,7 @@ export default {
     .section1 .pro_left img{
         width: 200px;
         height: 200px;
+        object-fit: cover;
     }
     .section1 .pro_left .upload_img{
         width: 70%;
@@ -541,7 +542,8 @@ export default {
     border-radius: 5px;
     cursor: pointer;
     border: 0;
-    background-color: #00C7AE ;
+    /* background-color: #00C7AE ; */
+    background-color: rgba(0, 200, 200, 0.5);
     color: white;
     margin-right: 10px;
     }
@@ -621,8 +623,10 @@ export default {
     cursor: pointer;
     }
     .number_box li.active{
-    background-color: #00c8c8;
+    /* background-color: #00c8c8; */
+    background-color: rgba(0, 200, 200, 0.5);
     border-radius: 5px;
+    color: white;
     cursor: pointer;
     /* color: white; */
     }
@@ -755,12 +759,14 @@ export default {
     font-size: 18px;
     border-radius: 5px;
     border: 0;
-    background-color: #00C7AE;
+    /* background-color: #00C7AE; */
+    background-color: rgba(0, 200, 200, 0.5);
     color: white;
     cursor: pointer;
     }
     .addview .addview_btn:hover{
-    background-color: #0056b3;
+    /* background-color: #0056b3; */
+    background-color: rgba(0, 86, 179, 0.5);
     }
     .noprogram{
     display: flex;
