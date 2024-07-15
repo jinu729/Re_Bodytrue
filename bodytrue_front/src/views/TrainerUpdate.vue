@@ -110,7 +110,7 @@
               <div class="join_btn">
   
                 <button type="submit" @click="updatetr(tr.tr_no)" id="clear">수정완료</button>
-                <button type="button" @click="exit" id="exit">수정취소</button>
+                <router-link type="button" id="exit" :to="`/trmypage/${tr.tr_no}`">수정취소</router-link>
               </div>
             </div>
           </div>

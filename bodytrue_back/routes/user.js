@@ -954,6 +954,23 @@ router.post('/userfaq',function(req,res){
 
 
 //재영작성
+
+// 프로그램 조회수 증가 라우터
+router.post('/incrementcnt/:pro_no', async (req, res) => {
+    const pro_no = req.params.pro_no;
+    try {
+        const result = await db.query('UPDATE program SET pro_cnt = pro_cnt + 1 WHERE pro_no = ?', [pro_no]);
+        if (result.affectedRows === 1) {
+            res.status(200).json({ success: true });
+        } else {
+            res.status(404).json({ success: false, message: 'Program not found' });
+        }
+    } catch (error) {
+        console.error('Error updating program count:', error);
+        res.status(500).json({ success: false, error: 'An error occurred while updating program count' });
+    }
+});
+
 // GET /programs 라우트 정의
 // 기본 프로그램 목록 가져오기
 router.get('/programlist/:pro_tag', (req, res) => {
