@@ -7,22 +7,19 @@ const multer = require('multer');
 const path = require("path");
 //승호작성
 
-const generateUniqueIdentifier = () => {
-    return `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
-};
-
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.resolve(__dirname, '../uploads/'));
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = generateUniqueIdentifier();
-        cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
-    }
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, cb) {
+            cb(null, path.join(__dirname, '..', 'uploads'));
+        },
+        filename(req, file, cb) {
+            console.log('Uploaded File:', file.originalname); // 업로드된 파일 이름 확인
+            cb(null, file.originalname);
+        },
+    }),
+    limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-const upload = multer({ storage });
 router.post('/upload_img', upload.single('img'), (request, response) => {
     setTimeout(() => {
         return response.status(200).json({
@@ -30,8 +27,6 @@ router.post('/upload_img', upload.single('img'), (request, response) => {
         });
     }, 0);
 });
-
-//프로그램 등록
 
 router.post('/createprogram/:tr_no', function (req, res) {
     const data = {
@@ -49,25 +44,10 @@ router.post('/createprogram/:tr_no', function (req, res) {
         pro_imgprice: req.body.pro_imgprice
     };
 
-    // 디버그: 원본 파일명 확인
-    console.log('Original Filenames:');
-    console.log('pro_img:', data.pro_img);
-    console.log('pro_img1:', data.pro_img1);
-    console.log('pro_img2:', data.pro_img2);
-    console.log('pro_imgprice:', data.pro_imgprice);
-
-    // 파일명 변환
-    data.pro_img = Buffer.from(data.pro_img, 'latin1').toString('utf8').trim();
-    data.pro_img1 = Buffer.from(data.pro_img1, 'latin1').toString('utf8').trim();
-    data.pro_img2 = Buffer.from(data.pro_img2, 'latin1').toString('utf8').trim();
-    data.pro_imgprice = Buffer.from(data.pro_imgprice, 'latin1').toString('utf8').trim();
-
-    // 디버그: 변환된 파일명 확인
-    console.log('Converted Filenames:');
-    console.log('pro_img:', data.pro_img);
-    console.log('pro_img1:', data.pro_img1);
-    console.log('pro_img2:', data.pro_img2);
-    console.log('pro_imgprice:', data.pro_imgprice);
+    console.log(data);
+    console.log('Dirname-------------------');
+    console.log(__dirname);
+    console.log('-------------------');
 
     try {
         // 이미지를 제외한 프로그램 정보 먼저 입력
@@ -86,7 +66,12 @@ router.post('/createprogram/:tr_no', function (req, res) {
                     const pastDir2 = path.resolve(__dirname, '../uploads', data.pro_img2);
                     const pastDir3 = path.resolve(__dirname, '../uploads', data.pro_imgprice);
 
-                    console.log('PastDirs:', pastDir0, pastDir1, pastDir2, pastDir3);
+                    console.log('pastDir-------------------');
+                    console.log(pastDir0);
+                    console.log(pastDir1);
+                    console.log(pastDir2);
+                    console.log(pastDir3);
+                    console.log('-------------------');
 
                     const newDir = path.resolve(__dirname, '../uploads/program');
                     if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
@@ -96,7 +81,12 @@ router.post('/createprogram/:tr_no', function (req, res) {
                     const extension2 = path.extname(data.pro_img2);
                     const extension3 = path.extname(data.pro_imgprice);
 
-                    console.log('Extensions:', extension, extension1, extension2, extension3);
+                    console.log('Extension-------------------');
+                    console.log(extension);
+                    console.log(extension1);
+                    console.log(extension2);
+                    console.log(extension3);
+                    console.log('-------------------');
 
                     // 등록 상품의 번호 불러오기
                     db.query("select pro_no from program where pro_name = ?", [data.pro_name], function (error, results, fields) {
@@ -212,7 +202,7 @@ router.post('/createprogram/:tr_no', function (req, res) {
                     console.log(err);
                 }
             });
-    } catch (err) {
+    } catch {
         return res.status(200).json({
             message: 'DB_error'
         });
@@ -220,7 +210,6 @@ router.post('/createprogram/:tr_no', function (req, res) {
 });
 //프로필사진 업로드용
 //프로필사진 업로드용
-
 router.post('/upload_Timg', upload.single('img'), (req, res) => {
     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
 
@@ -237,13 +226,10 @@ router.post('/upload_Timg', upload.single('img'), (req, res) => {
         console.log('-------------------');
 
         const newDir = path.resolve(__dirname, '../uploads/trainer');
-        const newDir = path.resolve(__dirname, '../uploads/trainer');
         if (!fs.existsSync(newDir)) fs.mkdirSync(newDir);
 
         const extension = path.extname(img);
-        const extension = path.extname(img);
 
-        console.log('Extension-------------------');
         console.log('Extension-------------------');
         console.log(extension);
         console.log('-------------------');
