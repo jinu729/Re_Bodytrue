@@ -689,6 +689,9 @@ const upload2 = multer({
 
 router.post('/upload_img', upload2.single('img'), (req, res) => {
     console.log('File Uploaded:', req.file); // 업로드된 파일 정보 확인
+
+    
+
     return res.status(200).json({
         message: 'success',
         filename: req.file.filename  // 업로드된 파일명 반환
