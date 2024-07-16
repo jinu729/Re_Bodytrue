@@ -175,8 +175,8 @@ export default {
     width: 80%; /* 전체 너비의 80%로 설정 */
     height: 5%; /* 높이 설정 */
     margin: auto; /* 가운데 정렬을 위한 자동 마진 */
-    padding-top: 30px; /* 위쪽 여백 설정 */
-    padding-right: 50px; /* 오른쪽 패딩 설정 */
+    padding-top: 15px; /* 위쪽 여백 설정 */
+    padding-right: 25px; /* 오른쪽 패딩 설정 */
 }
 
 /* 정렬 옵션 스타일 */
@@ -200,7 +200,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start; /* 전체 이미지 그리드를 왼쪽 정렬로 설정 */
-    padding: 20px;
+    padding: 15px;
     margin: 0 auto;
     /* margin-left: 250px; */
 
@@ -238,6 +238,8 @@ export default {
 }
 .program_image img {
   width: 300px; /* 이미지의 최대 너비 설정 */
+  max-height: 200px;
+  min-height: 200px;
   overflow: hidden; /* 넘치는 부분을 숨기기 위해 설정 */
   border-radius: 10px; /* 이미지의 모서리를 둥글게 만드는 정도 설정 */
   background-color: #eeeeee; /* 이미지가 로드되기 전에 보여질 배경색 설정 */
