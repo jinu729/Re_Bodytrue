@@ -7,7 +7,7 @@
                 <!-- <form> -->
             <div class="content_left">
                 <div class="upload_img">
-                    <div class="img-box" >
+                    <div class="img-box">
                         <!-- <img id="profile-picture" class="profile-picture" src="" alt="Profile Picture"> -->
                     </div>
                     <input type="file" id="image-upload" accept="image/*" ref="img" @change="uploadFile($event.target.files, 0)">

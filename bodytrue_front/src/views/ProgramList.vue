@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="class">
     <div class="sort_right">
       &nbsp;&nbsp;
       <!-- 드롭다운 대신 select 요소 사용 -->
@@ -16,7 +16,7 @@
         <!-- 프로그램 목록을 순회하며 표시 -->
         <div v-for="(program, index) in pagedProgramList" :key="index" class="program_item">
           <!-- 프로그램 상세 페이지로 이동하는 링크 -->
-          <a :href="`/prodetail/${program.PRO_NO}`" @click="incrementCnt(program.PRO_NO)" class="page-button">
+          <div :href="`/prodetail/${program.PRO_NO}`" @click="incrementCnt(program.PRO_NO)" class="page-button">
             <div class="program_image">
               <!-- 이미지 표시 -->
               <img :src="program.IMG_PATH ? require(`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`) : '/goodsempty2.jpg'" alt="상품 이미지">
@@ -29,7 +29,7 @@
               <!-- 평점 표시 -->
               <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG || 0}}</span></p>
             </div>
-          </a>
+          </div>
         </div>
       </div>
     </main>
@@ -198,14 +198,15 @@ export default {
     justify-content: flex-start; /* 전체 이미지 그리드를 왼쪽 정렬로 설정 */
     padding: 20px;
     margin: 0 auto;
-    margin-left: 250px;
+    /* margin-left: 250px; */
 
 }
 
 /* 프로그램 아이템 스타일 */
 .program_item {
      width: calc(25% - 10px); /* 각 이미지 아이템의 너비 설정 */
-     margin-right: 10px; /* 오른쪽 마진 설정 */        
+     height: 300px;
+     margin: 5px; /* 오른쪽 마진 설정 */        
      margin-bottom: 20px; /* 아래쪽 마진 설정 */
      box-sizing: border-box;
      position: relative;
@@ -221,13 +222,13 @@ export default {
   text-overflow: ellipsis; /* 넘치는 부분에 ... 표시 */
 }
 /* 프로그램 썸네일 이미지 스타일 */
+.program_image {
+  margin: 0 auto;
+  
+}
 .program_image img {
-  max-width: 220px; /* 이미지의 최대 너비 설정 */
-  max-height: 220px; /* 이미지의 최대 높이 설정 */
-  min-width: 220px; /* 이미지의 최소 너비 설정 */
-  min-height: 220px; /* 이미지의 최소 높이 설정 */
+  width: 300px; /* 이미지의 최대 너비 설정 */
   overflow: hidden; /* 넘치는 부분을 숨기기 위해 설정 */
-  padding: auto; /* 패딩을 자동으로 설정 */
   border-radius: 10px; /* 이미지의 모서리를 둥글게 만드는 정도 설정 */
   background-color: #eeeeee; /* 이미지가 로드되기 전에 보여질 배경색 설정 */
   height: auto; /* 이미지의 높이를 자동으로 조정하여 원본 비율 유지 */
