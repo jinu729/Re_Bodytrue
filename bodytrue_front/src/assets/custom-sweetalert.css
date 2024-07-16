@@ -1,0 +1,31 @@
+/* src/assets/custom-sweetalert2.css */
+
+/* SweetAlert2 타이틀 스타일 변경 */
+.swal2-title {
+    font-size: 20px;
+    /* color: #ff0000; */
+}
+
+/* SweetAlert2 버튼 스타일 변경 */
+.swal2-confirm {
+    /* background-color: #00C7AE; */
+    background-color: rgba(0, 200, 200, 0.5);
+    height: 40px;
+    line-height: 20px;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.swal2-popup{
+    width: 500px;
+    padding: 0;
+}

@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';  
+import './assets/custom-sweetalert.css';
 
 //부트스트랩
 import BootstrapVue3 from 'bootstrap-vue-3'

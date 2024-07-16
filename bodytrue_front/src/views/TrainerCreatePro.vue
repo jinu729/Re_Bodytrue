@@ -7,8 +7,8 @@
                 <!-- <form> -->
             <div class="content_left">
                 <div class="upload_img">
-                    <div class="img-box">
-                        <img id="profile-picture" class="profile-picture" src="" alt="Profile Picture">
+                    <div class="img-box" >
+                        <!-- <img id="profile-picture" class="profile-picture" src="" alt="Profile Picture"> -->
                     </div>
                     <input type="file" id="image-upload" accept="image/*" ref="img" @change="uploadFile($event.target.files, 0)">
                     <label for="image-upload" class="file-upload-label" style="padding-left: 50px;">썸네일이미지 선택</label><br>   
@@ -28,7 +28,7 @@
                     <div class="prcn_title">
                         <span>전화번호</span>
                     </div>
-                    <input type="text" id="phn_text" v-model="program.phn_text" placeholder="010-1111-1111">
+                    <input type="text" id="phn_text"  @input="formatPhoneNumber" v-model="program.phn_text" placeholder="010-1111-1111">
                     <div v-if="errors.phn_text" hidden>{{ errors.phn_text }}</div>
                 </div>
                 <div class="prc_name">
@@ -166,6 +166,17 @@ export default {
         this.myImg();
     },
     methods:{
+        formatPhoneNumber(event) {
+            let input = event.target.value.replace(/[^0-9]/g, '');
+            if (input.length < 4) {
+                this.program.phn_text = input;
+            } else if (input.length < 8) {
+                this.program.phn_text = `${input.slice(0, 3)}-${input.slice(3)}`;
+            } else {
+                this.program.phn_text = `${input.slice(0, 3)}-${input.slice(3, 7)}-${input.slice(7, 11)}`;
+            }
+        
+        },
         validateForm() {
             this.errors = {};
 
@@ -538,10 +549,11 @@ export default {
 .content_left .upload_img .img-box{
     width: 250px;
     height: 250px;
-    border: 2px solid #ccc;
+    border: 1px solid #ccc;
     overflow: hidden;
     display: inline-block;
     position: relative;    
+    border-radius: 10px;
 }
 .content_left .upload_img .profile-picture{
     width: 100%;
