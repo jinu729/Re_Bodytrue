@@ -127,7 +127,7 @@
         <div class="section5" id="myplike">
             <div class="plike_list">
                 <p class="plike_user">찜 리스트</p>
-            </div>
+         </div>
             <div class="plike_table">
     <!-- 찜내역 있을 경우 -->
     <div v-if="combinedData.length > 0">
