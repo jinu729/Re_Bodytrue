@@ -30,7 +30,7 @@
                     <li class="mpitem"><a href="#">/</a></li>
                     <li class="mpitem"><a href="#myreview">나의 리뷰</a></li>
                     <li class="mpitem"><a href="#">/</a></li>
-                    <li class="mpitem"><a href="#myplike">즐겨찾기</a></li>
+                    <li class="mpitem"><a href="#myplike">찜</a></li>
                 </ul>
             </div>
         </div>
@@ -126,7 +126,7 @@
         </div>
         <div class="section5" id="myplike">
             <div class="plike_list">
-                <p class="plike_user">즐겨찾기 리스트</p>
+                <p class="plike_user">내 찜 (두찜아님ㅋㅋ)</p>
             </div>
             <div class="plike_table">
     <!-- 찜내역 있을 경우 -->

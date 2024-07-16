@@ -19,7 +19,7 @@ const upload = multer({
             cb(null, file.originalname);
         },
     }),
-    limits: { fileSize: 5 * 1024 * 1024 },
+    // limits: { fileSize: 5 * 1024 * 1024 },
 });
 
 router.post('/upload_img', upload.single('img'), (request, response) => {
