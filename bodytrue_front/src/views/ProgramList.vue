@@ -1,5 +1,5 @@
 <template>
-  <div id="class">
+  <div id="p_list" style="width: 100%;">
     <div class="sort_right">
       &nbsp;&nbsp;
       <!-- 드롭다운 대신 select 요소 사용 -->
@@ -16,19 +16,21 @@
         <!-- 프로그램 목록을 순회하며 표시 -->
         <div v-for="(program, index) in pagedProgramList" :key="index" class="program_item">
           <!-- 프로그램 상세 페이지로 이동하는 링크 -->
-          <div :href="`/prodetail/${program.PRO_NO}`" @click="incrementCnt(program.PRO_NO)" class="page-button">
-            <div class="program_image">
-              <!-- 이미지 표시 -->
-              <img :src="program.IMG_PATH ? require(`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`) : '/goodsempty2.jpg'" alt="상품 이미지">
-            </div>
-            <div class="program_details">
-              <!-- 프로그램 이름 표시 -->
-              <p class="program_name">{{ program.PRO_NAME }} </p>
-              <!-- 트레이너 이름 표시 -->
-              <p class="trainer_name">{{ program.PRO_TRAINER }}</p>
-              <!-- 평점 표시 -->
-              <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG || 0}}</span></p>
-            </div>
+          <div class="page-button">
+            <a :href="`/prodetail/${program.PRO_NO}`" @click="incrementCnt(program.PRO_NO)" >
+              <div class="program_image">
+                <!-- 이미지 표시 -->
+                <img :src="program.IMG_PATH ? require(`../../../bodytrue_back/uploads/program/${program.IMG_PATH}`) : '/goodsempty2.jpg'" alt="상품 이미지">
+              </div>
+              <div class="program_details">
+                <!-- 프로그램 이름 표시 -->
+                <p class="program_name">{{ program.PRO_NAME }} </p>
+                <!-- 트레이너 이름 표시 -->
+                <p class="trainer_name">{{ program.PRO_TRAINER }}</p>
+                <!-- 평점 표시 -->
+                <p class="rating"><span class="star-rating">{{ program.PRO_RATE_AVG || 0}}</span></p>
+              </div>
+            </a>  
           </div>
         </div>
       </div>
@@ -187,7 +189,9 @@ export default {
 
 /* 프로그램 목록 메인 컨테이너 */
 .prolist_main {
-    width: 100%; /* 전체 너비의 80%로 설정 */
+  width: 100%;
+    display: flex;
+    justify-content: center; /* 중앙 정렬을 위해 flexbox 사용 */
 }
 
 /* 프로그램 목록 리스트 스타일 */
@@ -212,6 +216,12 @@ export default {
      position: relative;
     overflow: hidden;
     border-radius: 5px;
+}
+
+.page-button{
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
 }
 
 .program_name {
