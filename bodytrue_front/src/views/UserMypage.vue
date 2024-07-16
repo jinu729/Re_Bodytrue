@@ -146,7 +146,7 @@
                         <div class="pro_enddate">마감일 : {{ item.pro_enddate }}</div>
                         <div class="del_btn">
                             <!-- 찜정보 가져올 때 가져온 item.pro_no으로 찜내역 삭제 -->
-                            <button class="plike_delete" @click="delplike(item.pro_no)">삭제</button>
+                            <button class="plike_delete" @click="delplike(item.pro_no, $event)">삭제</button>
                         </div>
                     </li>
                 </ul>
@@ -541,7 +541,8 @@ export default {
             // return this.moreplikeCount += 1; //한번에 보여줄 개수 3개
         },
         //찜 목록 삭제
-        async delplike(plike_pro_no){ //위에서 delplike클릭 할 때 받은 변수 plike.pro_no의 매개변수 이름이 plike_pro_no
+        async delplike(plike_pro_no, event){ //위에서 delplike클릭 할 때 받은 변수 plike.pro_no의 매개변수 이름이 plike_pro_no
+            event.stopPropagation();
             const plike_user_no = this.$route.params.user_no;
             console.log("plike_user_no", plike_user_no);
             console.log("plike_pro_no",plike_pro_no);
@@ -551,9 +552,15 @@ export default {
                 pro_no: plike_pro_no
             });
                 console.log('찜삭제 성공',response.data);
-                this.$swal('찜 목록에서 삭제되었습니다.');
-                //삭제된 후 찜 목록 업데이트
-                this.plikeData = this.plikeData.filter(plike => plike.pro_no !== plike_pro_no);
+                this.$swal({
+                    title: '삭제 완료',
+                    text: '찜 목록에서 삭제되었습니다.',
+                    icon: 'success'
+                }).then(() => {
+                    // 삭제된 후 찜 목록 업데이트
+                    this.plikeData = this.plikeData.filter(plike => plike.pro_no !== plike_pro_no);
+                    window.location.reload();
+                });
                 //필터를 통해서 내가 삭제한 프로그램 번호랑 기존에 있는 찜 프로그램 번호 비교해서 true 값만 다시
                 //배열에 넣어서 plikeData를 초기화중
             }catch(error){
@@ -562,6 +569,7 @@ export default {
         },
         //상품상세페이지로 이동하기
         goToProdetail(pro_no){
+            console.log("goToProdetail",this.goToProdetail);
             this.$router.push(`/prodetail/${pro_no}`);
         },
         gotoupdate(user_no){

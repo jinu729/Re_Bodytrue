@@ -198,6 +198,7 @@ export default {
     justify-content: flex-start; /* 전체 이미지 그리드를 왼쪽 정렬로 설정 */
     padding: 20px;
     margin: 0 auto;
+    margin-left: 250px;
 
 }
 
