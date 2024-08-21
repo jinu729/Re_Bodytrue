@@ -2,7 +2,7 @@ BodyTrue
 =============
 트레이너 1:1 매칭 예약 프로젝트
 
-OMG_backend
+BodyTrue_backend
 --
 ### Project setup
 ```
@@ -12,7 +12,7 @@ npm install
 ```
 npm start
 ```
-OMG_frontend
+BodyTrue_frontend
 -- 
 ### Project setup
 ```
