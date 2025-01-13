@@ -91,9 +91,15 @@
                     <li class="item" @click="gotoLogin">
                         <router-link class="icon" to="/login"><img src="../image/loginicon.png" alt="login">로그인</router-link>
                     </li>
+                    <li class="item" @click="gotoLogin">
+                        <router-link class="icon" to="/login2"><img src="../image/loginicon.png" alt="login">로그인2</router-link>
+                    </li>
                     <li class="line">|</li>
-                    <li class="item">
+                    <!-- <li class="item">
                         <router-link class="icon" to="/join"><img src="../image/joinicon.png" alt="join">회원가입</router-link>
+                    </li> -->
+                    <li class="item">
+                        <router-link class="icon" to="/join_main"><img src="../image/joinicon.png" alt="join">회원가입</router-link>
                     </li>
                     <li class="line">|</li>
                     <li class="item">

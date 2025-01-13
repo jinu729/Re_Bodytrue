@@ -11,7 +11,11 @@ import TrainerCreatePro from '../views/TrainerCreatePro'
 
 //진우작성
 import Join from '../views/Join.vue'
+import Join_main from '../views/Join_main.vue'
+import Join_user from '../views/Join_user.vue'
+import Join_trainer from '../views/Join_trainer.vue'
 import Login from '../views/Login.vue'
+import Login2 from '../views/Login2.vue'
 
 //진우작성완
 
@@ -119,9 +123,29 @@ const routes = [
     component: Join
   },
   {
+    path: '/join_main',
+    name: 'Join_main',
+    component: Join_main
+  },
+  {
+    path: '/join_user',
+    name: 'Join_user',
+    component: Join_user
+  },
+  {
+    path: '/join_trainer',
+    name: 'Join_trainer',
+    component: Join_trainer
+  },
+  {
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/login2',
+    name: 'Login2',
+    component: Login2
   },
   {
     path: '/prolist/:pro_tag',
