@@ -207,7 +207,7 @@ header .nav_left h1{
     height: 55px;
 }
 header .logo img{
-    height: 50px;
+    height: 45px;
     /* line-height: 60px; */
 }
 .nav_left .navbar{
@@ -223,12 +223,12 @@ header .logo img{
 .menu_list .list{
     height: 40px;
     line-height: 60px;
-    font-size: 22px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
 }
 .menu_list .list:hover{
-    font-size: 26px;
+    font-size: 20px;
     font-weight: bold;
 }
 header .nav_right{
