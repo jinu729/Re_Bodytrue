@@ -92,7 +92,7 @@
                         <router-link class="icon" to="/login"><img src="../image/loginicon.png" alt="login">로그인</router-link>
                     </li>
                     <li class="item" @click="gotoLogin">
-                        <router-link class="icon" to="/login2"><img src="../image/loginicon.png" alt="login">로그인2</router-link>
+                        <router-link class="icon" to="/login_main"><img src="../image/loginicon.png" alt="login">로그인2</router-link>
                     </li>
                     <li class="line">|</li>
                     <!-- <li class="item">

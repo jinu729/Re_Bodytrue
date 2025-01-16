@@ -15,6 +15,8 @@ import Join_main from '../views/Join_main.vue'
 import Join_user from '../views/Join_user.vue'
 import Join_trainer from '../views/Join_trainer.vue'
 import Login from '../views/Login.vue'
+import Login_main from '../views/Login_main.vue'
+import Login_user from '../views/Login_user.vue'
 import Login2 from '../views/Login2.vue'
 
 //진우작성완
@@ -141,6 +143,16 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/login_main',
+    name: 'Login_main',
+    component: Login_main
+  },
+  {
+    path: '/login_user',
+    name: 'Login_user',
+    component: Login_user
   },
   {
     path: '/login2',
