@@ -18,20 +18,22 @@
                 <div class="common_total">
                     <div class="common_email">
                         <label for="email">이메일</label><br>
-                        <input type="text" id="common_email" name="email" placeholder="이메일">
+                        <input type="text" id="common_email" name="email" v-model="email" placeholder="이메일">
                     </div>
                     <div class="common_psd">
                         <label for="password">비밀번호</label><br>
-                        <input type="text" id="common_psd" name="password" placeholder="비밀번호">
+                        <input type="text" id="common_psd" name="password" v-model="pwd" placeholder="비밀번호">
                     </div>
                     <div class="common_forgot">
+                        <a @click="gojoin">회원가입</a>
+                        <span style="color: #ccc">|</span>
                         <a @click="goEmailFind">아이디 찾기</a>
                         <span style="color: #ccc">|</span>
                         <a @click="goPwdFind">비밀번호 찾기</a>
                     </div>
                     <div class="login_btn">
                         <button type="submit" class="com_login">로그인</button>
-                        <button type="button" class="com_join">회원가입</button>
+                        <!-- <button type="button" class="com_join">회원가입</button> -->
                     </div>
                 </div>
             </div>
@@ -39,6 +41,18 @@
     </div>
 </template>
 <script>
+// import axios from 'axios';
+
+export default {
+    data(){
+        return{
+            pwd : ''
+        };
+    },
+    computed : {
+
+    }
+}
 
 </script>
 <style scoped>
@@ -129,10 +143,12 @@
 }
 .common_forgot{    
     margin-bottom: 20px;
+    color: #ccc;
 }
 .common_forgot a{
     padding: 8px;
     color: #ccc;
+    cursor: pointer;
 }
 .login_btn{
     width: 100%;
