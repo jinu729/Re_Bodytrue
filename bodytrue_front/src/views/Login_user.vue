@@ -13,44 +13,136 @@
                 </div>
             </div>
             <div class="line"></div>
-            <div class="common_login">
-                <h3>일반 로그인</h3>
-                <div class="common_total">
-                    <div class="common_email">
-                        <label for="email">이메일</label><br>
-                        <input type="text" id="common_email" name="email" v-model="email" placeholder="이메일">
-                    </div>
-                    <div class="common_psd">
-                        <label for="password">비밀번호</label><br>
-                        <input type="text" id="common_psd" name="password" v-model="pwd" placeholder="비밀번호">
-                    </div>
-                    <div class="common_forgot">
-                        <a @click="gojoin">회원가입</a>
-                        <span style="color: #ccc">|</span>
-                        <a @click="goEmailFind">아이디 찾기</a>
-                        <span style="color: #ccc">|</span>
-                        <a @click="goPwdFind">비밀번호 찾기</a>
-                    </div>
-                    <div class="login_btn">
-                        <button type="submit" class="com_login">로그인</button>
-                        <!-- <button type="button" class="com_join">회원가입</button> -->
+            <form class="common_form" @submit.prevent="login">
+                <div class="common_login">
+                    <h3>일반 로그인</h3>
+                    <div class="common_total">
+                        <div class="common_email">
+                            <label for="email">이메일</label><br>
+                            <input type="text" id="common_email" name="email" v-model="email" placeholder="이메일">
+                        </div>
+                        <div class="common_psd">
+                            <label for="password">비밀번호</label><br>
+                            <input type="password" id="common_psd" name="password" v-model="pwd" placeholder="비밀번호">
+                        </div>
+                        <div class="common_forgot">
+                            <a @click="gojoin">회원가입</a>
+                            <span style="color: #ccc">|</span>
+                            <a @click="goEmailFind">아이디 찾기</a>
+                            <span style="color: #ccc">|</span>
+                            <a @click="goPwdFind">비밀번호 찾기</a>
+                        </div>
+                        <div class="login_btn">
+                            <button type="submit" class="com_login">로그인</button>
+                            <!-- <button type="button" class="com_join">회원가입</button> -->
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
+    <FindIdModal :isOpen="isFindIdModalOpen" @close="closeFindIdModal" />
+    <FindPwModal :isOpen="isFindPwModalOpen" @close="closeFindPwModal" />
 </template>
 <script>
-// import axios from 'axios';
+import axios from 'axios';
+import FindIdModal from '../views/FindId.vue';
+import FindPwModal from '../views/FindPw.vue';
 
 export default {
+    components:{
+            FindIdModal,
+            FindPwModal,
+    },
     data(){
         return{
-            pwd : ''
+            pwd : '',
+            isFindIdModalOpen: false,
+            isFindPwModalOpen: false,
         };
     },
     computed : {
+        user() {
+            return this.$store.state.user;
+        },
+        trainer() {
+            return this.$store.state.trainer;
+        }
+    },
+    methods: {
+        async login(){
+            this.user_auth = this.email.includes('@') ? 1 : 0;
 
+            try {
+                const res = await axios({
+                    url : `http://localhost:3000/auth/login_user`,
+                    method: "POST",
+                    data: {
+                        email: this.email,
+                        pwd: this.pwd,
+                        user_auth: this.user_auth,
+                    }
+                });
+                if(res.data.code === 200){
+                    if(this.user_auth === 1) {
+                        const userPayload = {
+                            user_no: res.data.user_no,
+                            user_email: res.data.email,
+                            user_auth: res.data.user_auth,
+                        };
+                        this.$store.commit('setUser', userPayload);
+                        window.location.href = "/";
+                    } else {
+                        const user_auth = res.data.user_auth;
+                        if(user_auth === 0){
+                            const adminPayload = {
+                                user_no : res.data.user_no,
+                                user_email : res.data.user_email,
+                                user_auth : res.data.user_auth,
+                            };
+                            this.$store.commit('setUser',adminPayload);
+                            window.location.href = "/admin";
+                        } else{
+                            console.log("관리자가 아닙니다.");
+                            this.$swal("관리자가 아닙니다.");
+                            
+                        }
+                    }
+                } else if (res.data.code === 401) {
+                    // 비밀번호 오류 시
+                    this.$swal(res.data.message);
+                    // window.location.href = "/login";
+                } else if (res.data.code === 404) {
+                    // 존재하지 않는 이메일일 때
+                    this.$swal(res.data.message);
+                    // window.location.href = "/login";
+                } else if (res.data.code === 402) {
+                    // 존재하지 않는 이메일일 때
+                    this.$swal(res.data.message);
+                    // window.location.href = "/login";
+                }
+            } catch(err){
+                this.$swal(err);
+            }
+        },
+        goEmailFind() {
+            // 아이디 찾기 로직
+            this.isFindIdModalOpen = true;
+            console.log(this.isFindIdModalOpen);
+            // console.log('아이디 찾기');
+        },
+        goPwdFind() {
+            // 비밀번호 찾기 로직
+            this.isFindPwModalOpen = true;
+            console.log(this.isFindPwModalOpen);
+            console.log('비밀번호 찾기');
+        },
+        closeFindIdModal(){
+            this.isFindIdModalOpen = false;
+        },
+        closeFindPwModal(){
+            this.isFindPwModalOpen = false;
+        },
     }
 }
 
@@ -72,10 +164,18 @@ export default {
     border-radius: 50px;
     display: flex;
 }
-.total_login .sns_login, .total_login .common_login{
+.total_login .sns_login{
     width: 49.7%;
     height: 100%;
     text-align: center;
+}
+.common_form{
+    width: 49.7%;
+    height: 100%;
+    text-align: center;
+}
+.total_login .common_login{
+    width: 100%;
 }
 .total_login .line{
     width: 3.5px;
