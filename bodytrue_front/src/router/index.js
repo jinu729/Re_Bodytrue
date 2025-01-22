@@ -17,6 +17,7 @@ import Join_trainer from '../views/Join_trainer.vue'
 import Login from '../views/Login.vue'
 import Login_main from '../views/Login_main.vue'
 import Login_user from '../views/Login_user.vue'
+import Login_trainer from '../views/Login_trainer.vue'
 import Login2 from '../views/Login2.vue'
 
 //진우작성완
@@ -153,6 +154,11 @@ const routes = [
     path: '/login_user',
     name: 'Login_user',
     component: Login_user
+  },
+  {
+    path: '/login_trainer',
+    name: 'Login_trainer',
+    component: Login_trainer
   },
   {
     path: '/login2',
